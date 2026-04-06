@@ -187,6 +187,9 @@ public class AutoBlueClose1 extends OpMode {
         telemetry.addData("Pose Heading",   follower.getPose().getHeading());
         telemetry.addData("Segment Time",   segmentTimer.seconds());
         telemetry.addData("Shot Time",      shotTimer.seconds());
+
+        telemetry.addData("Intake State", intakeSubsystem.getState());
+        telemetry.addData("Ball Detected", intakeSubsystem.isBallDetected());
         telemetry.update();
     }
 
@@ -341,7 +344,7 @@ public class AutoBlueClose1 extends OpMode {
                 nextSequenceState = SequenceState.FINISHED;
                 break;
             case FINISHED:
-                stopTransferAction.run();
+                transferSubsystem.Closed();
                 shootAction.stop();
                 intakeAction.stop();
                 shotFinished   = true;
@@ -355,17 +358,13 @@ public class AutoBlueClose1 extends OpMode {
         shotFinished       = !shootDuringPath;
         holdStarted        = false;
         pathEndWaitStarted = false;
+
         segmentTimer.reset();
         shotTimer.reset();
         holdTimer.reset();
         pathEndTimer.reset();
 
-        stopTransferAction.run();
-        if (intakeDuringPath) {
-            intakeAction.startIntake();
-        } else {
-            intakeAction.stop();
-        }
+        transferSubsystem.Closed();
     }
 
     private void runCurrentSequence() {
@@ -374,6 +373,7 @@ public class AutoBlueClose1 extends OpMode {
         }
 
         Pose currentPose = follower.getPose();
+
         double robotXMeters = currentPose.getX() * INCHES_TO_METERS;
         double robotYMeters = currentPose.getY() * INCHES_TO_METERS;
         double robotHeadingRad = currentPose.getHeading();
@@ -398,13 +398,11 @@ public class AutoBlueClose1 extends OpMode {
             boolean readyToShoot = flyWheelSubsystem.isAtSpeed(2300);
             boolean pathDone = !follower.isBusy();
 
-            // Primary trigger: inside shooting zone AND flywheel at speed
-            boolean zoneAndReady = insideShootingZone && readyToShoot;
+            boolean hasBall = intakeAction.hasBall() &&
+                    intakeSubsystem.getState() == IntakeSubsystem.IntakeState.BALL_HELD_ONE;
 
-            // Fallback trigger: path finished (robot at destination heading) AND flywheel at speed.
-            // Handles cases where shootPose falls outside the shooting zone triangles,
-            // or the flywheel didn't reach speed until after the path ended.
-            boolean fallbackReady = pathDone && readyToShoot;
+            boolean zoneAndReady = insideShootingZone && readyToShoot && hasBall;
+            boolean fallbackReady = pathDone && readyToShoot && hasBall;
 
             if (!shotTriggered && (zoneAndReady || fallbackReady)) {
                 transferAction.start();
@@ -414,28 +412,44 @@ public class AutoBlueClose1 extends OpMode {
             }
 
             if (shotTriggered && !shotFinished && shotTimer.seconds() >= fireDurationSeconds) {
-                stopTransferAction.run();
+                transferSubsystem.Closed();
+
+                if (!intakeDuringPath) {
+                    intakeSubsystem.off();
+                } else {
+                    if (intakeSubsystem.getState() != IntakeSubsystem.IntakeState.INTAKING) {
+                        intakeSubsystem.runAll();
+                    }
+                }
+
                 shotFinished = true;
             }
 
-            // Start timeout countdown once path finishes and shot still hasn't triggered
             if (!shotTriggered && pathDone && !pathEndWaitStarted) {
                 pathEndWaitStarted = true;
                 pathEndTimer.reset();
             }
 
-            // Timeout: give up waiting for shot conditions and move on
             if (!shotTriggered && pathDone && pathEndWaitStarted
                     && pathEndTimer.seconds() >= maxWaitForShotSeconds) {
+
                 shotFinished = true;
-                stopTransferAction.run();
+                transferSubsystem.Closed();
+
+                if (intakeDuringPath) {
+                    intakeSubsystem.runAll();
+                } else {
+                    intakeSubsystem.off();
+                }
             }
         } else {
             shootAction.idle();
         }
 
         if (intakeDuringPath && !shotTriggered) {
-            intakeAction.startIntake();
+            if (intakeSubsystem.getState() == IntakeSubsystem.IntakeState.OFF) {
+                intakeAction.startIntake();
+            }
         }
 
         if (!follower.isBusy()) {
@@ -450,7 +464,8 @@ public class AutoBlueClose1 extends OpMode {
             pathEndTimer.reset();
         }
 
-        boolean holdComplete = !waitAtEndOfPath || (holdStarted && holdTimer.seconds() >= gateWaitSeconds);
+        boolean holdComplete = !waitAtEndOfPath ||
+                (holdStarted && holdTimer.seconds() >= gateWaitSeconds);
 
         if (!follower.isBusy() && shotFinished && holdComplete) {
             setSequenceState(nextSequenceState);

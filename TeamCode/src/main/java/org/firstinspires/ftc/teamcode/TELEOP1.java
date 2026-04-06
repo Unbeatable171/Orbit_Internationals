@@ -79,9 +79,9 @@ public class TELEOP1 extends CommandOpMode {
                     if (transferOpen) {
                         intakeSubsystem.transfer();
                     } else if (gamepad1.right_trigger > 0.1) {
-                        intakeSubsystem.on();
+                        intakeSubsystem.runAll();
                     } else if (gamepad1.left_trigger > 0.1) {
-                        intakeSubsystem.reverse();
+                        intakeSubsystem.reverseAll();
                     } else {
                         intakeSubsystem.off();
                     }
