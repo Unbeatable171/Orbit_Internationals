@@ -34,7 +34,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem(HardwareMap hardwareMap){
 
         intake = hardwareMap.get(DcMotorEx.class,"intake");
-        transfer = hardwareMap.get(DcMotorEx.class,"transfer");
+        transfer = hardwareMap.get(DcMotorEx.class,"transfermotor");
 
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

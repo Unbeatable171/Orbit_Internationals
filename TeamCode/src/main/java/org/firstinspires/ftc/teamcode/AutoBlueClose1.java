@@ -72,6 +72,10 @@ public class AutoBlueClose1 extends OpMode {
     // Shoot position (shared endpoint for all shoot paths)
     private final Pose shootPose = new Pose(59.66467065868264, 83.85628742514972, Math.toRadians(134.771));
 
+    private final Pose shootPose2 = new Pose ( 66.66227347611203, 75.91433278418451, Math.toRadians(134.771));
+
+    private final Pose shootPoseLast = new Pose (71.17792421746293,95.6474464579901, Math.toRadians(145.8));
+
     // Spike 1
     private final Pose spike1Pose = new Pose(16.25205930807249, 84.36573311367383, Math.toRadians(180));
     private final Pose spike1ControlPose = new Pose(53.66676696031331, 79.04511241109216);
