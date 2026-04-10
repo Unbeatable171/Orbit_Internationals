@@ -11,35 +11,24 @@ public class CalculatorConstants {
     //TODO Retune the values
 
     // Field target positions in meters, using the same field reference as Pedro after conversion.
-    public static double blueGoalXMeters = 0.036184136858475976495;
-    public static double blueGoalYMeters = 3.5638609642301708469;
-    public static double redGoalXMeters = 3.551682;
-    public static double redGoalYMeters = 3.56743;
+    public static double blueGoalXInches = 0;
+    public static double blueGoalYInches = 138;
+    public static double redGoalXInches = 138;
+    public static double redGoalYInches = 138;
 
     // Vertical difference between goal center and ball release point in meters.
-    public static double goalHeightDiffMeters = 0.685;
-    public static double gravityMetersPerSecSquared = 9.81;
-
+    public static double goalHeightInches = 0;
+    public static double gravityInches = 386.09;
+    public static double scoreAngle = Math.toRadians(-30);
+    public static double passThroughRadius = 5;
     // Hood angles are physical launch angles in degrees, not servo positions.
     public static double minHoodAngleDeg = 41.5;
     public static double maxHoodAngleDeg = 83.0;
     public static double defaultHoodAngleDeg = 60.0;
 
-    //TODO redo hood vs distance regression with constant rpm
-
-    // Distance -> hood angle quartic regression coefficients.
-    // Active fit:
-    // hoodAngleDeg =
-    //     angleQuarticA * d^4
-    //   + angleQuarticB * d^3
-    //   + angleQuarticC * d^2
-    //   + angleQuarticD * d
-    //   + angleQuarticE
-    public static double angleQuarticA = 8.42829;
-    public static double angleQuarticB = -63.80044;
-    public static double angleQuarticC = 158.97116;
-    public static double angleQuarticD = -149.4327;
-    public static double angleQuarticE = 107.46963;
+   public double hoodAngletoServo(){
+       return;
+   }
 
     //TODO Retune rpm vs velocity regression, with constant hood angle
 
@@ -89,8 +78,8 @@ public class CalculatorConstants {
     // Release point offset from robot pose origin in meters.
     // X is along the robot's forward/back axis (field length in heading direction).
     // A negative X offset means the release point is behind the robot center.
-    public static double releaseOffsetXMeters = -0.08;
-    public static double releaseOffsetYMeters = 0.0;
+    public static double releaseOffsetXInches = -3.14961;
+    public static double releaseOffsetYInches = 0.0;
 
 //    // Far-shot transfer pulsing to let the flywheel recover between shots.
 //    public static double farShotPauseSeconds = 0.3;

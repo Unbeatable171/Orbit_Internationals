@@ -50,9 +50,13 @@ public class ShooterCalculator {
         }
     }
 
-    private final double goalXMeters;
-    private final double goalYMeters;
+    private final double goalXInches;
+    private final double goalYInches;
     private final GoalTarget goalTarget;
+
+    private double g = CalculatorConstants.gravityInches;
+    private double y = CalculatorConstants.goalHeightInches;
+    private double a = CalculatorConstants.scoreAngle;
 
     public ShooterCalculator() {
 
@@ -62,11 +66,11 @@ public class ShooterCalculator {
     public ShooterCalculator(GoalTarget goalTarget) {
         this.goalTarget = goalTarget;
         if (goalTarget == GoalTarget.RED) {
-            goalXMeters = CalculatorConstants.redGoalXMeters;
-            goalYMeters = CalculatorConstants.redGoalYMeters;
+            goalXInches = CalculatorConstants.redGoalXInches;
+            goalYInches = CalculatorConstants.redGoalYInches;
         } else {
-            goalXMeters = CalculatorConstants.blueGoalXMeters;
-            goalYMeters = CalculatorConstants.blueGoalYMeters;
+            goalXInches = CalculatorConstants.blueGoalXInches;
+            goalYInches = CalculatorConstants.blueGoalYInches;
         }
     }
 
@@ -76,40 +80,40 @@ public class ShooterCalculator {
 
     // ---------------- Geometry ----------------
 
-    public double releaseXMeters(double robotX, double robotY, double robotHeadingRad) {
+    public double releaseXInches(double robotX, double robotY, double robotHeadingRad) {
         double cos = Math.cos(robotHeadingRad);
         double sin = Math.sin(robotHeadingRad);
 
         return robotX
-                + CalculatorConstants.releaseOffsetXMeters * cos
-                - CalculatorConstants.releaseOffsetYMeters * sin;
+                + CalculatorConstants.releaseOffsetXInches * cos
+                - CalculatorConstants.releaseOffsetYInches * sin;
     }
 
-    public double releaseYMeters(double robotX, double robotY, double robotHeadingRad) {
+    public double releaseYInches(double robotX, double robotY, double robotHeadingRad) {
         double cos = Math.cos(robotHeadingRad);
         double sin = Math.sin(robotHeadingRad);
 
         return robotY
-                + CalculatorConstants.releaseOffsetXMeters * sin
-                + CalculatorConstants.releaseOffsetYMeters * cos;
+                + CalculatorConstants.releaseOffsetXInches * sin
+                + CalculatorConstants.releaseOffsetYInches * cos;
     }
 
-    public double distanceToGoalMeters(double robotX, double robotY, double robotHeadingRad) {
-        double releaseX = releaseXMeters(robotX, robotY, robotHeadingRad);
-        double releaseY = releaseYMeters(robotX, robotY, robotHeadingRad);
+    public double distanceToGoalInches(double robotX, double robotY, double robotHeadingRad) {
+        double releaseX = releaseXInches(robotX, robotY, robotHeadingRad);
+        double releaseY = releaseYInches(robotX, robotY, robotHeadingRad);
 
-        double distanceX = goalXMeters - releaseX;
-        double distanceY = goalYMeters - releaseY;
+        double distanceX = goalXInches - releaseX;
+        double distanceY = goalYInches - releaseY;
 
         return Math.sqrt(distanceX * distanceX + distanceY * distanceY);
     }
 
     public double headingChangeToGoal(double robotX, double robotY, double robotHeadingRad) {
-        double releaseX = releaseXMeters(robotX, robotY, robotHeadingRad);
-        double releaseY = releaseYMeters(robotX, robotY, robotHeadingRad);
+        double releaseX = releaseXInches(robotX, robotY, robotHeadingRad);
+        double releaseY = releaseYInches(robotX, robotY, robotHeadingRad);
 
-        double distanceX = goalXMeters - releaseX;
-        double distanceY = goalYMeters - releaseY;
+        double distanceX = goalXInches - releaseX;
+        double distanceY = goalYInches - releaseY;
 
         double targetHeading = Math.atan2(distanceY, distanceX);
         double headingError = targetHeading - robotHeadingRad;
@@ -141,21 +145,7 @@ public class ShooterCalculator {
     // ---------------- Calculators ----------------
 
     public double hoodAngleCalculator(double distanceMeters) {
-        double hoodAngleDeg =
-                CalculatorConstants.angleQuarticA * Math.pow(distanceMeters, 4)
-                        + CalculatorConstants.angleQuarticB * Math.pow(distanceMeters, 3)
-                        + CalculatorConstants.angleQuarticC * distanceMeters * distanceMeters
-                        + CalculatorConstants.angleQuarticD * distanceMeters
-                        + CalculatorConstants.angleQuarticE;
-
-        /*
-        double hoodAngleDeg = interpolateLookupTable(
-                distanceMeters,
-                CalculatorConstants.hoodLookupDistancesMeters,
-                CalculatorConstants.hoodLookupAnglesDeg
-        );
-        */
-
+        double hoodAngleDeg = Math.atan((2*y/distanceMeters) - Math.tan(a));
         return clamp(
                 hoodAngleDeg,
                 CalculatorConstants.minHoodAngleDeg,
@@ -163,38 +153,9 @@ public class ShooterCalculator {
         );
     }
 
-    /*
-    private double interpolateLookupTable(double distanceMeters,
-                                          double[] distancesMeters,
-                                          double[] anglesDeg) {
-        if (distancesMeters == null || anglesDeg == null
-                || distancesMeters.length == 0
-                || distancesMeters.length != anglesDeg.length) {
-            return CalculatorConstants.defaultHoodAngleDeg;
-        }
-
-        if (distanceMeters <= distancesMeters[0]) {
-            return anglesDeg[0];
-        }
-
-        for (int i = 1; i < distancesMeters.length; i++) {
-            if (distanceMeters <= distancesMeters[i]) {
-                double lowerDistance = distancesMeters[i - 1];
-                double upperDistance = distancesMeters[i];
-                double lowerAngle = anglesDeg[i - 1];
-                double upperAngle = anglesDeg[i];
-                double t = (distanceMeters - lowerDistance) / (upperDistance - lowerDistance);
-                return lowerAngle + t * (upperAngle - lowerAngle);
-            }
-        }
-
-        return anglesDeg[anglesDeg.length - 1];
-    }
-    */
-
     public double velocityCalculator(double distanceMeters, double hoodAngleDeg) {
         double x = distanceMeters;
-        double y = CalculatorConstants.goalHeightDiffMeters;
+        double y = CalculatorConstants.goalHeightInches;
         double angleRad = Math.toRadians(hoodAngleDeg);
 
         double cos = Math.cos(angleRad);
@@ -206,7 +167,7 @@ public class ShooterCalculator {
         }
 
         return Math.sqrt(
-                (CalculatorConstants.gravityMetersPerSecSquared * x * x) / denominator
+                (CalculatorConstants.gravityInches * x * x) / denominator
         );
     }
 
@@ -285,7 +246,7 @@ public class ShooterCalculator {
                                               double robotHeadingRad,
                                               double robotVelocityXMetersPerSecond,
                                               double robotVelocityYMetersPerSecond) {
-        double distanceMeters = distanceToGoalMeters(robotX, robotY, robotHeadingRad);
+        double distanceMeters = distanceToGoalInches(robotX, robotY, robotHeadingRad);
         double baseHeadingErrorRad = headingChangeToGoal(robotX, robotY, robotHeadingRad);
 
         if (distanceMeters <= 1e-6) {
@@ -306,10 +267,10 @@ public class ShooterCalculator {
             );
         }
 
-        double releaseX = releaseXMeters(robotX, robotY, robotHeadingRad);
-        double releaseY = releaseYMeters(robotX, robotY, robotHeadingRad);
-        double goalDeltaX = goalXMeters - releaseX;
-        double goalDeltaY = goalYMeters - releaseY;
+        double releaseX = releaseXInches(robotX, robotY, robotHeadingRad);
+        double releaseY = releaseYInches(robotX, robotY, robotHeadingRad);
+        double goalDeltaX = goalXInches - releaseX;
+        double goalDeltaY = goalYInches - releaseY;
 
         double targetHeadingRad = Math.atan2(goalDeltaY, goalDeltaX);
         double unitX = goalDeltaX / distanceMeters;
