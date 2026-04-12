@@ -5,6 +5,7 @@
 //import com.pedropathing.geometry.BezierCurve;
 //import com.pedropathing.geometry.BezierLine;
 //import com.pedropathing.geometry.Pose;
+//import com.pedropathing.math.Vector;
 //import com.pedropathing.paths.PathChain;
 //import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 //import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -20,8 +21,8 @@
 //import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 //
 //@Config
-//@Autonomous(name = "Auto Blue Close 1")
-//public class AutoBlueClose1 extends OpMode {
+//@Autonomous(name = "Auto Blue Close 2")
+//public class AutoBlueClose2 extends OpMode {
 //
 //    public enum SequenceState {
 //        PRELOAD_SHOT,
@@ -39,69 +40,87 @@
 //    }
 //
 //    // --- Tunable parameters ---
-//    public static double fireDurationSeconds   = 1.5;
-//    public static double maxWaitForShotSeconds = 2.5;
-//    public static double gateWaitSeconds       = 1.0;
+//    public static double fireDurationSeconds          = 1.5;
+//    public static double maxWaitForShotSeconds        = 2.5;
+//    public static double gateWaitSeconds              = 1;
+//    public static double headingReadyToleranceDeg     = 3.0;
+//    public static boolean requireHeadingReadyForShot  = false;
+//    public static boolean forceFeedAfterWaitTimeout   = true;
 //
-//    // Fixed shooter values — tune hoodPosition for your 65 deg target
-//    public static int    targetRPM    = 2300;
-//    public static double hoodPosition = 0.361;
+//    // Shooting zone triangle 1 (upper field)
+//    public static double shootZoneTriangleOneAXInches = 72;
+//    public static double shootZoneTriangleOneAYInches = 72;
+//    public static double shootZoneTriangleOneBXInches = 0.0;
+//    public static double shootZoneTriangleOneBYInches = 144;
+//    public static double shootZoneTriangleOneCXInches = 144;
+//    public static double shootZoneTriangleOneCYInches = 144;
 //
-////    // Shooting zone triangle 1 (upper field)
-////    public static double shootZoneTriangleOneAXInches = 72;
-////    public static double shootZoneTriangleOneAYInches = 72;
-////    public static double shootZoneTriangleOneBXInches = 0.0;
-////    public static double shootZoneTriangleOneBYInches = 144;
-////    public static double shootZoneTriangleOneCXInches = 144;
-////    public static double shootZoneTriangleOneCYInches = 144;
-////
-////    // Shooting zone triangle 2 (lower field)
-////    public static double shootZoneTriangleTwoAXInches = 72;
-////    public static double shootZoneTriangleTwoAYInches = 23;
-////    public static double shootZoneTriangleTwoBXInches = 95;
-////    public static double shootZoneTriangleTwoBYInches = 0.0;
-////    public static double shootZoneTriangleTwoCXInches = 49;
-////    public static double shootZoneTriangleTwoCYInches = 0.0;
+//    // Shooting zone triangle 2 (lower field)
+//    public static double shootZoneTriangleTwoAXInches = 72;
+//    public static double shootZoneTriangleTwoAYInches = 23;
+//    public static double shootZoneTriangleTwoBXInches = 95;
+//    public static double shootZoneTriangleTwoBYInches = 0.0;
+//    public static double shootZoneTriangleTwoCXInches = 49;
+//    public static double shootZoneTriangleTwoCYInches = 0.0;
 //
 //    private static final double INCHES_TO_METERS = 0.0254;
 //
-//    // --- Poses ---
-//    private final Pose startPose  = new Pose(37.34831836370614,  136.13465551339004, Math.toRadians(90));
-//    private final Pose shootPose  = new Pose(59.66467065868264,   83.85628742514972, Math.toRadians(134.771));
+//    // --- Poses (from AutoCloseBlue1_1.pp) ---
 //
-//    // Spike 1
+//    // Start: (37.348, 136.135), heading linear 90 -> 180 deg
+//    private final Pose startPose = new Pose(37.34831836370614, 136.13465551339004, Math.toRadians(90));
+//
+//    // StartToShoot endpoint — heading linear 180 -> 134.771
+//    private final Pose shootPose = new Pose(59.66467065868264, 83.85628742514972, Math.toRadians(134.771));
+//
+//    // Gate3ToShoot has a different endpoint
+//    private final Pose shootPoseFinal = new Pose(68.44226538685398, 97.37852795233258, Math.toRadians(134.771));
+//
+//    // Spike 1 — ShootToSpike1 endpoint, heading linear 134.771 -> 180
 //    private final Pose spike1Pose        = new Pose(16.25205930807249, 84.36573311367383, Math.toRadians(180));
 //    private final Pose spike1ControlPose = new Pose(53.66676696031331, 79.04511241109216);
 //
-//    // Spike 2
-//    private final Pose spike2Pose               = new Pose(13.996705107084011, 59.25535420098848, Math.toRadians(180));
-//    private final Pose spike2Control1Pose       = new Pose(57.26561374779271,  55.45697402558966);
-//    private final Pose spike2Control2Pose       = new Pose(41.60828261105465,  55.796347995935626);
+//    // Spike 2 — ShootToSpike2 endpoint, heading linear 134.771 -> 180
+//    // Control points from .pp (note order matches file: first cp is closer to start)
+//    private final Pose spike2Pose          = new Pose(13.996705107084011, 59.25535420098848, Math.toRadians(180));
+//    private final Pose spike2Control1Pose  = new Pose(41.60828261105465,  55.796347995935626);
+//    private final Pose spike2Control2Pose  = new Pose(52.04650336888003,  58.06652921504601);
+//
+//    // Spike2ToShoot control points, heading linear 180 -> 134.771
 //    private final Pose spike2ReturnControl1Pose = new Pose(49.082747190955814, 59.829296925095434);
 //    private final Pose spike2ReturnControl2Pose = new Pose(53.57203878897888,  74.55582081306909);
 //
-//    // Gate
-//    private final Pose gatePose              = new Pose(12.07578253706755, 60.0, Math.toRadians(147));
-//    private final Pose gateControlPose       = new Pose(36.428710947133744, 64.18349791356334);
-//    private final Pose gateReturnControlPose = new Pose(7.444645799011532,  31.175260681273393);
+//    // Gate (shared endpoint for all 3 gate visits), heading linear -> 147
+//    private final Pose gatePose        = new Pose(12.07578253706755, 60.0, Math.toRadians(147));
+//    private final Pose gateControlPose = new Pose(36.428710947133744, 64.18349791356334);
+//
+//    // Gate1ToShoot control point (from .pp)
+//    private final Pose gate1ReturnControlPose = new Pose(29.683817596662212, 42.501775544679276);
+//
+//    // Gate2ToShoot control point (from .pp — different from gate 1)
+//    private final Pose gate2ReturnControlPose = new Pose(32.591268533772656, 43.511339758703365);
+//
+//    // Gate3ToShoot control point (from .pp)
+//    private final Pose gate3ReturnControlPose = new Pose(39.47100494233938, 60.35483234519431);
 //
 //    // --- Subsystems ---
-//    private Follower          follower;
-//    private FlyWheelSubsystem flyWheelSubsystem;
-//    private IntakeSubsystem   intakeSubsystem;
-//    private TransferSubsystem transferSubsystem;
+//    private Follower           follower;
+//    private FlyWheelSubsystem  flyWheelSubsystem;
+//    private IntakeSubsystem    intakeSubsystem;
+//    private TransferSubsystem  transferSubsystem;
+//    private ShooterCalculator  shooterCalculator;
 //
 //    // --- Actions ---
-//    private ShootAction        shootAction;
-//    private TransferAction     transferAction;
+//    private ShootAction       shootAction;
+//    private TransferAction    transferAction;
 //    private StopTransferAction stopTransferAction;
-//    private IntakeAction       intakeAction;
+//    private IntakeAction      intakeAction;
 //
 //    // --- Timers ---
-//    private final ElapsedTime segmentTimer = new ElapsedTime();
-//    private final ElapsedTime shotTimer    = new ElapsedTime();
-//    private final ElapsedTime holdTimer    = new ElapsedTime();
-//    private final ElapsedTime pathEndTimer = new ElapsedTime();
+//    private final ElapsedTime segmentTimer  = new ElapsedTime();
+//    private final ElapsedTime shotTimer     = new ElapsedTime();
+//    private final ElapsedTime holdTimer     = new ElapsedTime();
+//    private final ElapsedTime pathEndTimer  = new ElapsedTime();
 //
 //    // --- State machine ---
 //    private SequenceState sequenceState;
@@ -136,6 +155,7 @@
 //        flyWheelSubsystem  = new FlyWheelSubsystem(hardwareMap);
 //        intakeSubsystem    = new IntakeSubsystem(hardwareMap);
 //        transferSubsystem  = new TransferSubsystem(hardwareMap);
+//        shooterCalculator  = new ShooterCalculator(ShooterCalculator.GoalTarget.BLUE);
 //
 //        shootAction        = new ShootAction(flyWheelSubsystem);
 //        transferAction     = new TransferAction(transferSubsystem, intakeSubsystem);
@@ -176,63 +196,78 @@
 //        telemetry.addData("Pose Heading",   follower.getPose().getHeading());
 //        telemetry.addData("Segment Time",   segmentTimer.seconds());
 //        telemetry.addData("Shot Time",      shotTimer.seconds());
+//        telemetry.addData("Intake State",   intakeSubsystem.getState());
+//        telemetry.addData("Ball Detected",  intakeSubsystem.isBallDetected());
 //        telemetry.update();
 //    }
 //
 //    private void buildPaths() {
+//
+//        // StartToShoot — BezierLine, heading linear 90 -> 134.771 deg
 //        driveStartToShoot = follower.pathBuilder()
 //                .addPath(new BezierLine(startPose, shootPose))
 //                .setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading())
 //                .build();
 //
+//        // ShootToSpike1 — BezierCurve 1 control point, heading linear 134.771 -> 180 deg
 //        driveShootToSpike1 = follower.pathBuilder()
 //                .addPath(new BezierCurve(shootPose, spike1ControlPose, spike1Pose))
 //                .setLinearHeadingInterpolation(shootPose.getHeading(), spike1Pose.getHeading())
 //                .build();
 //
+//        // Spike1ToShoot — BezierLine, heading linear 180 -> 134.771 deg
 //        driveSpike1ToShoot = follower.pathBuilder()
 //                .addPath(new BezierLine(spike1Pose, shootPose))
 //                .setLinearHeadingInterpolation(spike1Pose.getHeading(), shootPose.getHeading())
 //                .build();
 //
+//        // ShootToSpike2 — BezierCurve 2 control points, heading linear 134.771 -> 180 deg
 //        driveShootToSpike2 = follower.pathBuilder()
 //                .addPath(new BezierCurve(shootPose, spike2Control1Pose, spike2Control2Pose, spike2Pose))
 //                .setLinearHeadingInterpolation(shootPose.getHeading(), spike2Pose.getHeading())
 //                .build();
 //
+//        // Spike2ToShoot — BezierCurve 2 control points, heading linear 180 -> 134.771 deg
 //        driveSpike2ToShoot = follower.pathBuilder()
 //                .addPath(new BezierCurve(spike2Pose, spike2ReturnControl1Pose, spike2ReturnControl2Pose, shootPose))
 //                .setLinearHeadingInterpolation(spike2Pose.getHeading(), shootPose.getHeading())
 //                .build();
 //
+//        // ShootToGate1 — BezierCurve 1 control point, heading linear 134.771 -> 147 deg
 //        driveShootToGate1 = follower.pathBuilder()
 //                .addPath(new BezierCurve(shootPose, gateControlPose, gatePose))
 //                .setLinearHeadingInterpolation(shootPose.getHeading(), gatePose.getHeading())
 //                .build();
 //
+//        // Gate1ToShoot — BezierCurve 1 control point, heading linear 147 -> 134.771 deg
 //        driveGate1ToShoot = follower.pathBuilder()
-//                .addPath(new BezierCurve(gatePose, gateReturnControlPose, shootPose))
+//                .addPath(new BezierCurve(gatePose, gate1ReturnControlPose, shootPose))
 //                .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose.getHeading())
 //                .build();
 //
+//        // ShootToGate2 — BezierCurve 1 control point, heading linear 134.771 -> 147 deg
 //        driveShootToGate2 = follower.pathBuilder()
 //                .addPath(new BezierCurve(shootPose, gateControlPose, gatePose))
 //                .setLinearHeadingInterpolation(shootPose.getHeading(), gatePose.getHeading())
 //                .build();
 //
+//        // Gate2ToShoot — BezierCurve 1 control point, heading linear 147 -> 134.771 deg
 //        driveGate2ToShoot = follower.pathBuilder()
-//                .addPath(new BezierCurve(gatePose, gateReturnControlPose, shootPose))
+//                .addPath(new BezierCurve(gatePose, gate2ReturnControlPose, shootPose))
 //                .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose.getHeading())
 //                .build();
 //
+//        // ShootToGate3 — BezierCurve 1 control point, heading linear 134.771 -> 147 deg
 //        driveShootToGate3 = follower.pathBuilder()
 //                .addPath(new BezierCurve(shootPose, gateControlPose, gatePose))
 //                .setLinearHeadingInterpolation(shootPose.getHeading(), gatePose.getHeading())
 //                .build();
 //
+//        // Gate3ToShoot — BezierCurve 1 control point, heading linear 147 -> 134.771 deg
+//        // Note: ends at shootPoseFinal (68.44, 97.38), not the standard shootPose
 //        driveGate3ToShoot = follower.pathBuilder()
-//                .addPath(new BezierCurve(gatePose, gateReturnControlPose, shootPose))
-//                .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose.getHeading())
+//                .addPath(new BezierCurve(gatePose, gate3ReturnControlPose, shootPoseFinal))
+//                .setLinearHeadingInterpolation(gatePose.getHeading(), shootPoseFinal.getHeading())
 //                .build();
 //    }
 //
@@ -317,7 +352,7 @@
 //                nextSequenceState = SequenceState.FINISHED;
 //                break;
 //            case FINISHED:
-//                stopTransferAction.run();
+//                transferSubsystem.Closed();
 //                shootAction.stop();
 //                intakeAction.stop();
 //                shotFinished   = true;
@@ -337,15 +372,7 @@
 //        holdTimer.reset();
 //        pathEndTimer.reset();
 //
-//        // Stop transfer at start of every segment
-//        stopTransferAction.run();
-//
-//        // Start or stop intake immediately based on segment type
-//        if (intakeDuringPath) {
-//            intakeAction.startIntake();
-//        } else {
-//            intakeAction.stop();
-//        }
+//        transferSubsystem.Closed();
 //    }
 //
 //    private void runCurrentSequence() {
@@ -353,19 +380,35 @@
 //
 //        Pose currentPose = follower.getPose();
 //
-//        if (shootDuringPath) {
-//            // Spin flywheel at fixed values every loop
-//            flyWheelSubsystem.spinUp(targetRPM);
-//            flyWheelSubsystem.setHoodAngle(hoodPosition);
+//        double robotXMeters   = currentPose.getX() * INCHES_TO_METERS;
+//        double robotYMeters   = currentPose.getY() * INCHES_TO_METERS;
+//        double robotHeadingRad = currentPose.getHeading();
 //
-////            boolean insideShootingZone = inShootingZone(currentPose.getX(), currentPose.getY());
-//            boolean flywheelReady      = flyWheelSubsystem.isAtSpeed(targetRPM);
+//        double robotVelocityXMetersPerSecond =
+//                follower.getVelocity().dot(new Vector(1.0, 0.0)) * INCHES_TO_METERS;
+//        double robotVelocityYMetersPerSecond =
+//                follower.getVelocity().dot(new Vector(1.0, Math.PI / 2.0)) * INCHES_TO_METERS;
+//
+//        ShooterCalculator.ShotSolution shotSolution = shooterCalculator.calculateShotSolution(
+//                robotXMeters,
+//                robotYMeters,
+//                robotHeadingRad,
+//                robotVelocityXMetersPerSecond,
+//                robotVelocityYMetersPerSecond
+//        );
+//
+//        if (shootDuringPath) {
+//            shootAction.update(shotSolution);
+//
+//            boolean insideShootingZone = inShootingZone(currentPose.getX(), currentPose.getY());
+//            boolean readyToShoot       = flyWheelSubsystem.isAtSpeed(2300);
 //            boolean pathDone           = !follower.isBusy();
 //
-////            // Primary: in zone AND flywheel ready
-//        boolean zoneAndReady  = insideShootingZone && flywheelReady;
-////            // Fallback: path done AND flywheel ready
-////            boolean fallbackReady = pathDone && flywheelReady;
+//            boolean hasBall = intakeAction.hasBall() &&
+//                    intakeSubsystem.getState() == IntakeSubsystem.IntakeState.BALL_HELD_ONE;
+//
+//            boolean zoneAndReady    = insideShootingZone && readyToShoot && hasBall;
+//            boolean fallbackReady   = pathDone && readyToShoot && hasBall;
 //
 //            if (!shotTriggered && (zoneAndReady || fallbackReady)) {
 //                transferAction.start();
@@ -374,34 +417,46 @@
 //                shotTimer.reset();
 //            }
 //
-//            // Stop transfer after fireDurationSeconds
 //            if (shotTriggered && !shotFinished && shotTimer.seconds() >= fireDurationSeconds) {
-//                stopTransferAction.run();
+//                transferSubsystem.Closed();
+//
+//                if (!intakeDuringPath) {
+//                    intakeSubsystem.off();
+//                } else {
+//                    if (intakeSubsystem.getState() != IntakeSubsystem.IntakeState.INTAKING) {
+//                        intakeSubsystem.runAll();
+//                    }
+//                }
+//
 //                shotFinished = true;
 //            }
 //
-//            // Start timeout once path finishes and shot still hasn't triggered
 //            if (!shotTriggered && pathDone && !pathEndWaitStarted) {
 //                pathEndWaitStarted = true;
 //                pathEndTimer.reset();
 //            }
 //
-//            // Timeout: skip shot and move on
 //            if (!shotTriggered && pathDone && pathEndWaitStarted
 //                    && pathEndTimer.seconds() >= maxWaitForShotSeconds) {
-//                stopTransferAction.run();
 //                shotFinished = true;
+//                transferSubsystem.Closed();
+//
+//                if (intakeDuringPath) {
+//                    intakeSubsystem.runAll();
+//                } else {
+//                    intakeSubsystem.off();
+//                }
 //            }
 //        } else {
 //            shootAction.idle();
 //        }
 //
-//        // Keep intake running during intake segments until shot triggers
 //        if (intakeDuringPath && !shotTriggered) {
-//            intakeAction.startIntake();
+//            if (intakeSubsystem.getState() == IntakeSubsystem.IntakeState.OFF) {
+//                intakeAction.startIntake();
+//            }
 //        }
 //
-//        // Hold timer at gate end
 //        if (!follower.isBusy()) {
 //            if (waitAtEndOfPath && !holdStarted) {
 //                holdStarted = true;
@@ -426,7 +481,7 @@
 //
 //    private double lineSideValue(double pointX, double pointY,
 //                                 double lineStartX, double lineStartY,
-//                                 double lineEndX, double lineEndY) {
+//                                 double lineEndX,   double lineEndY) {
 //        return (pointX - lineStartX) * (lineEndY - lineStartY)
 //                - (pointY - lineStartY) * (lineEndX - lineStartX);
 //    }
@@ -446,15 +501,18 @@
 //    }
 //
 //    private boolean inShootingZone(double robotXInches, double robotYInches) {
-//        return isInsideTriangle(
+//        boolean inTriangleOne = isInsideTriangle(
 //                robotXInches, robotYInches,
 //                shootZoneTriangleOneAXInches, shootZoneTriangleOneAYInches,
 //                shootZoneTriangleOneBXInches, shootZoneTriangleOneBYInches,
-//                shootZoneTriangleOneCXInches, shootZoneTriangleOneCYInches)
-//                || isInsideTriangle(
+//                shootZoneTriangleOneCXInches, shootZoneTriangleOneCYInches
+//        );
+//        boolean inTriangleTwo = isInsideTriangle(
 //                robotXInches, robotYInches,
 //                shootZoneTriangleTwoAXInches, shootZoneTriangleTwoAYInches,
 //                shootZoneTriangleTwoBXInches, shootZoneTriangleTwoBYInches,
-//                shootZoneTriangleTwoCXInches, shootZoneTriangleTwoCYInches);
+//                shootZoneTriangleTwoCXInches, shootZoneTriangleTwoCYInches
+//        );
+//        return inTriangleOne || inTriangleTwo;
 //    }
 //}

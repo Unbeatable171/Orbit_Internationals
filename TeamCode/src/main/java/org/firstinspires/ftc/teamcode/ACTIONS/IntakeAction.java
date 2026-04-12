@@ -18,12 +18,4 @@ public class IntakeAction {
         intakeSubsystem.off();
     }
 
-    public boolean hasBall() {
-        return intakeSubsystem.isBallDetected();
-    }
-
-    public boolean isHoldingBall() {
-        return intakeSubsystem.getState() ==
-                IntakeSubsystem.IntakeState.BALL_HELD_ONE;
-    }
 }

@@ -16,6 +16,16 @@ public class DriveSubsystem extends SubsystemBase {
         return Math.abs(value) < threshold ? 0.0 : value;
     }
 
+    private Double headingOverride = null;
+
+    public void setHeadingOverride(double turn) {
+        this.headingOverride = turn;
+    }
+
+    public void clearHeadingOverride() {
+        this.headingOverride = null;
+    }
+
     public DriveSubsystem(HardwareMap hardwareMap) {
         frontleft  = hardwareMap.get(DcMotorEx.class, "fl");
         frontright = hardwareMap.get(DcMotorEx.class, "fr");
@@ -34,13 +44,18 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void drive(double forward, double strafe, double rotate) {
+
         forward = applyDeadzone(forward, DEADZONE);
         strafe  = applyDeadzone(strafe,  DEADZONE);
         rotate  = applyDeadzone(rotate,  DEADZONE);
 
+
+
         forward = Math.pow(forward, 3);
         strafe  = Math.pow(strafe,  3);
         rotate  = Math.pow(rotate,  3) *0.8;
+
+        if (headingOverride != null) strafe = headingOverride;
 
         double fl = forward + strafe + rotate;
         double bl = forward - strafe + rotate;

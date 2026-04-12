@@ -11,31 +11,30 @@ public class CalculatorConstants {
     //TODO Retune the values
 
     // Field target positions in meters, using the same field reference as Pedro after conversion.
-    public static double blueGoalXInches = 0;
-    public static double blueGoalYInches = 138;
-    public static double redGoalXInches = 138;
-    public static double redGoalYInches = 138;
+    public static double blueGoalXInches = 8;
+    public static double blueGoalYInches = 136;
+    public static double redGoalXInches = 144;
+    public static double redGoalYInches = 144;
 
     // Vertical difference between goal center and ball release point in meters.
-    public static double goalHeightInches = 0;
+    public static double goalHeightInches = 27;
     public static double gravityInches = 386.09;
-    public static double scoreAngle = Math.toRadians(-30);
+    public static double scoreAngle = -45;
     public static double passThroughRadius = 5;
     // Hood angles are physical launch angles in degrees, not servo positions.
-    public static double minHoodAngleDeg = 41.5;
-    public static double maxHoodAngleDeg = 83.0;
-    public static double defaultHoodAngleDeg = 60.0;
+    public static double minHoodAngleDeg = 42;
+    public static double maxHoodAngleDeg = 75;
 
-   public double hoodAngletoServo(){
-       return;
-   }
+
+
 
     //TODO Retune rpm vs velocity regression, with constant hood angle
 
     // Exit velocity -> RPM regression coefficients.
-    public static double rpmA = 0.0;
-    public static double rpmB = 0.0;
-    public static double rpmC = 0.0;
+    public static double rpmA = -0.00241551;
+    public static double rpmB = 1.73898;
+    public static double rpmC = -398.65032;
+    public static double rpmD = 31747.5212;
 
 
     // Valid shooting limits.
@@ -63,14 +62,16 @@ public class CalculatorConstants {
     public static double farFallbackTriangleBYInches = 0.0;
     public static double farFallbackTriangleCXInches = 49.0;
     public static double farFallbackTriangleCYInches = 0.0;
-    public static double farFallbackHoodAngleDeg = FlyWheelConstants.servoPositionToHoodAngle(0.275);
-    public static double farFallbackRpm = 3200.0;
+    public static double farFallbackHoodAngleDeg = 65;
+    public static double farFallbackRpm = 1000;
 
 
 
 //    // Heading lock tuning. The P terms match the primary/secondary Pedro heading PIDFs.
-    public static double headingPrimaryKp = 0.8;
-    public static double headingSecondaryKp = 0.8;
+    public static double headingPrimaryKp = 1.18;
+    public static double headingSecondaryKp = 1;
+    public static double headingPrimaryKd = 0.09;
+    public static double headingSecondaryKd = 0.15;
     public static double headingSecondaryThresholdDeg = 6.0;
     public static double maxTurnPower = 0.5;
     public static double headingToleranceDeg = 3.0;

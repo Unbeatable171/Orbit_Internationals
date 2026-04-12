@@ -28,6 +28,7 @@ public class TELEOPTEST extends CommandOpMode {
     private double rpmIncrement = 50;
     private double angleIncrement = 2;
 
+
     private boolean prevDpadUp, prevDpadDown, prevDpadLeft, prevDpadRight;
     private boolean gateOpen = false;
     private boolean flywheelEnabled = true;
@@ -42,6 +43,7 @@ public class TELEOPTEST extends CommandOpMode {
         flyWheelSubsystem = new FlyWheelSubsystem(hardwareMap);
 
         gamepadEx = new GamepadEx(gamepad1);
+        transferSubsystem.Closed();
 
         telemetry = new MultipleTelemetry(
                 telemetry,
@@ -102,7 +104,6 @@ public class TELEOPTEST extends CommandOpMode {
                     }
                 }, intakeSubsystem));
 
-
         // ---------------- MAIN CONTROL LOOP ----------------
         new RunCommand(() -> {
 
@@ -154,7 +155,10 @@ public class TELEOPTEST extends CommandOpMode {
         telemetry.addData("Flywheel Enabled", flywheelEnabled);
         telemetry.addData("Current Voltage",flyWheelSubsystem.voltageSensor.getVoltage());
 
+//        telemetry.addData("Transfer Current Draw", intakeSubsystem.currentTransferCurrent());
+
         telemetry.update();
+
 
     }
 }

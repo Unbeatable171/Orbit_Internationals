@@ -1,6 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-public class ShooterCalculator2 {
+
+
+public class ShooterCalculatorRed {
+
+
+
+
 
     public enum GoalTarget {
         BLUE,
@@ -54,15 +60,18 @@ public class ShooterCalculator2 {
     private final double goalYInches;
     private final GoalTarget goalTarget;
 
+    private double lastHeadingErrorRad = 0;
+    private long lastHeadingTimestamp  = System.currentTimeMillis();
+
     private final double gravity = CalculatorConstants.gravityInches;
     private final double goalHeight = CalculatorConstants.goalHeightInches;
     private final double scoreAngle = CalculatorConstants.scoreAngle;
 
-    public ShooterCalculator2() {
-        this(GoalTarget.BLUE);
+    public ShooterCalculatorRed() {
+        this(GoalTarget.RED);
     }
 
-    public ShooterCalculator2(GoalTarget goalTarget) {
+    public ShooterCalculatorRed(GoalTarget goalTarget) {
         this.goalTarget = goalTarget;
         if (goalTarget == GoalTarget.RED) {
             goalXInches = CalculatorConstants.redGoalXInches;
@@ -108,7 +117,7 @@ public class ShooterCalculator2 {
         double releaseY = releaseYInches(robotX, robotY, robotHeadingRad);
         double dx = goalXInches - releaseX;
         double dy = goalYInches - releaseY;
-        double targetHeading = Math.atan2(dy, dx);
+        double targetHeading = Math.atan((144-dy)/(144-dx));
         double headingError = targetHeading - robotHeadingRad;
         while (headingError > Math.PI)  headingError -= 2 * Math.PI;
         while (headingError < -Math.PI) headingError += 2 * Math.PI;
@@ -123,18 +132,37 @@ public class ShooterCalculator2 {
 
     public double headingTurnPower(double headingErrorRad) {
         double headingErrorDeg = Math.abs(Math.toDegrees(headingErrorRad));
-        double kp = headingErrorDeg <= CalculatorConstants.headingSecondaryThresholdDeg
+
+        boolean useSecondary = headingErrorDeg <= CalculatorConstants.headingSecondaryThresholdDeg;
+
+        double kp = useSecondary
                 ? CalculatorConstants.headingSecondaryKp
                 : CalculatorConstants.headingPrimaryKp;
-        return clamp(headingErrorRad * kp,
+        double kd = useSecondary
+                ? CalculatorConstants.headingSecondaryKd
+                : CalculatorConstants.headingPrimaryKd;
+
+        long now = System.currentTimeMillis();
+        double dt = (now - lastHeadingTimestamp) / 1000.0;
+        double derivative = (dt > 0) ? (headingErrorRad - lastHeadingErrorRad) / dt : 0;
+
+        lastHeadingErrorRad  = headingErrorRad;
+        lastHeadingTimestamp = now;
+
+        return clamp((headingErrorRad * kp) + (derivative * kd),
                 -CalculatorConstants.maxTurnPower,
                 CalculatorConstants.maxTurnPower);
     }
-
+    public void resetHeadingPD() {
+        lastHeadingErrorRad  = 0;
+        lastHeadingTimestamp = System.currentTimeMillis();
+    }
     // ---------------- Ballistic Calculators ----------------
 
     public double hoodAngleCalculator(double distanceInches) {
-        double hoodAngleRad = Math.atan((2.0 * goalHeight / distanceInches) - Math.tan(scoreAngle));
+        double hoodAngleRad = Math.atan(
+                (2.0 * goalHeight / distanceInches) - Math.tan(Math.toRadians(scoreAngle))
+        );
         return clamp(
                 Math.toDegrees(hoodAngleRad),
                 CalculatorConstants.minHoodAngleDeg,
@@ -148,13 +176,14 @@ public class ShooterCalculator2 {
         double tan = Math.tan(angleRad);
         double denominator = 2.0 * cos * cos * (distanceInches * tan - goalHeight);
         if (denominator <= 0) return Double.NaN;
-        return Math.sqrt((gravity * distanceInches * distanceInches) / denominator);
+        return Math.sqrt((gravity * distanceInches * distanceInches) / denominator) + FlyWheelConstants.velocityoffset;
     }
 
     public double rpmCalculator(double velocityInchesPerSec) {
-        double rpm = CalculatorConstants.rpmA * velocityInchesPerSec * velocityInchesPerSec
-                + CalculatorConstants.rpmB * velocityInchesPerSec
-                + CalculatorConstants.rpmC;
+        double rpm = CalculatorConstants.rpmA * velocityInchesPerSec * velocityInchesPerSec * velocityInchesPerSec
+                + CalculatorConstants.rpmB * velocityInchesPerSec * velocityInchesPerSec
+                + CalculatorConstants.rpmC* velocityInchesPerSec
+                + CalculatorConstants.rpmD + FlyWheelConstants.rpmoffset;
         return clamp(rpm, CalculatorConstants.minRpm, CalculatorConstants.maxRpm);
     }
 

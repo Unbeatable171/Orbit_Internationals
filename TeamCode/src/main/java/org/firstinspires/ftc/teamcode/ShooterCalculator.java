@@ -145,7 +145,9 @@ public class ShooterCalculator {
     // ---------------- Calculators ----------------
 
     public double hoodAngleCalculator(double distanceMeters) {
-        double hoodAngleDeg = Math.atan((2*y/distanceMeters) - Math.tan(a));
+        double hoodAngleDeg = Math.toDegrees(
+                Math.atan((2 * y / distanceMeters) - Math.tan(Math.toRadians(a)))
+        );
         return clamp(
                 hoodAngleDeg,
                 CalculatorConstants.minHoodAngleDeg,

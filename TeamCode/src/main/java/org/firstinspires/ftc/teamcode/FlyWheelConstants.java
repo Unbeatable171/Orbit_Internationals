@@ -4,17 +4,20 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class FlyWheelConstants{
-    public static double kF = 1.215;
-    public static double kP = 0.00215;
+    public static double kF = 1.405;
+    public static double kP = 0.0045;
     public static double kI = 0.0;
-    public static double kD = 0.00015;
+    public static double kD = 0.0001;
     public static double velocityTolerance = 50.0;
-    public static double targetRPM = 2450;
-    public static double hoodAngle = 60;
-    public static double hoodMinServoPosition = 0;
+    public static double targetRPM = 2300;
+    public static double hoodAngle = 65;
+    public static double hoodMinServoPosition = 0.1;
     public static double hoodMaxServoPosition = 1.0;
-    public static double hoodAngleSlope = 46.11;
-    public static double hoodAngleIntercept = 36.89;
+    public static double hoodAngleSlope = 36.67;
+    public static double hoodAngleIntercept = 38.33;
+
+    public static double velocityoffset = 150;
+    public static double rpmoffset = 300;
 
     // Calibrated launch-angle fit: outputAngleDeg = m * servoPosition + b.
 
@@ -31,7 +34,7 @@ public class FlyWheelConstants{
     }
 
     public static double servoPositionToHoodAngle(double servoPosition) {
-        return hoodAngleSlope * servoPosition + hoodAngleIntercept;
+        return (hoodAngleSlope * servoPosition) + hoodAngleIntercept;
     }
 
 }
