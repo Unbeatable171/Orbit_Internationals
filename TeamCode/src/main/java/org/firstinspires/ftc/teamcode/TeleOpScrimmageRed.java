@@ -31,7 +31,6 @@ public class TeleOpScrimmageRed extends CommandOpMode {
     private static final double PRESET_THREE_HOOD_POSITION = FlyWheelConstants.hoodAngleToServoPosition(55);
     private static final double idlerpm = 1000;
     private static final double idleHood = 1000;
-    private DriveSubsystem driveSubsystem;
     private IntakeSubsystem intakeSubsystem;
     private FlyWheelSubsystem flyWheelSubsystem;
     private TransferSubsystem transferSubsystem;
@@ -49,7 +48,7 @@ public class TeleOpScrimmageRed extends CommandOpMode {
 
     @Override
     public void initialize() {
-        driveSubsystem = new DriveSubsystem(hardwareMap);
+        DriveSubsystem driveSubsystem = new DriveSubsystem(hardwareMap);
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
         transferSubsystem = new TransferSubsystem(hardwareMap);
         flyWheelSubsystem = new FlyWheelSubsystem(hardwareMap);
