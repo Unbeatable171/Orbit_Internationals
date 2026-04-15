@@ -2,15 +2,36 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.pedropathing.math.MathFunctions.normalizeAngle;
 
-public class SHOOTERCALC {
 
-    public enum GoalTarget {
-        BLUE,
-        RED
+import static com.pedropathing.math.MathFunctions.normalizeAngle;
+
+public class SHOOTERCALCBLUE {
+
+    public static class ShotSolution {
+        public final double distanceMeters;
+        public final double hoodAngleDeg;
+        public final double velocityMetersPerSecond;
+        public final double rpm;
+        public final double towardTargetVelocityMetersPerSecond;
+        public final double lateralVelocityMetersPerSecond;
+
+        public ShotSolution(double distanceMeters,
+                            double hoodAngleDeg,
+                            double velocityMetersPerSecond,
+                            double rpm,
+                            double towardTargetVelocityMetersPerSecond,
+                            double lateralVelocityMetersPerSecond) {
+            this.distanceMeters = distanceMeters;
+            this.hoodAngleDeg = hoodAngleDeg;
+            this.velocityMetersPerSecond = velocityMetersPerSecond;
+            this.rpm = rpm;
+            this.towardTargetVelocityMetersPerSecond = towardTargetVelocityMetersPerSecond;
+            this.lateralVelocityMetersPerSecond = lateralVelocityMetersPerSecond;
+        }
     }
 
-    private final double goalXInches = CalculatorConstants.redGoalXInches;
-    private final double goalYInches = CalculatorConstants.redGoalYInches;
+    private final double goalXInches = CalculatorConstants.blueGoalXInches;
+    private final double goalYInches = CalculatorConstants.blueGoalYInches;
 
     private double g = CalculatorConstants.gravityInches;
     private double y = CalculatorConstants.goalHeightInches;
@@ -83,10 +104,14 @@ public class SHOOTERCALC {
         return clamp(rpm, CalculatorConstants.minRpm, CalculatorConstants.maxRpm);
     }
 
-    public ShooterCalculatorRed.ShotSolution calculateShotSolution(double robotX, double robotY,
-                                                                   double robotHeadingRad,
-                                                                   double robotVelocityXInchesPerSec,
-                                                                   double robotVelocityYInchesPerSec) {
+    public SHOOTERCALCBLUE.ShotSolution calculateShotSolution(double robotX, double robotY, double robotHeadingRad) {
+        return calculateShotSolution(robotX, robotY, robotHeadingRad, 0.0, 0.0);
+    }
+
+    public SHOOTERCALCBLUE.ShotSolution calculateShotSolution(double robotX, double robotY,
+                                                              double robotHeadingRad,
+                                                              double robotVelocityXInchesPerSec,
+                                                              double robotVelocityYInchesPerSec) {
 
         double distanceInches = distanceToGoalInches(robotX, robotY, robotHeadingRad);
 
@@ -149,20 +174,14 @@ public class SHOOTERCALC {
 
         double rpm = rpmCalculator(v0_new);
 
-        return new ShooterCalculatorRed.ShotSolution(
+        return new SHOOTERCALCBLUE.ShotSolution(
                 distanceInches,
-                compensatedHeadingErrorRad,
-                baseHeadingErrorRad,
-                headingLeadRad,
                 newHoodAngleDeg,
                 v0_new,
                 rpm,
                 Vrr,
-                Vrt,
-                false,
-                null
+                Vrt
         );
     }
-
-
 }
+

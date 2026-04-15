@@ -38,9 +38,8 @@ public class TELEOPTESTRED extends CommandOpMode {
 
     // -------------------- Shooter Calculator --------------------
     // Swap GoalTarget.BLUE / RED to match your alliance
-    private final ShooterCalculatorRed shooterCalc =
-            new ShooterCalculatorRed(ShooterCalculatorRed.GoalTarget.RED);
-    private ShooterCalculatorRed.ShotSolution shotSolution = null;
+    private final SHOOTERCALCRED shooterCalc = new SHOOTERCALCRED();
+    private SHOOTERCALCRED.ShotSolution shotSolution = null;
 
     // -------------------- Tuning increments --------------------
     private final double rpmIncrement   = 50;
@@ -88,30 +87,7 @@ public class TELEOPTESTRED extends CommandOpMode {
                 () -> (double) -gamepad1.left_stick_x
         ).schedule();
 
-        // ======================== FLYWHEEL ========================
-        // Priority:
-        //   flywheelEnabled=false          → stop
-        //   headingLocked + !manualOverride → calculator RPM + hood
-        //   headingLocked + manualOverride  → manual RPM + manual hood (heading still locked)
-        //   no lock                         → manual RPM + manual hood
-//        flyWheelSubsystem.setDefaultCommand(
-//                new RunCommand(() -> {
-//                    if (!flywheelEnabled) {
-//                        flyWheelSubsystem.stop();
-//                        flyWheelSubsystem.setHoodAngle(FlyWheelConstants.hoodAngle);
-//                        return;
-//                    }
-//                    if (headingLocked && shotSolution != null && !manualRPMOverride) {
-//                        // Full auto mode
-//                        flyWheelSubsystem.spinUp(shotSolution.rpm);
-//                        flyWheelSubsystem.setHoodAngle(shotSolution.hoodAngleDeg);
-//                    } else {
-//                        // Manual mode (covers: no lock, or manual override with lock)
-//                        flyWheelSubsystem.spinUp(FlyWheelConstants.targetRPM);
-//                        flyWheelSubsystem.setHoodAngle(FlyWheelConstants.hoodAngle);
-//                    }
-//                }, flyWheelSubsystem)
-//        );
+
 
         flyWheelSubsystem.setDefaultCommand(
                 new RunCommand(() -> {
@@ -120,12 +96,8 @@ public class TELEOPTESTRED extends CommandOpMode {
                         flyWheelSubsystem.setHoodAngle(shotSolution.hoodAngleDeg);
                         return;
                     }
-                    if (headingLocked) {
+                    else {
                         // Full auto mode
-                        flyWheelSubsystem.spinUp(shotSolution.rpm);
-                        flyWheelSubsystem.setHoodAngle(shotSolution.hoodAngleDeg);
-                    } else {
-                        // Manual mode (covers: no lock, or manual override with lock)
                         flyWheelSubsystem.spinUp(shotSolution.rpm);
                         flyWheelSubsystem.setHoodAngle(shotSolution.hoodAngleDeg);
                     }
@@ -142,33 +114,36 @@ public class TELEOPTESTRED extends CommandOpMode {
 
         // Y → toggle manual RPM override
         new GamepadButton(gamepadEx, GamepadKeys.Button.Y)
-                .whenPressed(new InstantCommand(() -> manualRPMOverride = !manualRPMOverride));
+                .whenPressed(new InstantCommand(() -> {
+                    flyWheelSubsystem.spinUp(2300);
+                    flyWheelSubsystem.setHoodAngle(65);
+                }));
 
-        // ======================== A: AIM + TRANSFER ========================
-        // Locks heading toward goal, opens transfer gate for 2 seconds, then releases both.
-        // If manualRPMOverride is ON, heading still locks but RPM/hood stay manual.
+
         new GamepadButton(gamepadEx, GamepadKeys.Button.A)
                 .whenPressed(() -> {
                     gateOpen = true;
                     transferSubsystem.Open();
-                    shooterCalc.resetHeadingPD();
                 })
                 .whenReleased(() -> {
                     gateOpen = false;
                     transferSubsystem.Closed();
                 });
 
-//        new GamepadButton(gamepadEx, GamepadKeys.Button.LEFT_BUMPER)
-//                .whenPressed(new InstantCommand(()-> {
-//                    follower.followPath(
-//                            follower.pathBuilder()
-//                                    .addPath(new BezierLine(follower.getPose(),follower.getPose()))
-//                                    .setHeadingInterpolation(HeadingInterpolator.facingPoint(CalculatorConstants.redGoalXInches,CalculatorConstants.redGoalYInches))
-//                                    .build();
-//                    );
-//
-//
-//                }));
+        new GamepadButton(gamepadEx, GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(()-> {
+                    follower.followPath(
+                            follower.pathBuilder()
+                                    .addPath(new BezierLine(follower.getPose(),
+                                            new Pose(follower.getPose().getX(), follower.getPose().getY() + 1)))
+                                    .setHeadingInterpolation
+                                            (HeadingInterpolator.facingPoint(
+                                                    CalculatorConstants.redGoalXInches,CalculatorConstants.redGoalYInches))
+                                    .build()
+                    );
+
+
+                }));
 
         // ======================== INTAKE ========================
         intakeSubsystem.setDefaultCommand(
@@ -241,14 +216,6 @@ public class TELEOPTESTRED extends CommandOpMode {
         // --- Recompute shot solution every loop ---
         shotSolution = shooterCalc.calculateShotSolution(rx, ry, rh, vx, vy);
 
-        // --- Heading correction when locked ---
-        if (headingLocked && shotSolution != null) {
-            driveSubsystem.setHeadingOverride(
-                    shooterCalc.headingTurnPower(shotSolution.headingErrorRad)
-            );
-        } else {
-            driveSubsystem.clearHeadingOverride();
-        }
 
         double headingToGoal = Math.atan((144-ry)/rx);
 
