@@ -65,7 +65,7 @@ public class TELEOPTESTRED extends CommandOpMode {
         // --- Pedro setup ---
         // Replace FConstants / LConstants with your actual Pedro constants class names
         follower = org.firstinspires.ftc.teamcode.pedroPathing.Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(104.6, 132.4, Math.toRadians(90)));
+        follower.setStartingPose(new Pose(105, 132, Math.toRadians(90)));
         // --- Subsystems ---
         driveSubsystem    = new DriveSubsystem(hardwareMap);
         intakeSubsystem   = new IntakeSubsystem(hardwareMap);
