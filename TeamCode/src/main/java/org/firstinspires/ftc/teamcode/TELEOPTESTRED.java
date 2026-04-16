@@ -91,6 +91,11 @@ public class TELEOPTESTRED extends CommandOpMode {
 
         flyWheelSubsystem.setDefaultCommand(
                 new RunCommand(() -> {
+                    if (shotSolution == null) {
+                        flyWheelSubsystem.stop();
+                        return;
+                    }
+
                     if (!flywheelEnabled) {
                         flyWheelSubsystem.stop();
                         flyWheelSubsystem.setHoodAngle(shotSolution.hoodAngleDeg);
