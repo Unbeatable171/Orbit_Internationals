@@ -136,7 +136,7 @@ public class TELEOPTEST2 extends CommandOpMode {
         );
 
         // X → flywheel on
-        new GamepadButton(gamepadEx1, GamepadKeys.Button.X)
+        new GamepadButton(gamepadEx2, GamepadKeys.Button.X)
                 .whenPressed(new InstantCommand(() -> flywheelEnabled = true));
 
         // B → flywheel off
