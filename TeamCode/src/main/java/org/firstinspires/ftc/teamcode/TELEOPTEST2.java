@@ -32,15 +32,15 @@ public class TELEOPTEST2 extends CommandOpMode {
     private Follower follower;
 
     // -------------------- Gamepad --------------------
-    private GamepadEx gamepadEx1;
+    private GamepadEx gamepadEx;
 
     private GamepadEx gamepadEx2;
 
     // -------------------- Shooter Calculator --------------------
     // Swap GoalTarget.BLUE / RED to match your alliance
-    private final ShooterCalculatorBlue shooterCalc =
-            new ShooterCalculatorBlue(ShooterCalculatorBlue.GoalTarget.BLUE);
-    private ShooterCalculatorBlue.ShotSolution shotSolution = null;
+    private final SHOOTERCALCBLUE shooterCalc =
+            new SHOOTERCALCBLUE();
+    private SHOOTERCALCBLUE.ShotSolution shotSolution = null;
 
     // -------------------- Tuning increments --------------------
     private final double rpmIncrement   = 50;
@@ -74,11 +74,11 @@ public class TELEOPTEST2 extends CommandOpMode {
         transferSubsystem.Closed();
         flyWheelSubsystem = new FlyWheelSubsystem(hardwareMap);
 
-        gamepadEx1 = new GamepadEx(gamepad1);
+        gamepadEx = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
 
         // --- Gamepad ---
-        gamepadEx1 = new GamepadEx(gamepad1);
+        gamepadEx = new GamepadEx(gamepad1);
 
         // --- Telemetry (also mirrors to FTC Dashboard) ---
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -136,15 +136,15 @@ public class TELEOPTEST2 extends CommandOpMode {
         );
 
         // X → flywheel on
-        new GamepadButton(gamepadEx2, GamepadKeys.Button.X)
+        new GamepadButton(gamepadEx, GamepadKeys.Button.X)
                 .whenPressed(new InstantCommand(() -> flywheelEnabled = true));
 
         // B → flywheel off
-        new GamepadButton(gamepadEx2, GamepadKeys.Button.B)
+        new GamepadButton(gamepadEx, GamepadKeys.Button.B)
                 .whenPressed(new InstantCommand(() -> flywheelEnabled = false));
 
         // Y → toggle manual RPM override
-        new GamepadButton(gamepadEx2, GamepadKeys.Button.Y)
+        new GamepadButton(gamepadEx, GamepadKeys.Button.Y)
                 .whenPressed(new InstantCommand(() -> {
                     flyWheelSubsystem.spinUp(3200);
                     flyWheelSubsystem.setHoodAngle(42);
@@ -153,25 +153,24 @@ public class TELEOPTEST2 extends CommandOpMode {
         // ======================== A: AIM + TRANSFER ========================
         // Locks heading toward goal, opens transfer gate for 2 seconds, then releases both.
         // If manualRPMOverride is ON, heading still locks but RPM/hood stay manual.
-        new GamepadButton(gamepadEx1, GamepadKeys.Button.A)
+        new GamepadButton(gamepadEx, GamepadKeys.Button.A)
                 .whenPressed(() -> {
                     gateOpen = true;
                     transferSubsystem.Open();
-                    shooterCalc.resetHeadingPD();
                 })
                 .whenReleased(() -> {
                     gateOpen = false;
                     transferSubsystem.Closed();
                 });
 
-        new GamepadButton(gamepadEx2, GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new InstantCommand(()-> {
+        new GamepadButton(gamepadEx, GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(() -> {
                     flyWheelSubsystem.spinUp(2400);
                     flyWheelSubsystem.setHoodAngle(65);
                 }));
 
-        new GamepadButton(gamepadEx2, GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(new InstantCommand(()-> {
+        new GamepadButton(gamepadEx, GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(new InstantCommand(() -> {
                     flyWheelSubsystem.spinUp(2300);
                     flyWheelSubsystem.setHoodAngle(65);
                 }));
@@ -249,23 +248,23 @@ public class TELEOPTEST2 extends CommandOpMode {
         // --- Recompute shot solution every loop ---
         shotSolution = shooterCalc.calculateShotSolution(rx, ry, rh, vx, vy);
 
-        // --- Heading correction when locked ---
-        if (headingLocked && shotSolution != null) {
-            driveSubsystem.setHeadingOverride(
-                    shooterCalc.headingTurnPower(shotSolution.headingErrorRad)
-            );
-        } else {
-            driveSubsystem.clearHeadingOverride();
-        }
-
-        double headingToGoal = Math.atan((144-ry)/rx);
+//        // --- Heading correction when locked ---
+//        if (headingLocked && shotSolution != null) {
+//            driveSubsystem.setHeadingOverride(
+//                    shooterCalc.headingTurnPower(shotSolution.headingErrorRad)
+//            );
+//        } else {
+//            driveSubsystem.clearHeadingOverride();
+//        }
+//
+//        double headingToGoal = Math.atan((144-ry)/rx);
 
         // ======================== TELEMETRY ========================
 
         telemetry.addData("X (in)",         rx);
         telemetry.addData("Y (in)",         ry);
         telemetry.addData("Heading (deg)",  Math.toDegrees(rh));
-        telemetry.addData("Distance (in)",  shotSolution != null ? shotSolution.distanceInches : 0);
+//        telemetry.addData("Distance (in)",  shotSolution != null ? shotSolution.distanceInches : 0);
 
         telemetry.addData("Target RPM",     FlyWheelConstants.targetRPM);
         telemetry.addData("Target Hood",    FlyWheelConstants.hoodAngle);

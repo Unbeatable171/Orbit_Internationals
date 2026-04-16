@@ -38,9 +38,9 @@ public class TELEOPTESTBLUE extends CommandOpMode {
 
     // -------------------- Shooter Calculator --------------------
     // Swap GoalTarget.BLUE / RED to match your alliance
-    private final ShooterCalculatorBlue shooterCalc =
-            new ShooterCalculatorBlue(ShooterCalculatorBlue.GoalTarget.BLUE);
-    private ShooterCalculatorBlue.ShotSolution shotSolution = null;
+    private final SHOOTERCALCBLUE shooterCalc =
+            new SHOOTERCALCBLUE();
+    private SHOOTERCALCBLUE.ShotSolution shotSolution = null;
 
     // -------------------- Tuning increments --------------------
     private final double rpmIncrement   = 50;
@@ -157,7 +157,6 @@ public class TELEOPTESTBLUE extends CommandOpMode {
                 .whenPressed(() -> {
                     gateOpen = true;
                     transferSubsystem.Open();
-                    shooterCalc.resetHeadingPD();
                 })
                 .whenReleased(() -> {
                     gateOpen = false;
@@ -243,23 +242,23 @@ public class TELEOPTESTBLUE extends CommandOpMode {
         // --- Recompute shot solution every loop ---
         shotSolution = shooterCalc.calculateShotSolution(rx, ry, rh, vx, vy);
 
-        // --- Heading correction when locked ---
-        if (headingLocked && shotSolution != null) {
-            driveSubsystem.setHeadingOverride(
-                    shooterCalc.headingTurnPower(shotSolution.headingErrorRad)
-            );
-        } else {
-            driveSubsystem.clearHeadingOverride();
-        }
-
-        double headingToGoal = Math.atan((144-ry)/rx);
+//        // --- Heading correction when locked ---
+//        if (headingLocked && shotSolution != null) {
+//            driveSubsystem.setHeadingOverride(
+//                    shooterCalc.headingTurnPower(shotSolution.headingErrorRad)
+//            );
+//        } else {
+//            driveSubsystem.clearHeadingOverride();
+//        }
+//
+//        double headingToGoal = Math.atan((144-ry)/rx);
 
         // ======================== TELEMETRY ========================
 
         telemetry.addData("X (in)",         rx);
         telemetry.addData("Y (in)",         ry);
         telemetry.addData("Heading (deg)",  Math.toDegrees(rh));
-        telemetry.addData("Distance (in)",  shotSolution != null ? shotSolution.distanceInches : 0);
+//        telemetry.addData("Distance (in)",  shotSolution != null ? shotSolution.distanceInches : 0);
 
         telemetry.addData("Target RPM",     FlyWheelConstants.targetRPM);
         telemetry.addData("Target Hood",    FlyWheelConstants.hoodAngle);
