@@ -146,7 +146,7 @@ public class TELEOPTESTBLUE extends CommandOpMode {
         // Y → toggle manual RPM override
         new GamepadButton(gamepadEx, GamepadKeys.Button.Y)
                 .whenPressed(new InstantCommand(() -> {
-                    flyWheelSubsystem.spinUp(3200);
+                    flyWheelSubsystem.spinUp(FlyWheelConstants.targetRPM);
                     flyWheelSubsystem.setHoodAngle(42);
                 }));
 

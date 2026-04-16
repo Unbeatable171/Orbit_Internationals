@@ -31,10 +31,11 @@ public class CalculatorConstants {
     //TODO Retune rpm vs velocity regression, with constant hood angle
 
     // Exit velocity -> RPM regression coefficients.
-    public static double rpmA = -0.00241551;
-    public static double rpmB = 1.73898;
-    public static double rpmC = -398.65032;
-    public static double rpmD = 31747.5212;
+    public static double rpmA = -0.000089615;
+    public static double rpmB = 0.082678;
+    public static double rpmC = -28.24994;
+    public static double rpmD = 4250.29217;
+    public static double rpmE = -235756.494;
 
 
     // Valid shooting limits.

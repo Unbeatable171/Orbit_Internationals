@@ -22,7 +22,7 @@ public class FlyWheelSubsystem extends SubsystemBase {
     //Calculate the value of ticks per rev = 28 * (flywheelSprocketTeeth / motorSprocketTeeth)
     //                                                                 (26 / 24)
 
-    private static final double Ticks_Per_Rev = 30.33333; // this in
+    private static final double Ticks_Per_Rev = 28; // this in
     private static final double maxRPM = 6000;
     private static final double maxTicks_per_rev = maxRPM * Ticks_Per_Rev/60;
     private static final double idleRPM = 1500;

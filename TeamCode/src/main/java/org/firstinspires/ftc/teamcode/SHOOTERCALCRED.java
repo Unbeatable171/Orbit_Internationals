@@ -93,10 +93,11 @@ public class SHOOTERCALCRED {
     }
 
     public double rpmCalculator(double velocityInchesPerSec) {
-        double rpm = CalculatorConstants.rpmA * velocityInchesPerSec * velocityInchesPerSec * velocityInchesPerSec
-                + CalculatorConstants.rpmB * velocityInchesPerSec * velocityInchesPerSec
-                + CalculatorConstants.rpmC* velocityInchesPerSec
-                + CalculatorConstants.rpmD;
+        double rpm = CalculatorConstants.rpmA * velocityInchesPerSec * velocityInchesPerSec * velocityInchesPerSec * velocityInchesPerSec
+                + CalculatorConstants.rpmB * velocityInchesPerSec * velocityInchesPerSec * velocityInchesPerSec
+                + CalculatorConstants.rpmC* velocityInchesPerSec * velocityInchesPerSec
+                + CalculatorConstants.rpmD* velocityInchesPerSec
+                +CalculatorConstants.rpmE;
 
         return clamp(rpm, CalculatorConstants.minRpm, CalculatorConstants.maxRpm);
     }
