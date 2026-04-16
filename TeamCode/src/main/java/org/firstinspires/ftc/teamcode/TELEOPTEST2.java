@@ -136,15 +136,15 @@ public class TELEOPTEST2 extends CommandOpMode {
         );
 
         // X → flywheel on
-        new GamepadButton(gamepadEx2, GamepadKeys.Button.X)
+        new GamepadButton(gamepadEx1, GamepadKeys.Button.X)
                 .whenPressed(new InstantCommand(() -> flywheelEnabled = true));
 
         // B → flywheel off
-        new GamepadButton(gamepadEx2, GamepadKeys.Button.B)
+        new GamepadButton(gamepadEx1, GamepadKeys.Button.B)
                 .whenPressed(new InstantCommand(() -> flywheelEnabled = false));
 
         // Y → toggle manual RPM override
-        new GamepadButton(gamepadEx2, GamepadKeys.Button.Y)
+        new GamepadButton(gamepadEx1, GamepadKeys.Button.Y)
                 .whenPressed(new InstantCommand(() -> {
                     flyWheelSubsystem.spinUp(3200);
                     flyWheelSubsystem.setHoodAngle(42);
@@ -164,13 +164,13 @@ public class TELEOPTEST2 extends CommandOpMode {
                     transferSubsystem.Closed();
                 });
 
-        new GamepadButton(gamepadEx2, GamepadKeys.Button.LEFT_BUMPER)
+        new GamepadButton(gamepadEx1, GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new InstantCommand(()-> {
                     flyWheelSubsystem.spinUp(2400);
                     flyWheelSubsystem.setHoodAngle(65);
                 }));
 
-        new GamepadButton(gamepadEx2, GamepadKeys.Button.RIGHT_BUMPER)
+        new GamepadButton(gamepadEx1, GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(new InstantCommand(()-> {
                     flyWheelSubsystem.spinUp(2300);
                     flyWheelSubsystem.setHoodAngle(65);
