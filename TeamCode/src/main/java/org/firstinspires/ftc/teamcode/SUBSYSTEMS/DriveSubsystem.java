@@ -10,7 +10,7 @@ public class DriveSubsystem extends SubsystemBase {
     public DcMotorEx frontleft, frontright, backleft, backright;
 
     private static final double MAX_TICKS_PER_SECOND = 2503;
-    private static final double DEADZONE = 0.001;
+    //private static final double DEADZONE = 0.00;
 
     private double applyDeadzone(double value, double threshold) {
         return Math.abs(value) < threshold ? 0.0 : value;
@@ -45,9 +45,9 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void drive(double forward, double strafe, double rotate) {
 
-        forward = applyDeadzone(forward, DEADZONE);
-        strafe  = applyDeadzone(strafe,  DEADZONE);
-        rotate  = applyDeadzone(rotate,  DEADZONE);
+       // forward = applyDeadzone(forward, DEADZONE);
+        // strafe  = applyDeadzone(strafe,  DEADZONE);
+        //rotate  = applyDeadzone(rotate,  DEADZONE);
 
 
 

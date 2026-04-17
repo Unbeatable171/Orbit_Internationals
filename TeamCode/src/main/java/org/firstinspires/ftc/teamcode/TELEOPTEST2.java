@@ -27,6 +27,8 @@ public class TELEOPTEST2 extends CommandOpMode {
     private IntakeSubsystem intakeSubsystem;
     private FlyWheelSubsystem flyWheelSubsystem;
     private TransferSubsystem transferSubsystem;
+    private double currentTargetRPM = FlyWheelConstants.targetRPM;
+    private double currentHoodAngle = FlyWheelConstants.hoodAngle;
 
     // -------------------- Pedro --------------------
     private Follower follower;
@@ -121,39 +123,32 @@ public class TELEOPTEST2 extends CommandOpMode {
                     if (!flywheelEnabled) {
                         flyWheelSubsystem.stop();
                         flyWheelSubsystem.setHoodAngle(FlyWheelConstants.hoodAngle);
-                        return;
-                    }
-                    if (headingLocked) {
-                        // Full auto mode
-                        flyWheelSubsystem.spinUp(FlyWheelConstants.targetRPM);
-                        flyWheelSubsystem.setHoodAngle(FlyWheelConstants.hoodAngle);
                     } else {
-                        // Manual mode (covers: no lock, or manual override with lock)
-                        flyWheelSubsystem.spinUp(FlyWheelConstants.targetRPM);
-                        flyWheelSubsystem.setHoodAngle(FlyWheelConstants.hoodAngle);
+                        flyWheelSubsystem.spinUp(currentTargetRPM);
+                        flyWheelSubsystem.setHoodAngle(currentHoodAngle);
                     }
                 }, flyWheelSubsystem)
         );
 
         // X → flywheel on
-        new GamepadButton(gamepadEx, GamepadKeys.Button.X)
+        new GamepadButton(gamepadEx2, GamepadKeys.Button.X)
                 .whenPressed(new InstantCommand(() -> flywheelEnabled = true));
 
         // B → flywheel off
-        new GamepadButton(gamepadEx, GamepadKeys.Button.B)
+        new GamepadButton(gamepadEx2, GamepadKeys.Button.B)
                 .whenPressed(new InstantCommand(() -> flywheelEnabled = false));
 
         // Y → toggle manual RPM override
-        new GamepadButton(gamepadEx, GamepadKeys.Button.Y)
+        new GamepadButton(gamepadEx2, GamepadKeys.Button.Y)
                 .whenPressed(new InstantCommand(() -> {
-                    flyWheelSubsystem.spinUp(3200);
-                    flyWheelSubsystem.setHoodAngle(42);
+                    currentTargetRPM = 3200;
+                    currentHoodAngle = 47;
                 }));
 
         // ======================== A: AIM + TRANSFER ========================
         // Locks heading toward goal, opens transfer gate for 2 seconds, then releases both.
         // If manualRPMOverride is ON, heading still locks but RPM/hood stay manual.
-        new GamepadButton(gamepadEx, GamepadKeys.Button.A)
+        new GamepadButton(gamepadEx2, GamepadKeys.Button.A)
                 .whenPressed(() -> {
                     gateOpen = true;
                     transferSubsystem.Open();
@@ -163,16 +158,18 @@ public class TELEOPTEST2 extends CommandOpMode {
                     transferSubsystem.Closed();
                 });
 
-        new GamepadButton(gamepadEx, GamepadKeys.Button.LEFT_BUMPER)
+      /*  new GamepadButton(gamepadEx2, GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new InstantCommand(() -> {
-                    flyWheelSubsystem.spinUp(2400);
-                    flyWheelSubsystem.setHoodAngle(65);
+                    currentTargetRPM = 2400;
+                    currentHoodAngle = 65;
                 }));
-
-        new GamepadButton(gamepadEx, GamepadKeys.Button.RIGHT_BUMPER)
+                
+       */
+// RIGHT_BUMPER → mid shot
+        new GamepadButton(gamepadEx2, GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(new InstantCommand(() -> {
-                    flyWheelSubsystem.spinUp(2300);
-                    flyWheelSubsystem.setHoodAngle(65);
+                    currentTargetRPM = 2300;
+                    currentHoodAngle = 65;
                 }));
 
         // ======================== INTAKE ========================
@@ -273,6 +270,8 @@ public class TELEOPTEST2 extends CommandOpMode {
         telemetry.addData("RPM Error",      FlyWheelConstants.targetRPM - flyWheelSubsystem.getCurrentRPMTOP());
         telemetry.addData("At Speed",       flyWheelSubsystem.isAtSpeed(FlyWheelConstants.targetRPM));
         telemetry.addData("Voltage",        flyWheelSubsystem.voltageSensor.getVoltage());
+        telemetry.addData("Current Target RPM", currentTargetRPM);
+        telemetry.addData("Current Hood Angle", currentHoodAngle);
 
         telemetry.update();
     }
