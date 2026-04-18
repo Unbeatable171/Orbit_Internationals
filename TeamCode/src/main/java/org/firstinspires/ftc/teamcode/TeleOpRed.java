@@ -87,6 +87,8 @@ public class TeleOpRed extends CommandOpMode {
         transferSubsystem.Closed();
         flyWheelSubsystem = new FlyWheelSubsystem(hardwareMap);
 
+        transferSubsystem.Closed();
+
         gamepadEx = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
 
