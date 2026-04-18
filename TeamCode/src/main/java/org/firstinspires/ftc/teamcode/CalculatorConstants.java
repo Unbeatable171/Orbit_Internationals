@@ -14,12 +14,12 @@ public class CalculatorConstants {
     public static double blueGoalXInches = 8;
     public static double blueGoalYInches = 136;
     public static double redGoalXInches = 140;
-    public static double redGoalYInches = 140;
+    public static double redGoalYInches = 144;
 
     // Vertical difference between goal center and ball release point in meters.
     public static double goalHeightInches = 27;
     public static double gravityInches = 386.09;
-    public static double scoreAngle = -45;
+    public static double scoreAngle = -55;
     public static double passThroughRadius = 5;
     // Hood angles are physical launch angles in degrees, not servo positions.
     public static double minHoodAngleDeg = 42;
@@ -31,10 +31,10 @@ public class CalculatorConstants {
     //TODO Retune rpm vs velocity regression, with constant hood angle
 
     // Exit velocity -> RPM regression coefficients.
-    public static double rpmA = -0.000089615;
-    public static double rpmB = 0.082678;
-    public static double rpmC = -28.24994;
-    public static double rpmD = 4250.29217;
+    public static double rpmA = 0.00007827;
+    public static double rpmB =-0.00401321;
+    public static double rpmC = -0.0242283;
+    public static double rpmD = 1922.78031;
     public static double rpmE = -235756.494;
 
 

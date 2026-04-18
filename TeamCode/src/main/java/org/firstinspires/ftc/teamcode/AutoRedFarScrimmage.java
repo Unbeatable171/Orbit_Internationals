@@ -26,17 +26,19 @@ public class AutoRedFarScrimmage extends OpMode {
 
     public enum SequenceState {
         PRELOAD_SHOT,
-        TO_SPIKE_1,
-        RETURN_SHOT_1,
-        TO_SPIKE_2,
+        ToHumanZone,
+        HumanToBack,
+        TOSpike3,
         RETURN_SHOT_2,
-        TO_GATE_1,
+        ToOverflow,
         RETURN_SHOT_3,
         TO_GATE_2,
         RETURN_SHOT_4,
         TO_GATE_3,
         RETURN_SHOT_5,
-        FINISHED
+        FINISHED,
+        BACK_TO_HUMAN,
+        HUMAN_TO_SHOOT
     }
 
     // --- Tunable parameters ---
@@ -47,61 +49,52 @@ public class AutoRedFarScrimmage extends OpMode {
     public static double transferClosedSeconds = 0.3;
     public static int shotPulseCountTarget     = 3;
 
-    // Fixed shooter values — tune hoodPosition for your 65 deg target
-    public static int targetRPM1 = 3200;
-    public static double hoodAngle1Deg = 55;   // degrees, not servo position
+    public static double redGoalXInches = 140;
+    public static double redGoalYInches = 140;
+
+    // Fixed shooter values - tune hoodPosition for your 65 deg target
+    public static int targetRPM1 = 3300;
+    public static double hoodAngle1Deg = 50;
 
     public static int targetRPM2 = 2450;
-    public static double hoodAngle2Deg = 60;   // degrees, not servo position
-
-//    private boolean useShot2Preset() {
-//        return sequenceState == SequenceState.RETURN_SHOT_1
-//                || sequenceState == SequenceState.RETURN_SHOT_2
-//                || sequenceState == SequenceState.RETURN_SHOT_3
-//                || sequenceState == SequenceState.RETURN_SHOT_4
-//                || sequenceState == SequenceState.RETURN_SHOT_5;
-//    }
-
+    public static double hoodAngle2Deg = 60;
 
     private static final double INCHES_TO_METERS = 0.0254;
 
-    private final Pose goalPoseBlue = new Pose(CalculatorConstants.redGoalXInches,CalculatorConstants.redGoalYInches);
+    private final Pose goalPoseRed = new Pose(CalculatorConstants.redGoalXInches, CalculatorConstants.redGoalYInches);
 
     // --- Poses ---
-    private final Pose startPose  = new Pose(85.5,  8.9, Math.toRadians(90));
-    private final Pose shootPose  = new Pose(85.3841368584759,   13.20373250388803, Math.toRadians(65.5));
+    private final Pose startPose = new Pose(85.5, 8.9, Math.toRadians(90));
+    private final Pose shootPose = new Pose(85.3841368584759, 13.20373250388803, Math.toRadians(65.5));
 
-    // Spike 1
+    // Human zone cycle
     private final Pose humanZone = new Pose(131.7469774359248, 9.106751318447499, Math.toRadians(-10));
-//    private final Pose spike1ControlPose = new Pose(48, 74.2);
-//    private final Pose shootPose2 = new Pose(61.1607182661587,73.05352407500875,Math.toRadians(132.41));
+    private final Pose backPose = new Pose(125.7469774359248, 10.106751318447499, Math.toRadians(0));
 
-    // Spike 2
+    // Spike
     private final Pose spike3pose = new Pose(127.9759292835543, 35.00032191690765, Math.toRadians(0));
-    private final Pose controlSpike3 = new Pose(94.59605173353452,  35.10513763030453);
-//    private final Pose spike2ReturnControl1Pose = new Pose(44.92984555509721, 58.9215464474854);
+    private final Pose controlSpike3 = new Pose(94.59605173353452, 35.10513763030453);
 
-    // Gate
+    // Overflow / gate cycles
     private final Pose overflowPick = new Pose(128.96186101869114, 35.12498924965115, Math.toRadians(40));
     private final Pose overflowControlPose = new Pose(127.60643595258041, 2.0286688083403455);
-//    private final Pose gateReturnControlPose = new Pose(7.444645799011532,  31.175260681273393);
 
     // --- Subsystems ---
-    private Follower          follower;
+    private Follower follower;
     private FlyWheelSubsystem flyWheelSubsystem;
-    private IntakeSubsystem   intakeSubsystem;
+    private IntakeSubsystem intakeSubsystem;
     private TransferSubsystem transferSubsystem;
 
     // --- Actions ---
-    private ShootAction        shootAction;
-    private TransferAction     transferAction;
+    private ShootAction shootAction;
+    private TransferAction transferAction;
     private StopTransferAction stopTransferAction;
-    private IntakeAction       intakeAction;
+    private IntakeAction intakeAction;
 
     // --- Timers ---
     private final ElapsedTime segmentTimer = new ElapsedTime();
-    private final ElapsedTime shotTimer    = new ElapsedTime();
-    private final ElapsedTime holdTimer    = new ElapsedTime();
+    private final ElapsedTime shotTimer = new ElapsedTime();
+    private final ElapsedTime holdTimer = new ElapsedTime();
     private final ElapsedTime pathEndTimer = new ElapsedTime();
 
     // --- State machine ---
@@ -124,7 +117,7 @@ public class AutoRedFarScrimmage extends OpMode {
     // --- Paths ---
     private PathChain driveStartToShoot;
     private PathChain driveShootToHuman;
-    private PathChain driveHumanToShoot;
+    private PathChain driveHumanToBack;
     private PathChain driveShoottoSpike3;
     private PathChain driveSpike3ToShoot;
     private PathChain driveShootToOverflow;
@@ -133,17 +126,19 @@ public class AutoRedFarScrimmage extends OpMode {
     private PathChain driveOverflowtoShoot2;
     private PathChain driveShootToOverflow3;
     private PathChain driveOverflow3ToShoot3;
+    private PathChain driveHumanToShoot;
+    private PathChain driveBackToHuman;
 
     @Override
     public void init() {
-        flyWheelSubsystem  = new FlyWheelSubsystem(hardwareMap);
-        intakeSubsystem    = new IntakeSubsystem(hardwareMap);
-        transferSubsystem  = new TransferSubsystem(hardwareMap);
+        flyWheelSubsystem = new FlyWheelSubsystem(hardwareMap);
+        intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        transferSubsystem = new TransferSubsystem(hardwareMap);
 
-        shootAction        = new ShootAction(flyWheelSubsystem);
-        transferAction     = new TransferAction(transferSubsystem, intakeSubsystem);
+        shootAction = new ShootAction(flyWheelSubsystem);
+        transferAction = new TransferAction(transferSubsystem, intakeSubsystem);
         stopTransferAction = new StopTransferAction(transferSubsystem, intakeSubsystem);
-        intakeAction       = new IntakeAction(intakeSubsystem);
+        intakeAction = new IntakeAction(intakeSubsystem);
 
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
@@ -169,15 +164,15 @@ public class AutoRedFarScrimmage extends OpMode {
 
         PoseMemory.lastPose = follower.getPose();
 
-        telemetry.addData("Sequence",       sequenceState);
-        telemetry.addData("Path Busy",      follower.isBusy());
+        telemetry.addData("Sequence", sequenceState);
+        telemetry.addData("Path Busy", follower.isBusy());
         telemetry.addData("Shot Triggered", shotTriggered);
-        telemetry.addData("Shot Finished",  shotFinished);
-        telemetry.addData("Pose X",         follower.getPose().getX());
-        telemetry.addData("Pose Y",         follower.getPose().getY());
-        telemetry.addData("Pose Heading",   follower.getPose().getHeading());
-        telemetry.addData("Segment Time",   segmentTimer.seconds());
-        telemetry.addData("Shot Time",      shotTimer.seconds());
+        telemetry.addData("Shot Finished", shotFinished);
+        telemetry.addData("Pose X", follower.getPose().getX());
+        telemetry.addData("Pose Y", follower.getPose().getY());
+        telemetry.addData("Pose Heading", follower.getPose().getHeading());
+        telemetry.addData("Segment Time", segmentTimer.seconds());
+        telemetry.addData("Shot Time", shotTimer.seconds());
         telemetry.update();
     }
 
@@ -185,7 +180,7 @@ public class AutoRedFarScrimmage extends OpMode {
         driveStartToShoot = follower.pathBuilder()
                 .addPath(new BezierLine(startPose, shootPose))
                 .setHeadingInterpolation(
-                        HeadingInterpolator.facingPoint(CalculatorConstants.blueGoalXInches,CalculatorConstants.blueGoalYInches)
+                        HeadingInterpolator.facingPoint(CalculatorConstants.redGoalXInches, CalculatorConstants.redGoalYInches)
                 )
                 .build();
 
@@ -194,12 +189,19 @@ public class AutoRedFarScrimmage extends OpMode {
                 .setTangentHeadingInterpolation()
                 .build();
 
+        driveHumanToBack = follower.pathBuilder()
+                .addPath(new BezierLine(humanZone, backPose))
+                .setLinearHeadingInterpolation(humanZone.getHeading(), backPose.getHeading())
+                .build();
+
+        driveBackToHuman = follower.pathBuilder()
+                .addPath(new BezierLine(backPose, humanZone))
+                .setLinearHeadingInterpolation(backPose.getHeading(), humanZone.getHeading())
+                .build();
+
         driveHumanToShoot = follower.pathBuilder()
                 .addPath(new BezierLine(humanZone, shootPose))
-//                .setLinearHeadingInterpolation(spike1Pose.getHeading(), shootPose.getHeading())
-                .setHeadingInterpolation(
-                        HeadingInterpolator.facingPoint(CalculatorConstants.blueGoalXInches,CalculatorConstants.blueGoalYInches)
-                )
+                .setLinearHeadingInterpolation(humanZone.getHeading(), shootPose.getHeading())
                 .build();
 
         driveShoottoSpike3 = follower.pathBuilder()
@@ -209,9 +211,8 @@ public class AutoRedFarScrimmage extends OpMode {
 
         driveSpike3ToShoot = follower.pathBuilder()
                 .addPath(new BezierCurve(spike3pose, controlSpike3, shootPose))
-//                .setLinearHeadingInterpolation(spike2Pose.getHeading(), shootPose.getHeading())
                 .setHeadingInterpolation(
-                        HeadingInterpolator.facingPoint(CalculatorConstants.blueGoalXInches,CalculatorConstants.blueGoalYInches)
+                        HeadingInterpolator.facingPoint(CalculatorConstants.redGoalXInches, CalculatorConstants.redGoalYInches)
                 )
                 .build();
 
@@ -222,9 +223,8 @@ public class AutoRedFarScrimmage extends OpMode {
 
         driveOverflowToShoot = follower.pathBuilder()
                 .addPath(new BezierLine(overflowPick, shootPose))
-//                .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose.getHeading())
                 .setHeadingInterpolation(
-                        HeadingInterpolator.facingPoint(CalculatorConstants.blueGoalXInches,CalculatorConstants.blueGoalYInches)
+                        HeadingInterpolator.facingPoint(CalculatorConstants.redGoalXInches, CalculatorConstants.redGoalYInches)
                 )
                 .build();
 
@@ -235,9 +235,8 @@ public class AutoRedFarScrimmage extends OpMode {
 
         driveOverflowtoShoot2 = follower.pathBuilder()
                 .addPath(new BezierLine(overflowPick, shootPose))
-//                .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose.getHeading())
                 .setHeadingInterpolation(
-                        HeadingInterpolator.facingPoint(CalculatorConstants.blueGoalXInches,CalculatorConstants.blueGoalYInches)
+                        HeadingInterpolator.facingPoint(CalculatorConstants.redGoalXInches, CalculatorConstants.redGoalYInches)
                 )
                 .build();
 
@@ -248,22 +247,21 @@ public class AutoRedFarScrimmage extends OpMode {
 
         driveOverflow3ToShoot3 = follower.pathBuilder()
                 .addPath(new BezierLine(overflowPick, shootPose))
-//                .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose.getHeading())
                 .setHeadingInterpolation(
-                        HeadingInterpolator.facingPoint(CalculatorConstants.blueGoalXInches,CalculatorConstants.blueGoalYInches)
+                        HeadingInterpolator.facingPoint(CalculatorConstants.redGoalXInches, CalculatorConstants.redGoalYInches)
                 )
                 .build();
     }
 
     private void setSequenceState(SequenceState newState) {
-        sequenceState      = newState;
-        segmentStarted     = false;
+        sequenceState = newState;
+        segmentStarted = false;
         segmentTimer.reset();
         shotTimer.reset();
-        shotTriggered      = false;
-        shotFinished       = false;
-        waitAtEndOfPath    = false;
-        holdStarted        = false;
+        shotTriggered = false;
+        shotFinished = false;
+        waitAtEndOfPath = false;
+        holdStarted = false;
         pathEndWaitStarted = false;
         transferCurrentlyOpen = false;
         shotPulseCount = 0;
@@ -272,85 +270,100 @@ public class AutoRedFarScrimmage extends OpMode {
     private void configureSequenceIfNeeded() {
         if (segmentStarted) return;
 
-        shootDuringPath   = false;
-        intakeDuringPath  = false;
-        waitAtEndOfPath   = false;
-        currentPath       = null;
+        shootDuringPath = false;
+        intakeDuringPath = false;
+        waitAtEndOfPath = false;
+        currentPath = null;
         nextSequenceState = SequenceState.FINISHED;
 
         switch (sequenceState) {
             case PRELOAD_SHOT:
-                currentPath       = driveStartToShoot;
-                shootDuringPath   = true;
-                nextSequenceState = SequenceState.TO_SPIKE_1;
+                currentPath = driveStartToShoot;
+                shootDuringPath = true;
+                nextSequenceState = SequenceState.TOSpike3;
                 break;
-            case TO_SPIKE_1:
-                currentPath       = driveShootToHuman;
-                intakeDuringPath  = true;
-                nextSequenceState = SequenceState.RETURN_SHOT_1;
+            case ToHumanZone:
+                currentPath = driveShootToHuman;
+                intakeDuringPath = true;
+                nextSequenceState = SequenceState.HumanToBack;
                 break;
-            case RETURN_SHOT_1:
-                currentPath       = driveHumanToShoot;
-                shootDuringPath   = true;
-                nextSequenceState = SequenceState.TO_SPIKE_2;
+            case HumanToBack:
+                currentPath = driveHumanToBack;
+                intakeDuringPath = true;
+                nextSequenceState = SequenceState.BACK_TO_HUMAN;
                 break;
-            case TO_SPIKE_2:
-                currentPath       = driveShoottoSpike3;
-                intakeDuringPath  = true;
+            case BACK_TO_HUMAN:
+                currentPath = driveBackToHuman;
+                intakeDuringPath = true;
+                nextSequenceState = SequenceState.HUMAN_TO_SHOOT;
+                break;
+            case HUMAN_TO_SHOOT:
+                currentPath = driveHumanToShoot;
+                intakeDuringPath = true;
+                shootDuringPath = true;
+                nextSequenceState = SequenceState.ToOverflow;
+                break;
+            case TOSpike3:
+                currentPath = driveShoottoSpike3;
+                intakeDuringPath = true;
                 nextSequenceState = SequenceState.RETURN_SHOT_2;
                 break;
             case RETURN_SHOT_2:
-                currentPath       = driveSpike3ToShoot;
-                shootDuringPath   = true;
-                nextSequenceState = SequenceState.TO_GATE_1;
+                currentPath = driveSpike3ToShoot;
+                shootDuringPath = true;
+                intakeDuringPath = true;
+                nextSequenceState = SequenceState.ToHumanZone;
                 break;
-            case TO_GATE_1:
-                currentPath       = driveShootToOverflow;
-                intakeDuringPath  = true;
-                waitAtEndOfPath   = true;
+            case ToOverflow:
+                currentPath = driveShootToOverflow;
+                intakeDuringPath = true;
+                waitAtEndOfPath = true;
                 nextSequenceState = SequenceState.RETURN_SHOT_3;
                 break;
             case RETURN_SHOT_3:
-                currentPath       = driveOverflowToShoot;
-                shootDuringPath   = true;
+                currentPath = driveOverflowToShoot;
+                shootDuringPath = true;
+                intakeDuringPath = true;
                 nextSequenceState = SequenceState.TO_GATE_2;
                 break;
             case TO_GATE_2:
-                currentPath       = driveShoottoOverflow2;
-                intakeDuringPath  = true;
-                waitAtEndOfPath   = true;
+                currentPath = driveShoottoOverflow2;
+                intakeDuringPath = true;
+                waitAtEndOfPath = true;
                 nextSequenceState = SequenceState.RETURN_SHOT_4;
                 break;
             case RETURN_SHOT_4:
-                currentPath       = driveOverflowtoShoot2;
-                shootDuringPath   = true;
+                currentPath = driveOverflowtoShoot2;
+                shootDuringPath = true;
+                intakeDuringPath = true;
                 nextSequenceState = SequenceState.TO_GATE_3;
                 break;
             case TO_GATE_3:
-                currentPath       = driveShootToOverflow3;
-                intakeDuringPath  = true;
-                waitAtEndOfPath   = true;
+                currentPath = driveShootToOverflow3;
+                intakeDuringPath = true;
+                waitAtEndOfPath = true;
                 nextSequenceState = SequenceState.RETURN_SHOT_5;
                 break;
             case RETURN_SHOT_5:
-                currentPath       = driveOverflow3ToShoot3;
-                shootDuringPath   = true;
+                currentPath = driveOverflow3ToShoot3;
+                shootDuringPath = true;
+                intakeDuringPath = true;
                 nextSequenceState = SequenceState.FINISHED;
                 break;
             case FINISHED:
                 stopTransferAction.run();
                 shootAction.stop();
                 intakeAction.stop();
-                shotFinished   = true;
+                shotFinished = true;
                 segmentStarted = true;
                 return;
         }
 
         follower.followPath(currentPath, true);
-        segmentStarted     = true;
-        shotTriggered      = !shootDuringPath;
-        shotFinished       = !shootDuringPath;
-        holdStarted        = false;
+        segmentStarted = true;
+        shotTriggered = !shootDuringPath;
+        shotFinished = !shootDuringPath;
+        holdStarted = false;
         pathEndWaitStarted = false;
 
         segmentTimer.reset();
@@ -358,10 +371,8 @@ public class AutoRedFarScrimmage extends OpMode {
         holdTimer.reset();
         pathEndTimer.reset();
 
-        // Stop transfer at start of every segment
         stopTransferAction.run();
 
-        // Start or stop intake immediately based on segment type
         if (intakeDuringPath) {
             intakeAction.startIntake();
         } else {
@@ -372,12 +383,7 @@ public class AutoRedFarScrimmage extends OpMode {
     private void runCurrentSequence() {
         if (sequenceState == SequenceState.FINISHED) return;
 
-        Pose currentPose = follower.getPose();
-
-
         if (shootDuringPath) {
-//            int activeRPM = useShot2Preset() ? targetRPM2 : targetRPM1;
-//            double activeHoodDeg = useShot2Preset() ? hoodAngle2Deg : hoodAngle1Deg;
             int activeRPM = targetRPM1;
             double activeHoodDeg = hoodAngle1Deg;
 
@@ -385,56 +391,22 @@ public class AutoRedFarScrimmage extends OpMode {
             flyWheelSubsystem.setHoodAngle(activeHoodDeg);
 
             boolean flywheelReady = flyWheelSubsystem.isAtSpeed(activeRPM);
-
-            boolean pathDone           = !follower.isBusy();
-
-
-//            if (!shotTriggered && pathDone) {
-//                transferAction.start();
-//                shotTriggered      = true;
-//                pathEndWaitStarted = false;
-//                shotTimer.reset();
-//
-//            }
-//
-//            // Stop transfer after fireDurationSeconds
-//            if (shotTriggered && !shotFinished && shotTimer.seconds() >= fireDurationSeconds) {
-//                stopTransferAction.run();
-//                shotFinished = true;
-//            }
-//
-//            // Start timeout once path finishes and shot still hasn't triggered
-//            if (!shotTriggered && pathDone && !pathEndWaitStarted) {
-//                pathEndWaitStarted = true;
-//                pathEndTimer.reset();
-//            }
-//
-//            // Timeout: skip shot and move on
-//            if (!shotTriggered && pathDone && pathEndWaitStarted
-//                    && pathEndTimer.seconds() >= maxWaitForShotSeconds) {
-//                stopTransferAction.run();
-//                shotFinished = true;
-//            }
-//        } else {
-//            shootAction.idle();
+            boolean pathDone = !follower.isBusy();
 
             if (pathDone && !shotTriggered && !shotFinished) {
-                // Start the wait timer once path finishes
                 if (!pathEndWaitStarted) {
                     pathEndWaitStarted = true;
                     pathEndTimer.reset();
                 }
 
-                // Fire as soon as flywheel is ready
                 if (flywheelReady) {
                     transferSubsystem.Open();
+                    transferAction.start();
                     shotTriggered = true;
                     transferCurrentlyOpen = true;
                     shotPulseCount = 1;
                     shotTimer.reset();
-                }
-                // Timeout — flywheel never got ready, skip shot
-                else if (pathEndTimer.seconds() >= maxWaitForShotSeconds) {
+                } else if (pathEndTimer.seconds() >= maxWaitForShotSeconds) {
                     stopTransferAction.run();
                     shotFinished = true;
                 }
@@ -459,24 +431,21 @@ public class AutoRedFarScrimmage extends OpMode {
                     shotFinished = true;
                 }
             }
-
         } else {
             shootAction.idle();
         }
 
-        // Keep intake running during intake segments until shot triggers
-        if (intakeDuringPath && !shotTriggered) {
+        if (intakeDuringPath) {
             intakeAction.startIntake();
         }
 
-        // Hold timer at gate end
         if (!follower.isBusy()) {
             if (waitAtEndOfPath && !holdStarted) {
                 holdStarted = true;
                 holdTimer.reset();
             }
         } else {
-            holdStarted        = false;
+            holdStarted = false;
             pathEndWaitStarted = false;
             holdTimer.reset();
             pathEndTimer.reset();
@@ -488,5 +457,4 @@ public class AutoRedFarScrimmage extends OpMode {
             setSequenceState(nextSequenceState);
         }
     }
-
 }

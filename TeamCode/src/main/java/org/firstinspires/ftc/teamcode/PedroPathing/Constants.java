@@ -42,7 +42,7 @@ public class Constants {
                     SECONDARY_HEADING_D,
                     SECONDARY_HEADING_F
             ))
-            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.1, 0.05838, 0.0015975 ))
+            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.09, 0.05838, 0.0015975 ))
             .centripetalScaling(0);
 
     public static MecanumConstants driveConstants = new MecanumConstants()

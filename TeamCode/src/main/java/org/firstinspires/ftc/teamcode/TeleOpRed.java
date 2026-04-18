@@ -8,19 +8,20 @@ import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.paths.HeadingInterpolator;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
-import org.firstinspires.ftc.teamcode.COMMAND.DriveCommand;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.*;
 
 
 
 
-@TeleOp(name = "TeleOp Test 2")
-public class TELEOPTEST2 extends CommandOpMode {
+@TeleOp(name = "TeleOp RED")
+public class TeleOpRed extends CommandOpMode {
 
     // -------------------- Subsystems --------------------
     private DriveSubsystem driveSubsystem;
@@ -40,9 +41,9 @@ public class TELEOPTEST2 extends CommandOpMode {
 
     // -------------------- Shooter Calculator --------------------
     // Swap GoalTarget.BLUE / RED to match your alliance
-    private final SHOOTERCALCBLUE shooterCalc =
-            new SHOOTERCALCBLUE();
-    private SHOOTERCALCBLUE.ShotSolution shotSolution = null;
+    private final SHOOTERCALCRED shooterCalc =
+            new SHOOTERCALCRED();
+    private SHOOTERCALCRED.ShotSolution shotSolution = null;
 
     // -------------------- Tuning increments --------------------
     private final double rpmIncrement   = 50;
@@ -61,6 +62,8 @@ public class TELEOPTEST2 extends CommandOpMode {
     private long headingLockStartTime          = 0;
     private static final long HEADING_LOCK_DURATION_MS = 1500;
 
+    private Pose startPose = new Pose (0,0,0);
+
     // ====================================================================
     @Override
     public void initialize() {
@@ -68,7 +71,15 @@ public class TELEOPTEST2 extends CommandOpMode {
         // --- Pedro setup ---
         // Replace FConstants / LConstants with your actual Pedro constants class names
         follower = org.firstinspires.ftc.teamcode.pedroPathing.Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(36.4, 132.2, Math.toRadians(90)));
+
+        if (PoseMemory.lastPose != null) {
+            startPose = PoseMemory.lastPose;
+        } else {
+            startPose = new Pose(105, 132, Math.toRadians(90)); // fallback if teleop is run directly
+        }
+        follower.setStartingPose(startPose);
+        follower.startTeleopDrive(true);
+
         // --- Subsystems ---
         driveSubsystem    = new DriveSubsystem(hardwareMap);
         intakeSubsystem   = new IntakeSubsystem(hardwareMap);
@@ -85,23 +96,14 @@ public class TELEOPTEST2 extends CommandOpMode {
         // --- Telemetry (also mirrors to FTC Dashboard) ---
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        // ======================== DRIVE ========================
-        new DriveCommand(
-                driveSubsystem,
-                () -> (double) -gamepad1.left_stick_y,
-                () -> (double) -gamepad1.right_stick_x,
-                () -> (double) -gamepad1.left_stick_x
-        ).schedule();
-
-
         flyWheelSubsystem.setDefaultCommand(
                 new RunCommand(() -> {
                     if (!flywheelEnabled) {
                         flyWheelSubsystem.stop();
-                        flyWheelSubsystem.setHoodAngle(FlyWheelConstants.hoodAngle);
+                        flyWheelSubsystem.setHoodAngle(shotSolution.hoodAngleDeg);
                     } else {
-                        flyWheelSubsystem.spinUp(currentTargetRPM);
-                        flyWheelSubsystem.setHoodAngle(currentHoodAngle);
+                        flyWheelSubsystem.spinUp(shotSolution.rpm);
+                        flyWheelSubsystem.setHoodAngle(shotSolution.hoodAngleDeg);
                     }
                 }, flyWheelSubsystem)
         );
@@ -117,8 +119,8 @@ public class TELEOPTEST2 extends CommandOpMode {
         // Y → toggle manual RPM override
         new GamepadButton(gamepadEx2, GamepadKeys.Button.Y)
                 .whenPressed(new InstantCommand(() -> {
-                    currentTargetRPM = 3200;
-                    currentHoodAngle = 47;
+                    currentTargetRPM = 3300;
+                    currentHoodAngle = 50;
                 }));
 
         // ======================== A: AIM + TRANSFER ========================
@@ -134,19 +136,42 @@ public class TELEOPTEST2 extends CommandOpMode {
                     transferSubsystem.Closed();
                 });
 
-      /*  new GamepadButton(gamepadEx2, GamepadKeys.Button.LEFT_BUMPER)
+        new GamepadButton(gamepadEx2, GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new InstantCommand(() -> {
-                    currentTargetRPM = 2400;
-                    currentHoodAngle = 65;
+                    currentTargetRPM = 2600;
+                    currentHoodAngle = 62;
                 }));
                 
-       */
+
 // RIGHT_BUMPER → mid shot
         new GamepadButton(gamepadEx2, GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(new InstantCommand(() -> {
-                    currentTargetRPM = 2300;
-                    currentHoodAngle = 65;
+                    currentTargetRPM = 2500;
+                    currentHoodAngle = 62;
                 }));
+
+        new GamepadButton(gamepadEx, GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(() -> {
+//                            pedroDriving = true;
+
+                            Pose currentPose = follower.getPose();
+
+                            follower.followPath(
+                                    follower.pathBuilder()
+                                            .addPath(new BezierLine
+                                                    (currentPose,
+                                                            new Pose(currentPose.getX(), currentPose.getY() + 1)))
+                                            .setHeadingInterpolation(
+                                                    HeadingInterpolator.facingPoint(CalculatorConstants.redGoalXInches, CalculatorConstants.redGoalYInches)
+                                            )
+                                            .build(),
+                                    true);
+                        }))
+                .whenReleased(new InstantCommand(() ->{
+                            follower.breakFollowing();
+                            follower.startTeleopDrive(true);
+                            follower.setTeleOpDrive(0, 0, 0, true);
+                        }));
 
         // ======================== INTAKE ========================
         intakeSubsystem.setDefaultCommand(
@@ -164,19 +189,15 @@ public class TELEOPTEST2 extends CommandOpMode {
 
         // ======================== MAIN LOOP COMMAND ========================
         new RunCommand(() -> {
+            double forward = -gamepad1.left_stick_y;
+            double strafe = -gamepad1.left_stick_x;
+            double turn = -gamepad1.right_stick_x;
 
-            // Update Pedro localizer
+            follower.setTeleOpDrive(forward, strafe, turn, true);
+
+            // Update Pedro teleop drive + localizer
             follower.update();
 
-            // --- Heading lock timeout ---
-            if (headingLocked) {
-                long elapsed = System.currentTimeMillis() - headingLockStartTime;
-                if (elapsed >= HEADING_LOCK_DURATION_MS) {
-                    headingLocked = false;
-                    gateOpen      = false;
-                    transferSubsystem.Closed();
-                }
-            }
 
             // --- Dpad tuning: RPM and hood angle (always active) ---
             if (gamepad1.dpad_up    && !prevDpadUp)    FlyWheelConstants.targetRPM += rpmIncrement;

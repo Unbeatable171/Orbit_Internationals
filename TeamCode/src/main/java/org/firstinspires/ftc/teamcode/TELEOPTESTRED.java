@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.SUBSYSTEMS.*;
 
 
 
-@TeleOp(name = "TeleOp Test RED")
+//@TeleOp(name = "TeleOp Test RED")
 public class TELEOPTESTRED extends CommandOpMode {
 
     // -------------------- Subsystems --------------------
@@ -120,8 +120,8 @@ public class TELEOPTESTRED extends CommandOpMode {
         // Y → toggle manual RPM override
         new GamepadButton(gamepadEx, GamepadKeys.Button.Y)
                 .whenPressed(new InstantCommand(() -> {
-                    flyWheelSubsystem.spinUp(2300);
-                    flyWheelSubsystem.setHoodAngle(65);
+                    flyWheelSubsystem.spinUp(FlyWheelConstants.targetRPM);
+                    flyWheelSubsystem.setHoodAngle(FlyWheelConstants.hoodAngle);
                 }));
 
 
@@ -140,7 +140,7 @@ public class TELEOPTESTRED extends CommandOpMode {
                     follower.followPath(
                             follower.pathBuilder()
                                     .addPath(new BezierLine(follower.getPose(),
-                                            new Pose(follower.getPose().getX(), follower.getPose().getY() + 1)))
+                                            new Pose(follower.getPose().getX() + 2, follower.getPose().getY() + 2)))
                                     .setHeadingInterpolation
                                             (HeadingInterpolator.facingPoint(
                                                     CalculatorConstants.redGoalXInches,CalculatorConstants.redGoalYInches))

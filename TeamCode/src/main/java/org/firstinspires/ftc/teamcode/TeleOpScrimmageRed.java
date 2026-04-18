@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.SUBSYSTEMS.FlyWheelSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.TransferSubsystem;
 
-@TeleOp(name = "TeleOp Scrimmage Red")
+//@TeleOp(name = "TeleOp Scrimmage Red")
 public class TeleOpScrimmageRed extends CommandOpMode {
 
     private static final double PRESET_ONE_RPM = 2300;
@@ -155,24 +155,24 @@ public class TeleOpScrimmageRed extends CommandOpMode {
                     transferSubsystem.Closed();
                 }));
 
-//        new GamepadButton(gamepad1Ex, GamepadKeys.Button.LEFT_BUMPER)
-//                .whenPressed(new InstantCommand(()-> {
-//                    pedroDriving = true;
-//
-//                    Pose currentPose = follower.getPose();
-//
-//                    follower.followPath(
-//                            follower.pathBuilder()
-//                                    .addPath(new BezierLine
-//                                            (currentPose,
-//                                                    new Pose(currentPose.getX(), currentPose.getY()+1)))
-//                                    .setHeadingInterpolation(
-//                                            HeadingInterpolator.facingPoint(CalculatorConstants.redGoalXInches,CalculatorConstants.redGoalYInches)
-//                                    )
-//                                    .build(),
-//                            true
-//                    );
-//                }));
+        new GamepadButton(gamepad1Ex, GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(()-> {
+                    pedroDriving = true;
+
+                    Pose currentPose = follower.getPose();
+
+                    follower.followPath(
+                            follower.pathBuilder()
+                                    .addPath(new BezierLine
+                                            (currentPose,
+                                                    new Pose(currentPose.getX(), currentPose.getY()+1)))
+                                    .setHeadingInterpolation(
+                                            HeadingInterpolator.facingPoint(CalculatorConstants.redGoalXInches,CalculatorConstants.redGoalYInches)
+                                    )
+                                    .build(),
+                            true
+                    );
+                }));
 //
 //        new GamepadButton(gamepad1Ex, GamepadKeys.Button.A)
 //                .whenPressed(new InstantCommand(() -> {

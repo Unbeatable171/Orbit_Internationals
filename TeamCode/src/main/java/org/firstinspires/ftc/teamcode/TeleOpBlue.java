@@ -19,14 +19,16 @@ import org.firstinspires.ftc.teamcode.SUBSYSTEMS.*;
 
 
 
-//@TeleOp(name = "TeleOp Test BLUE")
-public class TELEOPTESTBLUE extends CommandOpMode {
+@TeleOp(name = "TeleOp Blue")
+public class TeleOpBlue extends CommandOpMode {
 
     // -------------------- Subsystems --------------------
     private DriveSubsystem driveSubsystem;
     private IntakeSubsystem intakeSubsystem;
     private FlyWheelSubsystem flyWheelSubsystem;
     private TransferSubsystem transferSubsystem;
+    private double currentTargetRPM = FlyWheelConstants.targetRPM;
+    private double currentHoodAngle = FlyWheelConstants.hoodAngle;
 
     // -------------------- Pedro --------------------
     private Follower follower;
@@ -58,6 +60,7 @@ public class TELEOPTESTBLUE extends CommandOpMode {
     // -------------------- Heading lock timer --------------------
     private long headingLockStartTime          = 0;
     private static final long HEADING_LOCK_DURATION_MS = 1500;
+    private Pose startPose = new Pose(0,0,0);
 
     // ====================================================================
     @Override
@@ -66,7 +69,13 @@ public class TELEOPTESTBLUE extends CommandOpMode {
         // --- Pedro setup ---
         // Replace FConstants / LConstants with your actual Pedro constants class names
         follower = org.firstinspires.ftc.teamcode.pedroPathing.Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(36.4, 132.2, Math.toRadians(90)));
+
+        if (PoseMemory.lastPose != null) {
+            startPose = PoseMemory.lastPose;
+        } else {
+            startPose = new Pose(37.34831836370614, 136.13465551339004, Math.toRadians(90)); // fallback if teleop is run directly
+        }
+        follower.setStartingPose(startPose);
         // --- Subsystems ---
         driveSubsystem    = new DriveSubsystem(hardwareMap);
         intakeSubsystem   = new IntakeSubsystem(hardwareMap);
@@ -91,69 +100,38 @@ public class TELEOPTESTBLUE extends CommandOpMode {
                 () -> (double) -gamepad1.left_stick_x
         ).schedule();
 
-        // ======================== FLYWHEEL ========================
-        // Priority:
-        //   flywheelEnabled=false          → stop
-        //   headingLocked + !manualOverride → calculator RPM + hood
-        //   headingLocked + manualOverride  → manual RPM + manual hood (heading still locked)
-        //   no lock                         → manual RPM + manual hood
-//        flyWheelSubsystem.setDefaultCommand(
-//                new RunCommand(() -> {
-//                    if (!flywheelEnabled) {
-//                        flyWheelSubsystem.stop();
-//                        flyWheelSubsystem.setHoodAngle(FlyWheelConstants.hoodAngle);
-//                        return;
-//                    }
-//                    if (headingLocked && shotSolution != null && !manualRPMOverride) {
-//                        // Full auto mode
-//                        flyWheelSubsystem.spinUp(shotSolution.rpm);
-//                        flyWheelSubsystem.setHoodAngle(shotSolution.hoodAngleDeg);
-//                    } else {
-//                        // Manual mode (covers: no lock, or manual override with lock)
-//                        flyWheelSubsystem.spinUp(FlyWheelConstants.targetRPM);
-//                        flyWheelSubsystem.setHoodAngle(FlyWheelConstants.hoodAngle);
-//                    }
-//                }, flyWheelSubsystem)
-//        );
 
         flyWheelSubsystem.setDefaultCommand(
                 new RunCommand(() -> {
                     if (!flywheelEnabled) {
                         flyWheelSubsystem.stop();
-                        flyWheelSubsystem.setHoodAngle(FlyWheelConstants.hoodAngle);
-                        return;
-                    }
-                    if (headingLocked) {
-                        // Full auto mode
-                        flyWheelSubsystem.spinUp(FlyWheelConstants.targetRPM);
-                        flyWheelSubsystem.setHoodAngle(FlyWheelConstants.hoodAngle);
+                        flyWheelSubsystem.setHoodAngle(shotSolution.hoodAngleDeg);
                     } else {
-                        // Manual mode (covers: no lock, or manual override with lock)
-                        flyWheelSubsystem.spinUp(FlyWheelConstants.targetRPM);
-                        flyWheelSubsystem.setHoodAngle(FlyWheelConstants.hoodAngle);
+                        flyWheelSubsystem.spinUp(shotSolution.rpm);
+                        flyWheelSubsystem.setHoodAngle(shotSolution.hoodAngleDeg);
                     }
                 }, flyWheelSubsystem)
         );
 
         // X → flywheel on
-        new GamepadButton(gamepadEx, GamepadKeys.Button.X)
+        new GamepadButton(gamepadEx2, GamepadKeys.Button.X)
                 .whenPressed(new InstantCommand(() -> flywheelEnabled = true));
 
         // B → flywheel off
-        new GamepadButton(gamepadEx, GamepadKeys.Button.B)
+        new GamepadButton(gamepadEx2, GamepadKeys.Button.B)
                 .whenPressed(new InstantCommand(() -> flywheelEnabled = false));
 
         // Y → toggle manual RPM override
-        new GamepadButton(gamepadEx, GamepadKeys.Button.Y)
+        new GamepadButton(gamepadEx2, GamepadKeys.Button.Y)
                 .whenPressed(new InstantCommand(() -> {
-                    flyWheelSubsystem.spinUp(FlyWheelConstants.targetRPM);
-                    flyWheelSubsystem.setHoodAngle(42);
+                    currentTargetRPM = 3300;
+                    currentHoodAngle = 50;
                 }));
 
         // ======================== A: AIM + TRANSFER ========================
         // Locks heading toward goal, opens transfer gate for 2 seconds, then releases both.
         // If manualRPMOverride is ON, heading still locks but RPM/hood stay manual.
-        new GamepadButton(gamepadEx, GamepadKeys.Button.A)
+        new GamepadButton(gamepadEx2, GamepadKeys.Button.A)
                 .whenPressed(() -> {
                     gateOpen = true;
                     transferSubsystem.Open();
@@ -163,10 +141,18 @@ public class TELEOPTESTBLUE extends CommandOpMode {
                     transferSubsystem.Closed();
                 });
 
-        new GamepadButton(gamepadEx, GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new InstantCommand(()-> {
-                    headingLocked = true;
-                    headingLockStartTime =System.currentTimeMillis();
+        new GamepadButton(gamepadEx2, GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(() -> {
+                    currentTargetRPM = 2600;
+                    currentHoodAngle = 62;
+                }));
+
+
+// RIGHT_BUMPER → mid shot
+        new GamepadButton(gamepadEx2, GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(new InstantCommand(() -> {
+                    currentTargetRPM = 2500;
+                    currentHoodAngle = 62;
                 }));
 
         // ======================== INTAKE ========================
@@ -267,6 +253,8 @@ public class TELEOPTESTBLUE extends CommandOpMode {
         telemetry.addData("RPM Error",      FlyWheelConstants.targetRPM - flyWheelSubsystem.getCurrentRPMTOP());
         telemetry.addData("At Speed",       flyWheelSubsystem.isAtSpeed(FlyWheelConstants.targetRPM));
         telemetry.addData("Voltage",        flyWheelSubsystem.voltageSensor.getVoltage());
+        telemetry.addData("Current Target RPM", currentTargetRPM);
+        telemetry.addData("Current Hood Angle", currentHoodAngle);
 
         telemetry.update();
     }

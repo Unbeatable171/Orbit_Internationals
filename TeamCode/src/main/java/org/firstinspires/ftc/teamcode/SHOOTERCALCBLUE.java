@@ -105,7 +105,7 @@ public class SHOOTERCALCBLUE {
         double rpm = CalculatorConstants.rpmA * velocityInchesPerSec * velocityInchesPerSec * velocityInchesPerSec
                 + CalculatorConstants.rpmB * velocityInchesPerSec * velocityInchesPerSec
                 + CalculatorConstants.rpmC* velocityInchesPerSec
-                + CalculatorConstants.rpmD;
+                + CalculatorConstants.rpmD + FlyWheelConstants.rpmoffset;
 
         return clamp(rpm, CalculatorConstants.minRpm, CalculatorConstants.maxRpm);
     }

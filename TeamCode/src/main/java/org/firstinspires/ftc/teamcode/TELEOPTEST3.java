@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.SUBSYSTEMS.*;
 
 
 
-@TeleOp(name = "TeleOp Test 3")
+//@TeleOp(name = "TeleOp Test 3")
 public class TELEOPTEST3 extends CommandOpMode {
 
     // -------------------- Subsystems --------------------
@@ -165,8 +165,8 @@ public class TELEOPTEST3 extends CommandOpMode {
 // RIGHT_BUMPER → mid shot
         new GamepadButton(gamepadEx2, GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(new InstantCommand(() -> {
-                    currentTargetRPM = 2300;
-                    currentHoodAngle = 65;
+                    currentTargetRPM = 2500;
+                    currentHoodAngle = 63;
                 }));
 
 

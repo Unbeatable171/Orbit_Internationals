@@ -52,8 +52,8 @@ public class DriveSubsystem extends SubsystemBase {
 
 
         forward = Math.pow(forward, 3);
-        strafe  = Math.pow(strafe,  3);
-        rotate  = Math.pow(rotate,  3) *0.8;
+        strafe  = Math.pow(strafe,  3) * 0.8;
+        rotate  = Math.pow(rotate,  3);
 
         if (headingOverride != null) strafe = headingOverride;
 

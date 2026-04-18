@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.COMMAND.FlyWheelCommand;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.*;
 import org.firstinspires.ftc.teamcode.FlyWheelConstants;
 
-@TeleOp(name = "TeleOp Test 1")
+//@TeleOp(name = "TeleOp Test 1")
 public class TELEOPTEST extends CommandOpMode {
 
     private DriveSubsystem driveSubsystem;
