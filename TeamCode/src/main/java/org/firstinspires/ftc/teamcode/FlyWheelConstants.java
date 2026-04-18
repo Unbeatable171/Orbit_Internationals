@@ -4,10 +4,15 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class FlyWheelConstants{
-    public static double kF = 1.405;
-    public static double kP = 0.0045;
+    public static double kF = 1.131;
+    public static double kP = 0.0085;
     public static double kI = 0.0;
-    public static double kD = 0.0001;
+    public static double kD = 0.00012;
+
+    public static double kFHigh = 1.131;
+    public static double kPHigh = 0.0045;
+    public static double kIHigh = 0.0;
+    public static double kDHigh = 0.0002;
     public static double velocityTolerance = 50.0;
     public static double targetRPM = 2300;
     public static double hoodAngle = 65;

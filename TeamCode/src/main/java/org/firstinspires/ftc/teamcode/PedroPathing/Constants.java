@@ -15,12 +15,34 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
+    public static final double PRIMARY_HEADING_P = 1.08;
+    public static final double PRIMARY_HEADING_I = 0;
+    public static final double PRIMARY_HEADING_D = 0.03;
+    public static final double PRIMARY_HEADING_F = 0.01;
+
+    public static final double SECONDARY_HEADING_P = 0.9;
+    public static final double SECONDARY_HEADING_I = 0;
+    public static final double SECONDARY_HEADING_D = 0.01;
+    public static final double SECONDARY_HEADING_F = 0.01;
+
+    public static final double TELEOP_SECONDARY_HEADING_ERROR_RAD = Math.toRadians(12);
+
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(10.4)
-            .headingPIDFCoefficients(new PIDFCoefficients(1.08,0,0.03,0.01))
+            .mass(12.1)
+            .headingPIDFCoefficients(new PIDFCoefficients(
+                    PRIMARY_HEADING_P,
+                    PRIMARY_HEADING_I,
+                    PRIMARY_HEADING_D,
+                    PRIMARY_HEADING_F
+            ))
             .useSecondaryHeadingPIDF(true)
-            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(0.9,0,0.01,0.01))
-            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.12, 0.05838, 0.0015975 ))
+            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(
+                    SECONDARY_HEADING_P,
+                    SECONDARY_HEADING_I,
+                    SECONDARY_HEADING_D,
+                    SECONDARY_HEADING_F
+            ))
+            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.1, 0.05838, 0.0015975 ))
             .centripetalScaling(0);
 
     public static MecanumConstants driveConstants = new MecanumConstants()

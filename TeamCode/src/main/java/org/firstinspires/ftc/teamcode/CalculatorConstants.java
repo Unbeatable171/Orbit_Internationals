@@ -53,7 +53,7 @@ public class CalculatorConstants {
     public static double closeFallbackTriangleBYInches = 144.0;
     public static double closeFallbackTriangleCXInches = 144.0;
     public static double closeFallbackTriangleCYInches = 144.0;
-    public static double closeFallbackHoodAngleDeg = FlyWheelConstants.servoPositionToHoodAngle(0.55);
+    public static double closeFallbackHoodAngleDeg = 65;
     public static double closeFallbackRpm = 2300.0;
 
     // Far fallback triangle matches the second shooting triangle used in autos.

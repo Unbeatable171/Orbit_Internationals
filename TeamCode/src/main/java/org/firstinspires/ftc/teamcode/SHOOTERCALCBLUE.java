@@ -14,19 +14,25 @@ public class SHOOTERCALCBLUE {
         public final double rpm;
         public final double towardTargetVelocityMetersPerSecond;
         public final double lateralVelocityMetersPerSecond;
+        public final double targetHeadingRad;
+        public final double headingErrorRad;
 
         public ShotSolution(double distanceMeters,
                             double hoodAngleDeg,
                             double velocityMetersPerSecond,
                             double rpm,
                             double towardTargetVelocityMetersPerSecond,
-                            double lateralVelocityMetersPerSecond) {
+                            double lateralVelocityMetersPerSecond,
+                            double targetHeadingRad,
+                            double headingErrorRad) {
             this.distanceMeters = distanceMeters;
             this.hoodAngleDeg = hoodAngleDeg;
             this.velocityMetersPerSecond = velocityMetersPerSecond;
             this.rpm = rpm;
             this.towardTargetVelocityMetersPerSecond = towardTargetVelocityMetersPerSecond;
             this.lateralVelocityMetersPerSecond = lateralVelocityMetersPerSecond;
+            this.targetHeadingRad = targetHeadingRad;
+            this.headingErrorRad = headingErrorRad;
         }
     }
 
@@ -180,7 +186,9 @@ public class SHOOTERCALCBLUE {
                 v0_new,
                 rpm,
                 Vrr,
-                Vrt
+                normalizeAngle(targetHeadingRad - headingLeadRad),
+                compensatedHeadingErrorRad,
+                v0
         );
     }
 }

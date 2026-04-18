@@ -25,7 +25,7 @@ public class FlyWheelSubsystem extends SubsystemBase {
     private static final double Ticks_Per_Rev = 28; // this in
     private static final double maxRPM = 6000;
     private static final double maxTicks_per_rev = maxRPM * Ticks_Per_Rev/60;
-    private static final double idleRPM = 1500;
+    private static final double idleRPM = 2550;
 
     public FlyWheelSubsystem(HardwareMap hardwareMap){
         shooterTop = hardwareMap.get(DcMotorEx.class,"shooterTop");
@@ -53,33 +53,65 @@ public class FlyWheelSubsystem extends SubsystemBase {
     }
 
     public void spinUp (double rpm) {
-        double targetVelocity = rpmtoticks(rpm);
-        double actualTop = shooterTop.getVelocity();
-        double actualBottom = shooterBottom.getVelocity();
 
-        //Update PID values every tick
-        pidTop.setPID(FlyWheelConstants.kP, FlyWheelConstants.kI, FlyWheelConstants.kD);
-        pidBottom.setPID(FlyWheelConstants.kP, FlyWheelConstants.kI, FlyWheelConstants.kD);
+        if ( rpm < 3000) {
+            double targetVelocity = rpmtoticks(rpm);
+            double actualTop = shooterTop.getVelocity();
+            double actualBottom = shooterBottom.getVelocity();
 
-        //FeedForward
-        double ff = FlyWheelConstants.kF * (targetVelocity / maxTicks_per_rev);
-        // FlyWheelConstants.kS + FlyWheelConstants.kV * (targetVelocity / maxTicks_per_rev);
+            //Update PID values every tick
+            pidTop.setPID(FlyWheelConstants.kP, FlyWheelConstants.kI, FlyWheelConstants.kD);
+            pidBottom.setPID(FlyWheelConstants.kP, FlyWheelConstants.kI, FlyWheelConstants.kD);
 
-        //Voltage Compensation
-        double voltageScale = 12.0 / voltageSensor.getVoltage();
+            //FeedForward
+            double ff = FlyWheelConstants.kF * (targetVelocity / maxTicks_per_rev);
+            // FlyWheelConstants.kS + FlyWheelConstants.kV * (targetVelocity / maxTicks_per_rev);
 
-        //Clamp
-        double powerTop = ff + pidTop.calculate(actualTop, targetVelocity);
-        double powerBottom = ff + pidBottom.calculate(actualBottom, targetVelocity);
+            //Voltage Compensation
+            double voltageScale = 12.0 / voltageSensor.getVoltage();
 
-        powerTop *= voltageScale;
-        powerBottom *= voltageScale;
+            //Clamp
+            double powerTop = ff + pidTop.calculate(actualTop, targetVelocity);
+            double powerBottom = ff + pidBottom.calculate(actualBottom, targetVelocity);
 
-        powerTop = Math.max(-1, Math.min(1, powerTop));
-        powerBottom = Math.max(-1, Math.min(1, powerBottom));
+            powerTop *= voltageScale;
+            powerBottom *= voltageScale;
 
-        shooterTop.setPower(powerTop);
-        shooterBottom.setPower(powerBottom);
+            powerTop = Math.max(-1, Math.min(1, powerTop));
+            powerBottom = Math.max(-1, Math.min(1, powerBottom));
+
+            shooterTop.setPower(powerTop);
+            shooterBottom.setPower(powerBottom);
+        }
+        else {
+            double targetVelocity = rpmtoticks(rpm);
+            double actualTop = shooterTop.getVelocity();
+            double actualBottom = shooterBottom.getVelocity();
+
+            //Update PID values every tick
+            pidTop.setPID(FlyWheelConstants.kPHigh, FlyWheelConstants.kIHigh, FlyWheelConstants.kDHigh);
+            pidBottom.setPID(FlyWheelConstants.kPHigh, FlyWheelConstants.kIHigh, FlyWheelConstants.kDHigh);
+
+            //FeedForward
+            double ff = FlyWheelConstants.kF * (targetVelocity / maxTicks_per_rev);
+            // FlyWheelConstants.kS + FlyWheelConstants.kV * (targetVelocity / maxTicks_per_rev);
+
+            //Voltage Compensation
+            double voltageScale = 12.0 / voltageSensor.getVoltage();
+
+            //Clamp
+            double powerTop = ff + pidTop.calculate(actualTop, targetVelocity);
+            double powerBottom = ff + pidBottom.calculate(actualBottom, targetVelocity);
+
+            powerTop *= voltageScale;
+            powerBottom *= voltageScale;
+
+            powerTop = Math.max(-1, Math.min(1, powerTop));
+            powerBottom = Math.max(-1, Math.min(1, powerBottom));
+
+            shooterTop.setPower(powerTop);
+            shooterBottom.setPower(powerBottom);
+        }
 
     }
 
