@@ -8,12 +8,13 @@ import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.paths.HeadingInterpolator;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
-import org.firstinspires.ftc.teamcode.COMMAND.DriveCommand;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.*;
 
 
@@ -76,12 +77,14 @@ public class TeleOpBlue extends CommandOpMode {
             startPose = new Pose(37.34831836370614, 136.13465551339004, Math.toRadians(90)); // fallback if teleop is run directly
         }
         follower.setStartingPose(startPose);
+        follower.startTeleopDrive(true);
         // --- Subsystems ---
         driveSubsystem    = new DriveSubsystem(hardwareMap);
         intakeSubsystem   = new IntakeSubsystem(hardwareMap);
         transferSubsystem = new TransferSubsystem(hardwareMap);
         transferSubsystem.Closed();
         flyWheelSubsystem = new FlyWheelSubsystem(hardwareMap);
+        transferSubsystem.Closed();
 
         gamepadEx = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
@@ -91,15 +94,6 @@ public class TeleOpBlue extends CommandOpMode {
 
         // --- Telemetry (also mirrors to FTC Dashboard) ---
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-        // ======================== DRIVE ========================
-        new DriveCommand(
-                driveSubsystem,
-                () -> (double) -gamepad1.left_stick_y,
-                () -> (double) -gamepad1.right_stick_x,
-                () -> (double) -gamepad1.left_stick_x
-        ).schedule();
-
 
         flyWheelSubsystem.setDefaultCommand(
                 new RunCommand(() -> {
@@ -155,6 +149,29 @@ public class TeleOpBlue extends CommandOpMode {
                     currentHoodAngle = 62;
                 }));
 
+        new GamepadButton(gamepadEx, GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(() -> {
+                    Pose currentPose = follower.getPose();
+
+                    follower.followPath(
+                            follower.pathBuilder()
+                                    .addPath(new BezierLine(
+                                            currentPose,
+                                            new Pose(currentPose.getX() + 1, currentPose.getY() + 1)))
+                                    .setHeadingInterpolation(
+                                            HeadingInterpolator.facingPoint(
+                                                    CalculatorConstants.blueGoalXInches,
+                                                    CalculatorConstants.blueGoalYInches)
+                                    )
+                                    .build(),
+                            true);
+                }))
+                .whenReleased(new InstantCommand(() -> {
+                    follower.breakFollowing();
+                    follower.startTeleopDrive(true);
+                    follower.setTeleOpDrive(0, 0, 0, true);
+                }));
+
         // ======================== INTAKE ========================
         intakeSubsystem.setDefaultCommand(
                 new RunCommand(() -> {
@@ -171,8 +188,13 @@ public class TeleOpBlue extends CommandOpMode {
 
         // ======================== MAIN LOOP COMMAND ========================
         new RunCommand(() -> {
+            double forward = -gamepad1.left_stick_y;
+            double strafe = -gamepad1.left_stick_x;
+            double turn = -gamepad1.right_stick_x;
 
-            // Update Pedro localizer
+            follower.setTeleOpDrive(forward, strafe, turn, true);
+
+            // Update Pedro teleop drive + localizer
             follower.update();
 
             // --- Heading lock timeout ---

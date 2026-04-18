@@ -162,7 +162,7 @@ public class TeleOpRed extends CommandOpMode {
                                     follower.pathBuilder()
                                             .addPath(new BezierLine
                                                     (currentPose,
-                                                            new Pose(currentPose.getX(), currentPose.getY() + 1)))
+                                                            new Pose(currentPose.getX() + 1, currentPose.getY() + 1)))
                                             .setHeadingInterpolation(
                                                     HeadingInterpolator.facingPoint(CalculatorConstants.redGoalXInches, CalculatorConstants.redGoalYInches)
                                             )
