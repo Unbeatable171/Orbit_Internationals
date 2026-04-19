@@ -22,7 +22,8 @@ public class FlyWheelConstants{
     public static double hoodAngleIntercept = 38.33;
 
     public static double velocityoffset = 150;
-    public static double rpmoffset = 50;
+    public static double rpmoffset = 0;
+    public static double idleRpm = 2200;
     public static double rpmVelocitySlope = 12.9285;
     public static double rpmVelocityIntercept = -268.42;
 

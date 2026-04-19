@@ -10,7 +10,7 @@ public class TransferSubsystem extends SubsystemBase {
 
     //test the values and input in the next two places
     private static final double servoClosed = 0.3;
-    private static final double servoOpen = 0.52;
+    private static final double servoOpen = 0.48;
 
     public TransferSubsystem(HardwareMap hardwareMap){
         transfer = hardwareMap.get(Servo.class,"transfer");

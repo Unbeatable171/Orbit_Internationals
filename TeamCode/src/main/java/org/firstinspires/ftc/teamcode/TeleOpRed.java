@@ -101,7 +101,7 @@ public class TeleOpRed extends CommandOpMode {
         flyWheelSubsystem.setDefaultCommand(
                 new RunCommand(() -> {
                     if (!flywheelEnabled) {
-                        flyWheelSubsystem.stop();
+                        flyWheelSubsystem.spinUp(FlyWheelConstants.idleRpm);
                         flyWheelSubsystem.setHoodAngle(shotSolution.hoodAngleDeg);
                     } else {
                         flyWheelSubsystem.spinUp(shotSolution.rpm);

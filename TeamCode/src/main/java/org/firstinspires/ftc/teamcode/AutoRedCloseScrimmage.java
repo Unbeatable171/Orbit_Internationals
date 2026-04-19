@@ -51,11 +51,11 @@ public class AutoRedCloseScrimmage extends OpMode {
     public static double gateWaitSeconds       = 1;
 
     // Fixed shooter values — tune hoodPosition for your 65 deg target
-    public static int targetRPM1 = 2550;
-    public static double hoodAngle1Deg = 68;   // degrees, not servo position
+    public static int targetRPM1 = 2450;
+    public static double hoodAngle1Deg = 65;   // degrees, not servo position
 
-    public static int targetRPM2 = 2600;
-    public static double hoodAngle2Deg = 68;    // degrees, not servo position
+    public static int targetRPM2 = 2550;
+    public static double hoodAngle2Deg = 62;    // degrees, not servo position
 
     private boolean useShot2Preset() {
         return sequenceState == SequenceState.RETURN_SHOT_1

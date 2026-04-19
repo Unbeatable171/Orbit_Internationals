@@ -65,19 +65,20 @@ public class AutoRedFarScrimmage extends OpMode {
 
     // --- Poses ---
     private final Pose startPose = new Pose(85.5, 8.9, Math.toRadians(90));
-    private final Pose shootPose = new Pose(85.3841368584759, 13.20373250388803, Math.toRadians(65.5));
+    private final Pose shootPose = new Pose(85.3841368584759, 14, Math.toRadians(65.5));
 
     // Human zone cycle
-    private final Pose humanZone = new Pose(131.7469774359248, 9.106751318447499, Math.toRadians(-10));
-    private final Pose backPose = new Pose(125.7469774359248, 10.106751318447499, Math.toRadians(0));
+    private final Pose humanZone = new Pose(140, 28, Math.toRadians(0));
+    private final Pose humanZoneReturn = new Pose (100, 30);
+    private final Pose backPose = new Pose(120, 24, Math.toRadians(0));
 
     // Spike
-    private final Pose spike3pose = new Pose(127.9759292835543, 35.00032191690765, Math.toRadians(0));
+    private final Pose spike3pose = new Pose(127.9759292835543, 48, Math.toRadians(0));
     private final Pose controlSpike3 = new Pose(94.59605173353452, 35.10513763030453);
 
     // Overflow / gate cycles
-    private final Pose overflowPick = new Pose(128.96186101869114, 35.12498924965115, Math.toRadians(40));
-    private final Pose overflowControlPose = new Pose(127.60643595258041, 2.0286688083403455);
+    private final Pose overflowPick = new Pose(128, 40, Math.toRadians(50));
+    private final Pose overflowControlPose = new Pose(127.60643595258041, 10);
 
     // --- Subsystems ---
     private Follower follower;
@@ -186,6 +187,7 @@ public class AutoRedFarScrimmage extends OpMode {
 
         driveShootToHuman = follower.pathBuilder()
                 .addPath(new BezierLine(shootPose, humanZone))
+//                .setLinearHeadingInterpolation(shootPose.getHeading(),humanZone.getHeading())
                 .setTangentHeadingInterpolation()
                 .build();
 
@@ -200,7 +202,7 @@ public class AutoRedFarScrimmage extends OpMode {
                 .build();
 
         driveHumanToShoot = follower.pathBuilder()
-                .addPath(new BezierLine(humanZone, shootPose))
+                .addPath(new BezierCurve(humanZone, humanZoneReturn, shootPose))
                 .setLinearHeadingInterpolation(humanZone.getHeading(), shootPose.getHeading())
                 .build();
 
