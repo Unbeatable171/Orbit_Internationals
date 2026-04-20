@@ -104,8 +104,8 @@ public class TELEOPTESTRED extends CommandOpMode {
                     }
                     else {
                         // Full auto mode
-                        flyWheelSubsystem.spinUp(shotSolution.rpm);
-                        flyWheelSubsystem.setHoodAngle(shotSolution.hoodAngleDeg);
+                        flyWheelSubsystem.spinUp(FlyWheelConstants.targetRPM);
+                        flyWheelSubsystem.setHoodAngle(FlyWheelConstants.hoodAngle);
                     }
                 }, flyWheelSubsystem)
         );
