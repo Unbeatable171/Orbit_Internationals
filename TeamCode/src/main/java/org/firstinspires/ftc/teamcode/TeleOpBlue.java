@@ -157,7 +157,7 @@ public class TeleOpBlue extends CommandOpMode {
                             follower.pathBuilder()
                                     .addPath(new BezierLine(
                                             currentPose,
-                                            new Pose(currentPose.getX() + 1, currentPose.getY() + 1)))
+                                            new Pose(currentPose.getX() -1.5, currentPose.getY() + 1.5)))
                                     .setHeadingInterpolation(
                                             HeadingInterpolator.facingPoint(
                                                     CalculatorConstants.blueGoalXInches,

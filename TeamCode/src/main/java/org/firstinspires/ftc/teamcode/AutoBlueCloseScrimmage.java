@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.SUBSYSTEMS.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Config
-@Autonomous(name = "Auto Blue Close Scrimmage")
+@Autonomous(name = "Auto Blue Close ")
 public class AutoBlueCloseScrimmage extends OpMode {
 
     public enum SequenceState {
@@ -52,6 +52,9 @@ public class AutoBlueCloseScrimmage extends OpMode {
 
     public static int targetRPM2 = 2500;
     public static double hoodAngle2Deg = 62;   // degrees, not servo position
+
+    private SHOOTERCALCBLUE shootercalc = new SHOOTERCALCBLUE();
+    private SHOOTERCALCBLUE.ShotSolution shotSolution = null;
 
 
 

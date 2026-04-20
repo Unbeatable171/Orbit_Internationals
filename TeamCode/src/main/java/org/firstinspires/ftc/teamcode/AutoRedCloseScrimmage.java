@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.SUBSYSTEMS.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Config
-@Autonomous(name = "Auto Red Close Scrimmage")
+@Autonomous(name = "Auto Red Close ")
 public class AutoRedCloseScrimmage extends OpMode {
 
     public enum SequenceState {
@@ -56,6 +56,9 @@ public class AutoRedCloseScrimmage extends OpMode {
 
     public static int targetRPM2 = 2550;
     public static double hoodAngle2Deg = 62;    // degrees, not servo position
+
+    private SHOOTERCALCRED shootercalc = new SHOOTERCALCRED();
+    private SHOOTERCALCRED.ShotSolution shotSolution = null;
 
     private boolean useShot2Preset() {
         return sequenceState == SequenceState.RETURN_SHOT_1

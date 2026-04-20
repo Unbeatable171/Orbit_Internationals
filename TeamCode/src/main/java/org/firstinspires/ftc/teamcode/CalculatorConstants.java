@@ -19,7 +19,7 @@ public class CalculatorConstants {
     // Vertical difference between goal center and ball release point in meters.
     public static double goalHeightInches = 27;
     public static double gravityInches = 386.09;
-    public static double scoreAngle = -55;
+    public static double scoreAngle = -45;
     public static double passThroughRadius = 5;
     // Hood angles are physical launch angles in degrees, not servo positions.
     public static double minHoodAngleDeg = 42;

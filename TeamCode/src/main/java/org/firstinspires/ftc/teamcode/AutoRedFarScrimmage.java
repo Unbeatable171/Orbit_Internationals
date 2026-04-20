@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.SUBSYSTEMS.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Config
-@Autonomous(name = "Auto Red Far Scrimmage")
+@Autonomous(name = "Auto Red Far ")
 public class AutoRedFarScrimmage extends OpMode {
 
     public enum SequenceState {
@@ -61,8 +61,11 @@ public class AutoRedFarScrimmage extends OpMode {
 
     private static final double INCHES_TO_METERS = 0.0254;
 
+
     private final Pose goalPoseRed = new Pose(CalculatorConstants.redGoalXInches, CalculatorConstants.redGoalYInches);
 
+    private SHOOTERCALCRED shootercalc = new SHOOTERCALCRED();
+    private SHOOTERCALCRED.ShotSolution shotSolution = null;
     // --- Poses ---
     private final Pose startPose = new Pose(85.5, 8.9, Math.toRadians(90));
     private final Pose shootPose = new Pose(85.3841368584759, 14, Math.toRadians(65.5));

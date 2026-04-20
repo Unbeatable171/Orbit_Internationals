@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.SUBSYSTEMS.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Config
-@Autonomous(name = "Auto Blue Far Scrimmage")
+@Autonomous(name = "Auto Blue Far ")
 public class AutoBlueFarScrimmage extends OpMode {
 
     public enum SequenceState {
@@ -57,6 +57,9 @@ public class AutoBlueFarScrimmage extends OpMode {
 
     public static int targetRPM2 = 2450;
     public static double hoodAngle2Deg = 60;   // degrees, not servo position
+
+    private SHOOTERCALCBLUE shootercalc = new SHOOTERCALCBLUE();
+    private SHOOTERCALCBLUE.ShotSolution shotSolution = null;
 
 //    private boolean useShot2Preset() {
 //        return sequenceState == SequenceState.RETURN_SHOT_1
