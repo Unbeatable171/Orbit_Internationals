@@ -107,7 +107,13 @@ public class SHOOTERCALCBLUE {
                 + CalculatorConstants.rpmC
                 + FlyWheelConstants.rpmoffset;
 
-        return clamp(rpm, CalculatorConstants.minRpm, CalculatorConstants.maxRpm);
+        if(rpm <=3000){
+            return clamp(rpm, CalculatorConstants.minRpm, CalculatorConstants.maxRpm);
+        }
+        else{
+            double rpmFar = rpm + FlyWheelConstants.rpmoffsetFar;
+            return clamp(rpmFar, CalculatorConstants.minRpm, CalculatorConstants.maxRpm);
+        }
     }
 
     public SHOOTERCALCBLUE.ShotSolution calculateShotSolution(double robotX, double robotY, double robotHeadingRad) {

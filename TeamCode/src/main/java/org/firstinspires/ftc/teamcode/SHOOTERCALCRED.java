@@ -98,7 +98,13 @@ public class SHOOTERCALCRED {
                 + CalculatorConstants.rpmC
                 + FlyWheelConstants.rpmoffset;
 
-        return clamp(rpm, CalculatorConstants.minRpm, CalculatorConstants.maxRpm);
+        if(rpm <=3000){
+            return clamp(rpm, CalculatorConstants.minRpm, CalculatorConstants.maxRpm);
+        }
+        else{
+            double rpmFar = rpm + FlyWheelConstants.rpmoffsetFar;
+            return clamp(rpmFar, CalculatorConstants.minRpm, CalculatorConstants.maxRpm);
+        }
     }
 
     public SHOOTERCALCRED.ShotSolution calculateShotSolution(double robotX, double robotY, double robotHeadingRad) {
