@@ -11,8 +11,8 @@ public class CalculatorConstants {
     //TODO Retune the values
 
     // Field target positions in meters, using the same field reference as Pedro after conversion.
-    public static double blueGoalXInches = 8;
-    public static double blueGoalYInches = 136;
+    public static double blueGoalXInches = 0;
+    public static double blueGoalYInches = 140;
     public static double redGoalXInches = 140;
     public static double redGoalYInches = 144;
 
@@ -31,9 +31,9 @@ public class CalculatorConstants {
     //TODO Retune rpm vs velocity regression, with constant hood angle
 
     // Exit velocity -> RPM regression coefficients.
-    public static double rpmA = 0.00007827;
-    public static double rpmB =-0.00401321;
-    public static double rpmC = -0.0242283;
+    public static double rpmA = 0.0237941;
+    public static double rpmB =-3.24908;
+    public static double rpmC = 2129.91696;
     public static double rpmD = 1922.78031;
     public static double rpmE = -235756.494;
 
