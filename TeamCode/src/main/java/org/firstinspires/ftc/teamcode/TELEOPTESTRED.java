@@ -15,13 +15,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
-import org.firstinspires.ftc.teamcode.COMMAND.DriveCommand;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.*;
 
 
 
 
-//@TeleOp(name = "TeleOp Test RED")
+@TeleOp(name = "TeleOp Test RED")
 public class TELEOPTESTRED extends CommandOpMode {
 
     // -------------------- Subsystems --------------------
@@ -35,6 +34,7 @@ public class TELEOPTESTRED extends CommandOpMode {
 
     // -------------------- Gamepad --------------------
     private GamepadEx gamepadEx;
+    private GamepadEx gamepadEx2;
 
     // -------------------- Shooter Calculator --------------------
     // Swap GoalTarget.BLUE / RED to match your alliance
@@ -57,15 +57,23 @@ public class TELEOPTESTRED extends CommandOpMode {
     // -------------------- Heading lock timer --------------------
     private long headingLockStartTime          = 0;
     private static final long HEADING_LOCK_DURATION_MS = 1500;
+    private Pose startPose = new Pose(0, 0, 0);
 
     // ====================================================================
     @Override
     public void initialize() {
 
         // --- Pedro setup ---
-        // Replace FConstants / LConstants with your actual Pedro constants class names
         follower = org.firstinspires.ftc.teamcode.pedroPathing.Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(105, 132, Math.toRadians(90)));
+
+        if (PoseMemory.lastPose != null) {
+            startPose = PoseMemory.lastPose;
+        } else {
+            startPose = new Pose(105, 132, Math.toRadians(90));
+        }
+        follower.setStartingPose(startPose);
+        follower.startTeleopDrive(true);
+
         // --- Subsystems ---
         driveSubsystem    = new DriveSubsystem(hardwareMap);
         intakeSubsystem   = new IntakeSubsystem(hardwareMap);
@@ -75,17 +83,10 @@ public class TELEOPTESTRED extends CommandOpMode {
 
         // --- Gamepad ---
         gamepadEx = new GamepadEx(gamepad1);
+        gamepadEx2 = new GamepadEx(gamepad2);
 
         // --- Telemetry (also mirrors to FTC Dashboard) ---
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-        // ======================== DRIVE ========================
-        new DriveCommand(
-                driveSubsystem,
-                () -> (double) -gamepad1.left_stick_y,
-                () -> (double) -gamepad1.right_stick_x,
-                () -> (double) -gamepad1.left_stick_x
-        ).schedule();
 
 
 
@@ -97,7 +98,7 @@ public class TELEOPTESTRED extends CommandOpMode {
                     }
 
                     if (!flywheelEnabled) {
-                        flyWheelSubsystem.stop();
+                        flyWheelSubsystem.spinUp(FlyWheelConstants.idleRpm);
                         flyWheelSubsystem.setHoodAngle(shotSolution.hoodAngleDeg);
                         return;
                     }
@@ -136,18 +137,29 @@ public class TELEOPTESTRED extends CommandOpMode {
                 });
 
         new GamepadButton(gamepadEx, GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new InstantCommand(()-> {
+                .whenPressed(new InstantCommand(() -> {
+                    Pose currentPose = follower.getPose();
+
                     follower.followPath(
                             follower.pathBuilder()
-                                    .addPath(new BezierLine(follower.getPose(),
-                                            new Pose(follower.getPose().getX() + 2, follower.getPose().getY() + 2)))
-                                    .setHeadingInterpolation
-                                            (HeadingInterpolator.facingPoint(
-                                                    CalculatorConstants.redGoalXInches,CalculatorConstants.redGoalYInches))
-                                    .build()
+                                    .addPath(new BezierLine(
+                                            currentPose,
+                                            new Pose(currentPose.getX() + 1.5, currentPose.getY() + 1.5)
+                                    ))
+                                    .setHeadingInterpolation(
+                                            HeadingInterpolator.facingPoint(
+                                                    CalculatorConstants.redGoalXInches,
+                                                    CalculatorConstants.redGoalYInches
+                                            )
+                                    )
+                                    .build(),
+                            true
                     );
-
-
+                }))
+                .whenReleased(new InstantCommand(() -> {
+                    follower.breakFollowing();
+                    follower.startTeleopDrive(true);
+                    follower.setTeleOpDrive(0, 0, 0, true);
                 }));
 
         // ======================== INTAKE ========================
@@ -166,8 +178,13 @@ public class TELEOPTESTRED extends CommandOpMode {
 
         // ======================== MAIN LOOP COMMAND ========================
         new RunCommand(() -> {
+            double forward = -gamepad1.left_stick_y;
+            double strafe = -gamepad1.left_stick_x;
+            double turn = -gamepad1.right_stick_x;
 
-            // Update Pedro localizer
+            follower.setTeleOpDrive(forward, strafe, turn, true);
+
+            // Update Pedro teleop drive + localizer
             follower.update();
 
             // --- Heading lock timeout ---
