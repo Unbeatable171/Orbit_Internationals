@@ -99,7 +99,8 @@ public class SHOOTERCALCRED {
                 + FlyWheelConstants.rpmoffset;
 
         if(rpm <=2700){
-            return clamp(rpm, CalculatorConstants.minRpm, CalculatorConstants.maxRpm);
+            double closerpm =rpm-FlyWheelConstants.rpmoffsetClose;
+            return clamp(closerpm, CalculatorConstants.minRpm, CalculatorConstants.maxRpm);
         }
         else{
             double rpmFar = rpm + FlyWheelConstants.rpmoffsetFar;

@@ -21,7 +21,7 @@ public class TELEOP1 extends CommandOpMode {
 
     private static final double PRESET_ONE_RPM = 2300;
     private static final double PRESET_ONE_HOOD_POSITION = 0.5375;
-    private static final double PRESET_TWO_RPM = 2200.0;
+    private static final double PRESET_TWO_RPM = 2400.0;
     private static final double PRESET_TWO_HOOD_POSITION = 0.51;
     private static final double PRESET_THREE_RPM = 3200.0;
     private static final double PRESET_THREE_HOOD_POSITION = 0.205;
