@@ -11,7 +11,7 @@ public class CalculatorConstants {
     //TODO Retune the values
 
     // Field target positions in meters, using the same field reference as Pedro after conversion.
-    public static double blueGoalXInches = 0;
+    public static double blueGoalXInches = 6;
     public static double blueGoalYInches = 140;
     public static double redGoalXInches = 136;
     public static double redGoalYInches = 146;

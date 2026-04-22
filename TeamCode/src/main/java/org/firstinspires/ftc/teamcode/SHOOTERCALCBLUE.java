@@ -107,7 +107,7 @@ public class SHOOTERCALCBLUE {
                 + CalculatorConstants.rpmC
                 + FlyWheelConstants.rpmoffset;
 
-        if(rpm <=3000){
+        if(rpm <=2700){
             return clamp(rpm, CalculatorConstants.minRpm, CalculatorConstants.maxRpm);
         }
         else{
