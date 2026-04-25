@@ -13,7 +13,7 @@ public class CalculatorConstants {
     // Field target positions in meters, using the same field reference as Pedro after conversion.
     public static double blueGoalXInches = 6;
     public static double blueGoalYInches = 140;
-    public static double redGoalXInches = 136;
+    public static double redGoalXInches = 134;
     public static double redGoalYInches = 146;
 
     // Vertical difference between goal center and ball release point in meters.

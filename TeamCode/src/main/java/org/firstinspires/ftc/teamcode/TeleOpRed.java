@@ -143,7 +143,7 @@ public class TeleOpRed extends CommandOpMode {
                     currentTargetRPM = 2600;
                     currentHoodAngle = 62;
                 }));
-                
+
 
 // RIGHT_BUMPER → mid shot
         new GamepadButton(gamepadEx2, GamepadKeys.Button.RIGHT_BUMPER)
@@ -156,24 +156,24 @@ public class TeleOpRed extends CommandOpMode {
                 .whenPressed(new InstantCommand(() -> {
 //                            pedroDriving = true;
 
-                            Pose currentPose = follower.getPose();
+                    Pose currentPose = follower.getPose();
 
-                            follower.followPath(
-                                    follower.pathBuilder()
-                                            .addPath(new BezierLine
-                                                    (currentPose,
-                                                            new Pose(currentPose.getX() + 1, currentPose.getY() + 1)))
-                                            .setHeadingInterpolation(
-                                                    HeadingInterpolator.facingPoint(CalculatorConstants.redGoalXInches, CalculatorConstants.redGoalYInches)
-                                            )
-                                            .build(),
-                                    true);
-                        }))
+                    follower.followPath(
+                            follower.pathBuilder()
+                                    .addPath(new BezierLine
+                                            (currentPose,
+                                                    new Pose(currentPose.getX() + 1, currentPose.getY() + 1)))
+                                    .setHeadingInterpolation(
+                                            HeadingInterpolator.facingPoint(CalculatorConstants.redGoalXInches, CalculatorConstants.redGoalYInches)
+                                    )
+                                    .build(),
+                            true);
+                }))
                 .whenReleased(new InstantCommand(() ->{
-                            follower.breakFollowing();
-                            follower.startTeleopDrive(true);
-                            follower.setTeleOpDrive(0, 0, 0, true);
-                        }));
+                    follower.breakFollowing();
+                    follower.startTeleopDrive(true);
+                    follower.setTeleOpDrive(0, 0, 0, true);
+                }));
 
         // ======================== INTAKE ========================
         intakeSubsystem.setDefaultCommand(
@@ -275,3 +275,4 @@ public class TeleOpRed extends CommandOpMode {
         telemetry.update();
     }
 }
+
