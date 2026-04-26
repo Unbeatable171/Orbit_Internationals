@@ -94,7 +94,10 @@ public class SHOOTERCALCBLUE {
         double cos = Math.cos(angleRad);
         double tan = Math.tan(angleRad);
         double denominator = 2 * cos * cos * (x * tan - y);
-
+//mmm
+        if(denominator <= 0){
+            return Double.NaN;
+        }
 
         return Math.sqrt(
                 (CalculatorConstants.gravityInches * x * x) / denominator
@@ -176,7 +179,12 @@ public class SHOOTERCALCBLUE {
         // --- Step B6: new launch speed using effective horizontal distance ---
         double x_new = Vx_new * flightTime;
         double v0_new = velocityCalculator(x_new, newHoodAngleDeg);
+//mmm
 
+        if(Double.isNaN((v0_new))||v0_new <=0){
+            v0_new = v0;
+            newHoodAngleDeg = hoodAngleDeg;
+        }
 
         // --- Step B7: turret heading offset ---
         double headingLeadRad = Math.atan2(Vrt, Vx_compensated);
@@ -199,4 +207,3 @@ public class SHOOTERCALCBLUE {
         );
     }
 }
-

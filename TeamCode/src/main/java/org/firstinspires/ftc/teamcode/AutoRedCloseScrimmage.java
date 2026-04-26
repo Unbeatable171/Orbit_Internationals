@@ -46,15 +46,15 @@ public class AutoRedCloseScrimmage extends OpMode {
     }
 
     // --- Tunable parameters ---
-    public static double fireDurationSeconds   = 0.8;
+    public static double fireDurationSeconds   = 0.6;
     public static double maxWaitForShotSeconds = 2.5;
     public static double gateWaitSeconds       = 1;
 
     // Fixed shooter values — tune hoodPosition for your 65 deg target
-    public static int targetRPM1 = 2450;
+    public static int targetRPM1 = 2425;
     public static double hoodAngle1Deg = 65;   // degrees, not servo position
 
-    public static int targetRPM2 = 2550;
+    public static int targetRPM2 = 2435;
     public static double hoodAngle2Deg = 62;    // degrees, not servo position
 
     private SHOOTERCALCRED shootercalc = new SHOOTERCALCRED();
@@ -78,9 +78,9 @@ public class AutoRedCloseScrimmage extends OpMode {
     private final Pose shootPose  = new Pose(82,   93, Math.toRadians(49));
 
     // Spike 1
-    private final Pose spike1Pose        = new Pose(123, 92, Math.toRadians(0));
+    private final Pose spike1Pose        = new Pose(128, 94, Math.toRadians(0));
     private final Pose spike1ControlPose = new Pose(93.5, 84.2);
-    private final Pose shootPose2 = new Pose(80,90,Math.toRadians(45));
+    private final Pose shootPose2 = new Pose(80,90,Math.toRadians(43));
 
     // Spike 2
     private final Pose spike2Pose               = new Pose(131.5, 73, Math.toRadians(0));
@@ -88,7 +88,7 @@ public class AutoRedCloseScrimmage extends OpMode {
     private final Pose spike2ReturnControl1Pose = new Pose(96.57015444490278, 68);
 
     // Gate
-    private final Pose gatePose              = new Pose(128.8, 69.2, Math.toRadians(25));
+    private final Pose gatePose              = new Pose(133.5, 70.2, Math.toRadians(25));
     private final Pose gateControlPose       = new Pose(105.07128905286626, 74);
 //    private final Pose gateReturnControlPose = new Pose(7.444645799011532,  31.175260681273393);
 
@@ -240,6 +240,7 @@ public class AutoRedCloseScrimmage extends OpMode {
                 .build();
 
         driveShootToGate1 = follower.pathBuilder()
+                .setBrakingStart(0.8)
                 .addPath(new BezierCurve(shootPose2, gateControlPose, gatePose))
                 .setLinearHeadingInterpolation(shootPose2.getHeading(), gatePose.getHeading())
                 .build();

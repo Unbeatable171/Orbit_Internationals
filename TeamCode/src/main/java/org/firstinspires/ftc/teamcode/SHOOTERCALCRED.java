@@ -169,6 +169,11 @@ public class SHOOTERCALCRED {
         double v0_new = velocityCalculator(x_new, newHoodAngleDeg);
 
 
+        if(Double.isNaN((v0_new))||v0_new <=0){
+            v0_new = v0;
+            newHoodAngleDeg = hoodAngleDeg;
+        }
+
         // --- Step B7: turret heading offset ---
         double headingLeadRad = Math.atan2(Vrt, Vx_compensated);
         double targetHeadingRad = Math.atan2(dy, dx);

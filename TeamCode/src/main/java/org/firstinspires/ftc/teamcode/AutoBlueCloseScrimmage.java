@@ -42,15 +42,15 @@ public class AutoBlueCloseScrimmage extends OpMode {
     }
 
     // --- Tunable parameters ---
-    public static double fireDurationSeconds   = 0.6;  //earlier value is 1
+    public static double fireDurationSeconds   = 0.5;  //earlier value is 1
     public static double maxWaitForShotSeconds = 2.5;
     public static double gateWaitSeconds       = 1;
 
     // Fixed shooter values — tune hoodPosition for your 65 deg target
-    public static int targetRPM1 = 2450;
+    public static int targetRPM1 = 2375;
     public static double hoodAngle1Deg = 65;   // degrees, not servo position
 
-    public static int targetRPM2 = 2500;
+    public static int targetRPM2 = 2450;
     public static double hoodAngle2Deg = 62;   // degrees, not servo position
 
     private SHOOTERCALCBLUE shootercalc = new SHOOTERCALCBLUE();
@@ -74,7 +74,7 @@ public class AutoBlueCloseScrimmage extends OpMode {
     // --- Poses ---
     private final Pose startPose  = new Pose(37.34831836370614,  136.13465551339004, Math.toRadians(90));
     private final Pose shootPose  = new Pose(58.6,   83.85628742514972, Math.toRadians(130));
-    private final Pose shootPose2 = new Pose(59.5,78,Math.toRadians(132));
+    private final Pose shootPose2 = new Pose(59.5,80,Math.toRadians(132));
 
     // Spike 1
     private final Pose spike1Pose        = new Pose(36, 82.39819893649711, Math.toRadians(180));
@@ -82,7 +82,7 @@ public class AutoBlueCloseScrimmage extends OpMode {
 
 
     // Spike 2
-    private final Pose spike2Pose               = new Pose(28.5, 54, Math.toRadians(180));
+    private final Pose spike2Pose               = new Pose(28.5, 56, Math.toRadians(180));
     private final Pose spike2Control1Pose       = new Pose(66,  50);
     private final Pose spike2ReturnControl1Pose = new Pose(80, 57.89657853810264);
 
@@ -227,6 +227,7 @@ public class AutoBlueCloseScrimmage extends OpMode {
                 .build();
 
         driveGate1ToShoot = follower.pathBuilder()
+                .setBrakingStart(0.8)
                 .addPath(new BezierCurve(gatePose, gateReturnControlPose,shootPose2))
                 .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose2.getHeading())
 //                .setHeadingInterpolation(

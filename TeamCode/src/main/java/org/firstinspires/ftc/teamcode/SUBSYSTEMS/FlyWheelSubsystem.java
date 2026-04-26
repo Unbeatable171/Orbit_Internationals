@@ -53,6 +53,8 @@ public class FlyWheelSubsystem extends SubsystemBase {
     }
 
     public void spinUp (double rpm) {
+        //mmm
+        if(Double.isNaN(rpm) || rpm < 0) return;
 
         if ( rpm < 3000) {
             double targetVelocity = rpmtoticks(rpm);
