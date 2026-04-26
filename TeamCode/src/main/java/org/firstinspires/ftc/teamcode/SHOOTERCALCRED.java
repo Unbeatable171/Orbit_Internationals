@@ -85,7 +85,10 @@ public class SHOOTERCALCRED {
         double cos = Math.cos(angleRad);
         double tan = Math.tan(angleRad);
         double denominator = 2 * cos * cos * (x * tan - y);
-
+//mmm
+        if(denominator <= 0){
+            return Double.NaN;
+        }
 
         return Math.sqrt(
                 (CalculatorConstants.gravityInches * x * x) / denominator
