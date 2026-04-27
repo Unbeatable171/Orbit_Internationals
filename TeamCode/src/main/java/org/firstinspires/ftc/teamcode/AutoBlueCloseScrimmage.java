@@ -83,12 +83,12 @@ public class AutoBlueCloseScrimmage extends OpMode {
 
     // Spike 2
     private final Pose spike2Pose               = new Pose(28.5, 56, Math.toRadians(180));
-    private final Pose spike2Control1Pose       = new Pose(66,  50);
-    private final Pose spike2ReturnControl1Pose = new Pose(80, 57.89657853810264);
+    private final Pose spike2Control1Pose       = new Pose(70,  50);
+    private final Pose spike2ReturnControl1Pose = new Pose(85, 83);
 
     // Gate
-    private final Pose gatePose              = new Pose(17.8, 57.7, Math.toRadians(145));
-    private final Pose gateControlPose       = new Pose(36.428710947133744, 64.18349791356334);
+    private final Pose gatePose              = new Pose(21.8, 57.7, Math.toRadians(145));
+    private final Pose gateControlPose       = new Pose(41.428710947133744, 64.18349791356334);
     private final Pose gateReturnControlPose = new Pose(25,  33.65863141524106);
 
     private final Pose leavePose = new Pose(25,56.7, Math.toRadians(145));

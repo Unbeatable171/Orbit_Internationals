@@ -38,7 +38,9 @@ public class AutoBlueFarScrimmage extends OpMode {
         RETURN_SHOT_5,
         FINISHED,
         BACK_TO_HUMAN,
-        HUMAN_TO_SHOOT
+        HUMAN_TO_SHOOT,
+        RETURN_SHOT_6,
+        TO_GATE_4
     }
 
     // --- Tunable parameters ---
@@ -46,14 +48,14 @@ public class AutoBlueFarScrimmage extends OpMode {
     public static double maxWaitForShotSeconds = 2.5;
     public static double gateWaitSeconds       = 0.8;
     public static double transferOpenSeconds   = 0.2;
-    public static double transferClosedSeconds = 0.3;
+    public static double transferClosedSeconds = 0.08;
     public static int shotPulseCountTarget     = 3;
 
-    public static double blueGoalXInches = 8;
+    public static double blueGoalXInches = 15;
     public static double blueGoalYInches = 136;
     // Fixed shooter values — tune hoodPosition for your 65 deg target
     public static int targetRPM1 = 3300;
-    public static double hoodAngle1Deg = 50;   // degrees, not servo position
+    public static double hoodAngle1Deg = 45;   // degrees, not servo position
 
     public static int targetRPM2 = 2450;
     public static double hoodAngle2Deg = 60;   // degrees, not servo position
@@ -92,7 +94,7 @@ public class AutoBlueFarScrimmage extends OpMode {
 //    private final Pose spike2ReturnControl1Pose = new Pose(44.92984555509721, 58.9215464474854);
 
     // Gate
-    private final Pose overflowPick = new Pose(16, 35.12498924965115, Math.toRadians(120));
+    private final Pose overflowPick = new Pose(16, 56.12498924965115, Math.toRadians(120));
     private final Pose overflowControlPose = new Pose(13.893564047419593, 2.0286688083403455);
 //    private final Pose gateReturnControlPose = new Pose(7.444645799011532,  31.175260681273393);
 
@@ -145,6 +147,8 @@ public class AutoBlueFarScrimmage extends OpMode {
     private PathChain driveOverflow3ToShoot3;
     private PathChain driveHumanToShoot;
     private PathChain driveBackToHuman;
+    private PathChain driveOverflow4ToShoot4;
+    private PathChain driveShootToOverflow4;
 
     @Override
     public void init() {
@@ -281,6 +285,22 @@ public class AutoBlueFarScrimmage extends OpMode {
                         HeadingInterpolator.facingPoint(CalculatorConstants.blueGoalXInches,CalculatorConstants.blueGoalYInches)
                 )
                 .build();
+
+        driveShootToOverflow4 = follower.pathBuilder()
+                .addPath(new BezierCurve(shootPose, overflowControlPose, overflowPick))
+                .setLinearHeadingInterpolation(shootPose.getHeading(), overflowPick.getHeading())
+                .build();
+
+        driveOverflow4ToShoot4 = follower.pathBuilder()
+                .addPath(new BezierLine(overflowPick, shootPose))
+//                .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose.getHeading())
+                .setHeadingInterpolation(
+                        HeadingInterpolator.facingPoint(CalculatorConstants.blueGoalXInches,CalculatorConstants.blueGoalYInches)
+                )
+                .build();
+
+
+
     }
 
     private void setSequenceState(SequenceState newState) {
@@ -315,18 +335,18 @@ public class AutoBlueFarScrimmage extends OpMode {
             case ToHumanZone:
                 currentPath       = driveShootToHuman;
                 intakeDuringPath  = true;
-                nextSequenceState = SequenceState.HumanToBack;
-                break;
-            case HumanToBack:
-                currentPath      = driveHumanToBack;
-                intakeDuringPath = true;
-                nextSequenceState = SequenceState.BACK_TO_HUMAN;
-                break;
-            case BACK_TO_HUMAN:
-                currentPath = driveBackToHuman;
-                intakeDuringPath = true;
                 nextSequenceState = SequenceState.HUMAN_TO_SHOOT;
                 break;
+            //case HumanToBack:
+                //currentPath      = driveHumanToBack;
+            //    intakeDuringPath = true;
+                //nextSequenceState = SequenceState.BACK_TO_HUMAN;
+              //  break;
+            //case BACK_TO_HUMAN:
+             //   currentPath = driveBackToHuman;
+               // intakeDuringPath = true;
+               // nextSequenceState = SequenceState.HUMAN_TO_SHOOT;
+              //  break;
             case HUMAN_TO_SHOOT:
                 currentPath = driveHumanToShoot;
                 intakeDuringPath = true;
@@ -372,14 +392,26 @@ public class AutoBlueFarScrimmage extends OpMode {
                 currentPath       = driveShootToOverflow3;
                 intakeDuringPath  = true;
                 waitAtEndOfPath   = true;
-                nextSequenceState = SequenceState.FINISHED;
+                nextSequenceState = SequenceState.RETURN_SHOT_5;
                 break;
             case RETURN_SHOT_5:
                 currentPath       = driveOverflow3ToShoot3;
                 shootDuringPath   = true;
                 intakeDuringPath = true;
-                nextSequenceState = SequenceState.FINISHED;
+                nextSequenceState = SequenceState.TO_GATE_4;
                 break;
+            case TO_GATE_4:
+                currentPath = driveShootToOverflow4;
+                shootDuringPath  = true;
+                intakeDuringPath = true;
+                nextSequenceState =  sequenceState.FINISHED;
+                break;
+            //case RETURN_SHOT_6:
+            //    currentPath     = driveOverflow4ToShoot4;
+             //   shootDuringPath   = true;
+             //   intakeDuringPath = true;
+             //   nextSequenceState = SequenceState.FINISHED;
+             //   break;
             case FINISHED:
                 stopTransferAction.run();
                 shootAction.stop();
