@@ -42,9 +42,9 @@ public class AutoBlueCloseScrimmage extends OpMode {
     }
 
     // --- Tunable parameters ---
-    public static double fireDurationSeconds   = 0.5;  //earlier value is 1
+    public static double fireDurationSeconds   = 0.6;  //earlier value is 1
     public static double maxWaitForShotSeconds = 2.5;
-    public static double gateWaitSeconds       = 1;
+    public static double gateWaitSeconds       = 1.0;
 
     // Fixed shooter values — tune hoodPosition for your 65 deg target
     public static int targetRPM1 = 2375;
@@ -87,7 +87,7 @@ public class AutoBlueCloseScrimmage extends OpMode {
     private final Pose spike2ReturnControl1Pose = new Pose(80, 57.89657853810264);
 
     // Gate
-    private final Pose gatePose              = new Pose(17.8, 56.7, Math.toRadians(145));
+    private final Pose gatePose              = new Pose(17.8, 57.7, Math.toRadians(145));
     private final Pose gateControlPose       = new Pose(36.428710947133744, 64.18349791356334);
     private final Pose gateReturnControlPose = new Pose(25,  33.65863141524106);
 
@@ -448,34 +448,34 @@ public class AutoBlueCloseScrimmage extends OpMode {
 //        } else {
 //            shootAction.idle();
 
-                if (pathDone && !shotTriggered && !shotFinished) {
-                    // Start the wait timer once path finishes
-                    if (!pathEndWaitStarted) {
-                        pathEndWaitStarted = true;
-                        pathEndTimer.reset();
-                    }
-
-                    // Fire as soon as flywheel is ready
-                    if (flywheelReady) {
-                        transferAction.start();
-                        shotTriggered = true;
-                        shotTimer.reset();
-                    }
-                    // Timeout — flywheel never got ready, skip shot
-                    else if (pathEndTimer.seconds() >= maxWaitForShotSeconds) {
-                        stopTransferAction.run();
-                        shotFinished = true;
-                    }
+            if (pathDone && !shotTriggered && !shotFinished) {
+                // Start the wait timer once path finishes
+                if (!pathEndWaitStarted) {
+                    pathEndWaitStarted = true;
+                    pathEndTimer.reset();
                 }
 
-                // Stop transfer after fireDurationSeconds once shot was triggered
-                if (shotTriggered && !shotFinished && shotTimer.seconds() >= fireDurationSeconds) {
+                // Fire as soon as flywheel is ready
+                if (flywheelReady) {
+                    transferAction.start();
+                    shotTriggered = true;
+                    shotTimer.reset();
+                }
+                // Timeout — flywheel never got ready, skip shot
+                else if (pathEndTimer.seconds() >= maxWaitForShotSeconds) {
                     stopTransferAction.run();
                     shotFinished = true;
                 }
+            }
 
-            } else {
-                shootAction.idle();
+            // Stop transfer after fireDurationSeconds once shot was triggered
+            if (shotTriggered && !shotFinished && shotTimer.seconds() >= fireDurationSeconds) {
+                stopTransferAction.run();
+                shotFinished = true;
+            }
+
+        } else {
+            shootAction.idle();
         }
 
         // Keep intake running during intake segments until shot triggers
