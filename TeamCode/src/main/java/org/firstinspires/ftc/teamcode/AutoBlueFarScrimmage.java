@@ -81,7 +81,7 @@ public class AutoBlueFarScrimmage extends OpMode {
     private final Pose shootPose  = new Pose(56.11586314152411,   13.20373250388803, Math.toRadians(114.5));
 
     // Spike 1
-    private final Pose humanZone = new Pose(25.5, 5, Math.toRadians(180));
+    private final Pose humanZone = new Pose(25.5, 5, Math.toRadians(220));
     private final Pose backPose = new Pose(31.5,6,Math.toRadians(180));
     private final Pose humanzoneReturnControl = new Pose (26.274883359253494,17.184292379471227);
     private final Pose humanzoneReturnControl2 = new Pose (0,0);
@@ -94,8 +94,8 @@ public class AutoBlueFarScrimmage extends OpMode {
 //    private final Pose spike2ReturnControl1Pose = new Pose(44.92984555509721, 58.9215464474854);
 
     // Gate
-    private final Pose overflowPick = new Pose(16, 56.12498924965115, Math.toRadians(120));
-    private final Pose overflowControlPose = new Pose(13.893564047419593, 2.0286688083403455);
+    private final Pose overflowPick = new Pose(12.89, 38.12498924965115, Math.toRadians(120));
+    private final Pose overflowControlPose = new Pose(18.893564047419593, 1.0286688083403455);
 //    private final Pose gateReturnControlPose = new Pose(7.444645799011532,  31.175260681273393);
 
     // --- Subsystems ---
@@ -248,7 +248,7 @@ public class AutoBlueFarScrimmage extends OpMode {
                 .build();
 
         driveShootToOverflow = follower.pathBuilder()
-                .addPath(new BezierCurve(shootPose, overflowControlPose, overflowPick))
+                .addPath(new BezierCurve(shootPose,overflowControlPose, overflowPick))
                 .setLinearHeadingInterpolation(shootPose.getHeading(), overflowPick.getHeading())
                 .build();
 
@@ -261,7 +261,7 @@ public class AutoBlueFarScrimmage extends OpMode {
                 .build();
 
         driveShoottoOverflow2 = follower.pathBuilder()
-                .addPath(new BezierCurve(shootPose, overflowControlPose, overflowPick))
+                .addPath(new BezierCurve(shootPose,overflowControlPose, overflowPick))
                 .setLinearHeadingInterpolation(shootPose.getHeading(), overflowPick.getHeading())
                 .build();
 
@@ -274,7 +274,7 @@ public class AutoBlueFarScrimmage extends OpMode {
                 .build();
 
         driveShootToOverflow3 = follower.pathBuilder()
-                .addPath(new BezierCurve(shootPose, overflowControlPose, overflowPick))
+                .addPath(new BezierCurve(shootPose,overflowControlPose, overflowPick))
                 .setLinearHeadingInterpolation(shootPose.getHeading(), overflowPick.getHeading())
                 .build();
 
@@ -287,7 +287,7 @@ public class AutoBlueFarScrimmage extends OpMode {
                 .build();
 
         driveShootToOverflow4 = follower.pathBuilder()
-                .addPath(new BezierCurve(shootPose, overflowControlPose, overflowPick))
+                .addPath(new BezierCurve(shootPose,overflowControlPose,overflowPick))
                 .setLinearHeadingInterpolation(shootPose.getHeading(), overflowPick.getHeading())
                 .build();
 
