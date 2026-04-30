@@ -51,10 +51,10 @@ public class AutoRedCloseScrimmage extends OpMode {
     public static double gateWaitSeconds       = 1;
 
     // Fixed shooter values — tune hoodPosition for your 65 deg target
-    public static int targetRPM1 = 2425;
+    public static int targetRPM1 = 2450;
     public static double hoodAngle1Deg = 65;   // degrees, not servo position
 
-    public static int targetRPM2 = 2435;
+    public static int targetRPM2 = 2450;
     public static double hoodAngle2Deg = 62;    // degrees, not servo position
 
     private SHOOTERCALCRED shootercalc = new SHOOTERCALCRED();
@@ -83,7 +83,7 @@ public class AutoRedCloseScrimmage extends OpMode {
     private final Pose shootPose2 = new Pose(80,90,Math.toRadians(43));
 
     // Spike 2
-    private final Pose spike2Pose               = new Pose(131.5, 73, Math.toRadians(0));
+    private final Pose spike2Pose               = new Pose(133, 73, Math.toRadians(0));
     private final Pose spike2Control1Pose       = new Pose(76.41433278418451,  64);
     private final Pose spike2ReturnControl1Pose = new Pose(96.57015444490278, 68);
 

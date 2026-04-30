@@ -40,7 +40,7 @@ public class AutoRedFarNationals {
             BACK_TO_HUMAN,
             HUMAN_TO_SHOOT,
             RETURN_SHOT_6,
-            TO_GATE_4
+            TO_GATE_4,
         }
 
         // --- Tunable parameters ---
@@ -48,11 +48,11 @@ public class AutoRedFarNationals {
         public static double maxWaitForShotSeconds = 2.5;
         public static double gateWaitSeconds       = 0.8;
         public static double transferOpenSeconds   = 0.2;
-        public static double transferClosedSeconds = 0.08;
+        public static double transferClosedSeconds = 0.1;
         public static int shotPulseCountTarget     = 3;
 
-        public static double redGoalXInches = 15;
-        public static double redGoalYInches = 136;
+        public static double redGoalXInches = 137;
+        public static double redGoalYInches = 146;
         // Fixed shooter values — tune hoodPosition for your 65 deg target
         public static int targetRPM1 = 3300;
         public static double hoodAngle1Deg = 45;   // degrees, not servo position
@@ -212,10 +212,7 @@ public class AutoRedFarNationals {
 
             driveHumanToBack = follower.pathBuilder()
                     .addPath(new BezierLine(humanZone, backPose))
-                    .setLinearHeadingInterpolation(humanZone.getHeading(), backPose.getHeading())
-//                .setHeadingInterpolation(
-//                        HeadingInterpolator.facingPoint(CalculatorConstants.blueGoalXInches,CalculatorConstants.blueGoalYInches)
-//                )
+                    .setConstantHeadingInterpolation(humanZone.getHeading())  // keeps humanZone heading the whole time
                     .build();
 
             driveBackToHuman = follower.pathBuilder()
