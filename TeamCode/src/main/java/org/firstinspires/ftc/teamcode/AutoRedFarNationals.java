@@ -81,7 +81,7 @@ public class AutoRedFarNationals {
         private final Pose shootPose  = new Pose(56.11586314152411,   13.20373250388803, Math.toRadians(114.5)).mirror();
 
         // Spike 1
-        private final Pose humanZone = new Pose(140, 28, Math.toRadians(220));
+        private final Pose humanZone = new Pose(140, 28, Math.toRadians(40));
         private final Pose backPose = new Pose(31.5,6,Math.toRadians(180)).mirror();
         private final Pose humanzoneReturnControl = new Pose (26.274883359253494,17.184292379471227).mirror();
         private final Pose humanzoneReturnControl2 = new Pose (0,0).mirror();
@@ -95,7 +95,7 @@ public class AutoRedFarNationals {
 
         // Gate
         private final Pose overflowPick = new Pose(12.89, 38.12498924965115, Math.toRadians(120)).mirror();
-        private final Pose overflowControlPose = new Pose(18.893564047419593, 1.0286688083403455).mirror();
+        private final Pose overflowControlPose = new Pose(127.60643595258041, 10);
 //    private final Pose gateReturnControlPose = new Pose(7.444645799011532,  31.175260681273393);
 
         // --- Subsystems ---
