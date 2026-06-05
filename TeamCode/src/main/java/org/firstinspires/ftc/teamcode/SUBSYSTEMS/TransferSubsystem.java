@@ -13,7 +13,7 @@ public class TransferSubsystem extends SubsystemBase {
     private static final double servoOpen = 0.48;
 
     public TransferSubsystem(HardwareMap hardwareMap){
-        transfer = hardwareMap.get(Servo.class,"transfer");
+        transfer = hardwareMap.get(Servo.class,"transferServo");
     }
 
     public void Open(){

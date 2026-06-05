@@ -16,15 +16,15 @@ public class FlyWheelConstants{
     public static double velocityTolerance = 50.0;
     public static double targetRPM = 2300;
     public static double hoodAngle = 65;
-    public static double hoodMinServoPosition = 0.1;
+    public static double hoodMinServoPosition = 0.28;
     public static double hoodMaxServoPosition = 1.0;
     public static double hoodAngleSlope = 36.67;
     public static double hoodAngleIntercept = 38.33;
 
     public static double velocityoffset = 150;
     public static double rpmoffset = 0;
-    public static double rpmoffsetFar = 300;
-    public static double rpmoffsetClose = 50;
+    public static double rpmoffsetFar = 410;
+    public static double rpmoffsetClose = 80;
     public static double idleRpm = 2200;
     public static double rpmVelocitySlope = 12.9285;
     public static double rpmVelocityIntercept = -268.42;
