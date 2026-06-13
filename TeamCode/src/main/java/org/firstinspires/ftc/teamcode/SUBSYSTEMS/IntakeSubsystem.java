@@ -13,7 +13,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private final DcMotorEx transfer;
 
     private static final double intakeSpeed = 1.0;
-    private static final double intakeTransferSpeed = 0.3;
+    private static final double intakeTransferSpeed = 1;
     private static final double reverseSpeed = -0.8;
     private static final double transferSpeed = 1.0;
 

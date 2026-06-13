@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.SUBSYSTEMS;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -16,10 +17,10 @@ public class DriveSubsystem extends SubsystemBase {
         backleft   = hardwareMap.get(DcMotorEx.class, "bl");
         backright  = hardwareMap.get(DcMotorEx.class, "br");
 
-        frontleft.setDirection(DcMotorEx.Direction.REVERSE);
-        backleft.setDirection(DcMotorEx.Direction.REVERSE);
+        frontleft.setDirection(DcMotorEx.Direction.FORWARD);
+        backleft.setDirection(DcMotorEx.Direction.FORWARD);
         frontright.setDirection(DcMotorEx.Direction.REVERSE);
-        backright.setDirection(DcMotorEx.Direction.FORWARD);
+        backright.setDirection(DcMotorEx.Direction.REVERSE);
 
         frontleft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontright.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

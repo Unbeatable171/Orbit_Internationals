@@ -1,17 +1,12 @@
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.DriveSubsystem;
@@ -20,7 +15,8 @@ import org.firstinspires.ftc.teamcode.SUBSYSTEMS.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.COMMAND.DriveCommand;
 
-public class TeleOp extends CommandOpMode {
+@TeleOp(name = "TeleOp1")
+public class TeleOp1 extends CommandOpMode {
 
     private static final double rpm1 = 2300;
     private static final double hood1 = 0.5375;
@@ -60,8 +56,8 @@ public class TeleOp extends CommandOpMode {
         new DriveCommand(
                 driveSubsystem,
                 () -> (double) gamepad1.left_stick_y,
-                () -> (double) gamepad1.right_stick_x,
-                () -> (double) gamepad1.left_stick_x
+                () -> (double) -gamepad1.left_stick_x,
+                () -> (double) - gamepad1.right_stick_x
         ).schedule();
 
         intakeSubsystem.setDefaultCommand(
@@ -87,6 +83,7 @@ public class TeleOp extends CommandOpMode {
                         flyWheelSubsystem.stop();
                     }
                     flyWheelSubsystem.setHoodAngle(Constants.hoodAngle);
+                    flyWheelSubsystem.setTurretAngleRad(Constants.turretAngleRad);
                 }, flyWheelSubsystem)
         );
 
