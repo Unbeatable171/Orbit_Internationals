@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.FlyWheelConstants;
+import org.firstinspires.ftc.teamcode.Constants;
 
 public class FlyWheelSubsystem extends SubsystemBase {
 
@@ -57,17 +57,17 @@ public class FlyWheelSubsystem extends SubsystemBase {
         //mmm
         if(Double.isNaN(rpm) || rpm < 0) return;
 
-        if ( rpm < 3000) {
+
             double targetVelocity = rpmtoticks(rpm);
             double actualLeft = shooterLeft.getVelocity();
             double actualRight = shooterRight.getVelocity();
 
             //Update PID values every tick
-            pidTop.setPID(FlyWheelConstants.kP, FlyWheelConstants.kI, FlyWheelConstants.kD);
-            pidBottom.setPID(FlyWheelConstants.kP, FlyWheelConstants.kI, FlyWheelConstants.kD);
+            pidTop.setPID(Constants.kP, Constants.kI, Constants.kD);
+            pidBottom.setPID(Constants.kP, Constants.kI, Constants.kD);
 
             //FeedForward
-            double ff = FlyWheelConstants.kF * (targetVelocity / maxTicks_per_rev);
+            double ff = Constants.kF * (targetVelocity / maxTicks_per_rev);
             // FlyWheelConstants.kS + FlyWheelConstants.kV * (targetVelocity / maxTicks_per_rev);
 
             //Voltage Compensation
@@ -85,36 +85,6 @@ public class FlyWheelSubsystem extends SubsystemBase {
 
             shooterLeft.setPower(powerTop);
             shooterRight.setPower(powerBottom);
-        }
-        else {
-            double targetVelocity = rpmtoticks(rpm);
-            double actualLeft = shooterLeft.getVelocity();
-            double actualRight = shooterRight.getVelocity();
-
-            //Update PID values every tick
-            pidTop.setPID(FlyWheelConstants.kPHigh, FlyWheelConstants.kIHigh, FlyWheelConstants.kDHigh);
-            pidBottom.setPID(FlyWheelConstants.kPHigh, FlyWheelConstants.kIHigh, FlyWheelConstants.kDHigh);
-
-            //FeedForward
-            double ff = FlyWheelConstants.kF * (targetVelocity / maxTicks_per_rev);
-            // FlyWheelConstants.kS + FlyWheelConstants.kV * (targetVelocity / maxTicks_per_rev);
-
-            //Voltage Compensation
-            double voltageScale = 12.0 / voltageSensor.getVoltage();
-
-            //Clamp
-            double powerTop = ff + pidTop.calculate(actualLeft, targetVelocity);
-            double powerBottom = ff + pidBottom.calculate(actualRight, targetVelocity);
-
-            powerTop *= voltageScale;
-            powerBottom *= voltageScale;
-
-            powerTop = Math.max(-1, Math.min(1, powerTop));
-            powerBottom = Math.max(-1, Math.min(1, powerBottom));
-
-            shooterLeft.setPower(powerTop);
-            shooterRight.setPower(powerBottom);
-        }
 
     }
 
@@ -122,11 +92,10 @@ public class FlyWheelSubsystem extends SubsystemBase {
         double targetVelocity = rpmtoticks(rpm);
         double errorTop = Math.abs(targetVelocity - shooterLeft.getVelocity());
         double errorBottom = Math.abs(targetVelocity - shooterRight.getVelocity());
-        return errorTop < FlyWheelConstants.velocityTolerance && errorBottom < FlyWheelConstants.velocityTolerance;
+        return errorTop < Constants.velocityTolerance && errorBottom < Constants.velocityTolerance;
     }
 
     public void idle(){
-
         spinUp(idleRPM);
     }
 
@@ -138,12 +107,16 @@ public class FlyWheelSubsystem extends SubsystemBase {
     }
 
     public void setHoodAngle(double degrees){
-        double position = FlyWheelConstants.hoodAngleToServoPosition(degrees);
+        double position = Constants.hoodAngleToServoPosition(degrees);
         position = Math.max(
-                FlyWheelConstants.hoodMinServoPosition,
-                Math.min(FlyWheelConstants.hoodMaxServoPosition, position)
+                Constants.hoodMinServoPosition,
+                Math.min(Constants.hoodMaxServoPosition, position)
         );
         hoodServo.setPosition(position);
+    }
+
+    public double getHoodAngle() {
+        return Constants.servoPositionToHoodAngle(hoodServo.getPosition());
     }
 
     public double ticksToRPM(double ticks){
@@ -152,11 +125,11 @@ public class FlyWheelSubsystem extends SubsystemBase {
     }
 
 
-    public double getCurrentRPMTOP() {
+    public double getCurrentRPMLeft() {
         return ticksToRPM(shooterLeft.getVelocity());
     }
 
-    public double getCurrentRPMBottom(){
+    public double getCurrentRPMRight(){
 
         return ticksToRPM(shooterRight.getVelocity());
     }

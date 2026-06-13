@@ -36,7 +36,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         forward = Math.pow(forward, 1);
         strafe  = Math.pow(strafe,  1);
-        rotate  = Math.pow(rotate,  1) * 0.8;
+        rotate  = Math.pow(rotate,  1); //*0.8
 
 
         double fl = forward + strafe + rotate;
