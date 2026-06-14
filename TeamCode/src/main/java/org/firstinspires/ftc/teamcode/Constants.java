@@ -17,7 +17,7 @@ public class Constants {
     public static volatile double hoodAngleIntercept = 38.33;
 
     public static volatile double idleRpm = 2200;
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 
     public static double hoodAngleToServoPosition(double hoodAngleDeg) {
         return (hoodAngleDeg - hoodAngleIntercept) / hoodAngleSlope;
