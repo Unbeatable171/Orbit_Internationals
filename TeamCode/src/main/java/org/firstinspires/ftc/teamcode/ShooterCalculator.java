@@ -34,14 +34,6 @@ public class ShooterCalculator {
             this.turretAngleRad = turretAngleRad;
         }
     }
-
-    private final double goalXInches = Constants.blueGoalXInches;
-    private final double goalYInches = Constants.blueGoalYInches;
-
-    private double g = Constants.gravityInches;
-    private double y = Constants.goalHeightInches;
-    private double a = Constants.scoreAngle;
-
     public double clamp(double value, double minValue, double maxValue) {
         return Math.max(minValue, Math.min(value, maxValue));
     }
@@ -74,15 +66,16 @@ public class ShooterCalculator {
         double releaseX = releaseXInches(robotX, robotY, robotHeadingRad);
         double releaseY = releaseYInches(robotX, robotY, robotHeadingRad);
 
-        double distanceX = goalXInches - releaseX;
-        double distanceY = goalYInches - releaseY;
+        double distanceX = Constants.blueGoalXInches - releaseX;
+        double distanceY = Constants.blueGoalYInches - releaseY;
 
         return Math.sqrt(distanceX * distanceX + distanceY * distanceY);
     }
 
     public double hoodAngleCalculator(double distanceInches) {
         double hoodAngleDeg = Math.toDegrees(
-                Math.atan((2 * y / distanceInches) - Math.tan(Math.toRadians(a)))
+                Math.atan((2 * Constants.goalHeightInches / distanceInches)
+                        - Math.tan(Math.toRadians(Constants.scoreAngle)))
         );
         return clamp(
                 hoodAngleDeg,
@@ -139,8 +132,8 @@ public class ShooterCalculator {
         // --- Step B1: decompose robot velocity into radial and tangential ---
         double releaseX = releaseXInches(robotX, robotY, robotHeadingRad);
         double releaseY = releaseYInches(robotX, robotY, robotHeadingRad);
-        double dx = goalXInches - releaseX;
-        double dy = goalYInches - releaseY;
+        double dx = Constants.blueGoalXInches - releaseX;
+        double dy = Constants.blueGoalYInches - releaseY;
         double unitX = dx / distanceInches;
         double unitY = dy / distanceInches;
 
