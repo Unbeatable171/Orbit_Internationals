@@ -11,10 +11,10 @@ public class Constants {
     public static volatile double targetRPM = 1500;
     public static volatile double hoodAngle = 65;
     public static volatile double turretAngleRad = 0.0;
-    public static volatile double hoodMinServoPosition = 0.28;
+    public static volatile double hoodMinServoPosition = 0.22;
     public static volatile double hoodMaxServoPosition = 1.0;
-    public static volatile double hoodAngleSlope = 36.67;
-    public static volatile double hoodAngleIntercept = 38.33;
+    public static volatile double hoodAngleSlope = 37.0974358974359;
+    public static volatile double hoodAngleIntercept = 36.6365641025641;
 
     public static volatile double idleRpm = 2200;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
@@ -47,8 +47,8 @@ public class Constants {
     public static volatile double passThroughRadius = 5;
 
     // Hood angles are physical launch angles in degrees, not servo positions.
-    public static volatile double minHoodAngleDeg = 48.6;
-    public static volatile double maxHoodAngleDeg = 75;
+    public static volatile double minHoodAngleDeg = 44.798;
+    public static volatile double maxHoodAngleDeg = 73.734;
 
 
     //TODO Retune rpm vs velocity regression, with constant hood angle
