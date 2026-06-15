@@ -4,8 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class Constants {
-    public static volatile double kF = 1;
-    public static volatile double kP = 1;
+    public static volatile double kF = 1.7;
+    public static volatile double kP = 1.35;
     public static volatile double kI = 0.0;
     public static volatile double kD = 0;
     public static volatile double targetRPM = 1500;

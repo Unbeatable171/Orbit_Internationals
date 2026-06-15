@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.util.Range;
 public class ServoPositionFinder extends OpMode {
 
     private Servo hoodServo, gateServo;
-    private double hoodposition = 0.1;
-    private double gateposition = 0.32;
+    private double hoodposition = 0;
+    private double gateposition = 0;
     private double increment = 0.02;
 
     private boolean prevUp, prevDown, prevRight, prevLeft;
@@ -20,7 +20,7 @@ public class ServoPositionFinder extends OpMode {
     @Override
     public void init () {
         hoodServo = hardwareMap.get(Servo.class,"hoodServo");
-        gateServo = hardwareMap.get(Servo.class,"transfer");
+        //gateServo = hardwareMap.get(Servo.class,"transfer");
     }
 
 
@@ -49,13 +49,13 @@ public class ServoPositionFinder extends OpMode {
         }
 
         gateposition = Range.clip(gateposition, 0.0, 1.0);
-        gateServo.setPosition(gateposition);
+        //gateServo.setPosition(gateposition);
 
         telemetry.addData("Hood position is",hoodposition);
         telemetry.addData("Hood angle is", Constants.servoPositionToHoodAngle(hoodposition));
         telemetry.addData("Increment is",increment);
         telemetry.addData("Gate position is", gateposition);
-        telemetry.addData("Gate angle is", gateposition*300);
+        telemetry.addData("Gate angle is", gateposition*270);
         telemetry.update();
 
         prevLeft = gamepad1.dpad_left;
