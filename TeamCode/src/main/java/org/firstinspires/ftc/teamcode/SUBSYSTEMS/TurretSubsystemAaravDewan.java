@@ -23,7 +23,7 @@ public class TurretSubsystemAaravDewan extends SubsystemBase {
 
     public static double SLEW_DEG_PER_SEC = 180.0;
 
-    public static double RED_GOAL_X  = 137.0;
+    public static double RED_GOAL_X  = 144.0;
     public static double RED_GOAL_Y  = 144.0;
     public static double BLUE_GOAL_X = 0.0;
     public static double BLUE_GOAL_Y = 144.0;
@@ -47,7 +47,7 @@ public class TurretSubsystemAaravDewan extends SubsystemBase {
     private double lastLeftPos;
     private double lastRightPos;
 
-    public TurretSubsystemAaravDewan(HardwareMap hardwareMap) {
+    public TurretSubsystemAaravDewan (HardwareMap hardwareMap) {
         try {
             leftServo = hardwareMap.get(Servo.class, TURRET_SERVO_LEFT_NAME);
             leftPresent = true;
@@ -80,8 +80,7 @@ public class TurretSubsystemAaravDewan extends SubsystemBase {
             double dx = goalX - robotX;
             double dy = goalY - robotY;
             double bearingRad = Math.atan2(dy, dx);
-            desiredAngleDeg = Math.toDegrees(bearingRad - robotHeadingRad);
-        } else {
+            desiredAngleDeg = angleWrap(Math.toDegrees(bearingRad - robotHeadingRad));        } else {
             desiredAngleDeg = TURRET_SAFE_CENTER_ANGLE_DEG;
         }
 
@@ -93,7 +92,7 @@ public class TurretSubsystemAaravDewan extends SubsystemBase {
         lastTargetAngleDeg = clampedTarget;
 
         double maxStep = SLEW_DEG_PER_SEC * dt;
-        double err = clampedTarget - cmdAngleDeg;
+        double err = angleWrap(clampedTarget - cmdAngleDeg);
         if (Math.abs(err) <= maxStep) {
             cmdAngleDeg = clampedTarget;
         } else {
@@ -162,6 +161,11 @@ public class TurretSubsystemAaravDewan extends SubsystemBase {
         while (a - center >  180.0) a -= 360.0;
         while (a - center < -180.0) a += 360.0;
         return a;
+    }
+    private static double angleWrap(double angleDeg) {
+        while (angleDeg > 180.0) angleDeg -= 360.0;
+        while (angleDeg < -180.0) angleDeg += 360.0;
+        return angleDeg;
     }
 
     private static double lerp(double a, double b, double t) { return a + (b - a) * t; }

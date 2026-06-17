@@ -1,14 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.config.Config;//import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class Constants {
-    public static volatile double kF = 1.7;
-    public static volatile double kP = 1.35;
-    public static volatile double kI = 0.0;
-    public static volatile double kD = 0;
-    public static volatile double targetRPM = 1500;
+
     public static volatile double hoodAngle = 65;
     public static volatile double turretAngleRad = 0.0;
     public static volatile double hoodMinServoPosition = 0.22;
@@ -17,25 +13,17 @@ public class Constants {
     public static volatile double hoodAngleIntercept = 36.6365641025641;
 
     public static volatile double idleRpm = 2200;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 
-    public static double hoodAngleToServoPosition(double hoodAngleDeg) {
-        return (hoodAngleDeg - hoodAngleIntercept) / hoodAngleSlope;
-    }
-
-    public static double servoPositionToHoodAngle(double servoPosition) {
-        return (hoodAngleSlope * servoPosition) + hoodAngleIntercept;
-    }
-
-    //--------------------------------------------------------------------//
-
-    public static double inchesToMeters(double inches) {
-        return inches * 0.0254;
-    }
 
 
     // Goal Poses
     public static volatile double blueGoalXInches = 0;
+
+    public static volatile double kF = 1.4;
+    public static volatile double kP = 0.001;
+    public static volatile double kI = 0.0;
+    public static volatile double kD = 0;
+    public static volatile double targetRPM = 900;
     public static volatile double blueGoalYInches = 142;
     public static volatile double redGoalXInches = 142;
     public static volatile double redGoalYInches = 142;
@@ -84,5 +72,21 @@ public class Constants {
     public static double clip(double value, double min, double max) {
         return Math.max(min, Math.min(max, value));
     }
+
+    public static double hoodAngleToServoPosition(double hoodAngleDeg) {
+        return (hoodAngleDeg - hoodAngleIntercept) / hoodAngleSlope;
+    }
+
+    public static double servoPositionToHoodAngle(double servoPosition) {
+        return (hoodAngleSlope * servoPosition) + hoodAngleIntercept;
+    }
+
+    //--------------------------------------------------------------------//
+
+    public static double inchesToMeters(double inches) {
+        return inches * 0.0254;
+    }
+
+
 
 }
