@@ -23,5 +23,8 @@ android {
 dependencies {
     implementation project(':FtcRobotController')
     implementation 'androidx.xr.runtime:runtime:1.0.0-alpha14'
+    implementation "org.solverslib:core:0.3.4"
+    implementation "org.solverslib:core:0.3.4" // core
+    implementation "org.solverslib:pedroPathing:0.3.4" // pedroPathing
     // Everything else comes from build.dependencies.gradle
 }
