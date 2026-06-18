@@ -10,7 +10,7 @@ public class RobotConstants {
     public static Pose blueGoalPose =
             new Pose(
                     2,
-                    141,
+                    144,
                     Math.toRadians(90)
             );
 
@@ -28,7 +28,7 @@ public class RobotConstants {
                     Math.toRadians(90)
             );
 
-    public static String chosenAlliance = "RED";
+    public static String chosenAlliance = "BLUE";
 
     public static Pose savedPose = null;
 

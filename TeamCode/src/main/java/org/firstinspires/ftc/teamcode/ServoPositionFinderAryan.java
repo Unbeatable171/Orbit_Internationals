@@ -14,7 +14,7 @@ public class ServoPositionFinderAryan extends OpMode {
     private static final String SERVO_NAME = "hoodServo";
 
     private static final double HOOD_HOME = 1.0;
-    private static final double STEP = 0.02;
+    private static final double STEP = 1;
 
     private static final double SWEEP_STEP = 0.01;
     private static final int SWEEP_DELAY = 20;

@@ -20,6 +20,8 @@ import org.firstinspires.ftc.teamcode.SUBSYSTEMS.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.TurretSubsystemAaravDewan;
 import org.firstinspires.ftc.teamcode.Command.DriveCommand;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.TurretSubsystemAaravDewan;
+import org.firstinspires.ftc.teamcode.SUBSYSTEMS.Turrettt;
+import org.firstinspires.ftc.teamcode.globals.Localization;
 
 @TeleOp(name = "TTT")
 public class TTT extends CommandOpMode {
@@ -37,6 +39,7 @@ public class TTT extends CommandOpMode {
     private FlyWheelSubsystem flyWheelSubsystem;
     private TransferSubsystem transferSubsystem;
     private TurretSubsystemAaravDewan turretSubsystem;
+    private Turrettt turrettt;
 
     private Follower follower;
 
@@ -164,6 +167,11 @@ public class TTT extends CommandOpMode {
     public void run() {
         follower.update();
         super.run();
+        Localization.update();
+
+        turrettt.periodic();
+
+
 
         double currentRpmLeft = flyWheelSubsystem.getCurrentRPMLeft();
         double currentRpmRight = flyWheelSubsystem.getCurrentRPMRight();

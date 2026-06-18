@@ -22,20 +22,20 @@ public class Turrettt extends SubsystemBase {
     public final ServoEx servoLeftBack;
     public final ServoExGroup turretServos;
 
-    public static double minimumValueRad = 0.0;
-    public static double maximumValueRad = 2.0 * Math.PI;
+    public static double minimumValueRad = -Math.PI;
+    public static double maximumValueRad = Math.PI;
 
-    public static double minPosServos = 0.16;
+    public static double minPosServos = 0.1625;
     public static double maxPosServos = 0.845;
 
-    public static double maxStepPerLoop = 0.09;
+    public static double maxStepPerLoop = 0.025;
 
-    public static double wrapLow = 0.21;
-    public static double wrapHigh = 0.795;
+    public static double wrapLow = 0.1925;
+    public static double wrapHigh = 0.815;
 
-    public static double safeMiddle = 0.34;
+    public static double safeMiddle = 0.5;
 
-    public static double turretMountOffset = Math.PI;
+    public static double turretMountOffset = 0.0;
 
 
     private double currentServoPosition = safeMiddle;
@@ -110,7 +110,7 @@ public class Turrettt extends SubsystemBase {
                         - robotHeading
                         + turretMountOffset;
 
-        return normalizeRadians(turretHeading);
+        return normalizeSignedRadians(turretHeading);
     }
 
 
@@ -126,12 +126,16 @@ public class Turrettt extends SubsystemBase {
     }
 
 
-    private double normalizeRadians(double angle) {
+    private double normalizeSignedRadians(double angle) {
 
         double fullRotation = 2.0 * Math.PI;
         double normalized = angle % fullRotation;
 
-        if (normalized < 0.0) {
+        if (normalized > Math.PI) {
+            normalized -= fullRotation;
+        }
+
+        if (normalized < -Math.PI) {
             normalized += fullRotation;
         }
 

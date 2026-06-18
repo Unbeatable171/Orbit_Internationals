@@ -16,6 +16,7 @@ public class FlyWheelSubsystem extends SubsystemBase {
     public DcMotorEx shooterLeft, shooterRight;
     private Servo hoodServo;
     private Servo turretServo1, turretServo2;
+    private final HardwareMap hardwareMap;
     private PIDController pidTop, pidBottom;
     public VoltageSensor voltageSensor;
 
@@ -27,11 +28,10 @@ public class FlyWheelSubsystem extends SubsystemBase {
     private static final double idleRPM = 2000;
 
     public FlyWheelSubsystem(HardwareMap hardwareMap){
+        this.hardwareMap = hardwareMap;
         shooterLeft = hardwareMap.get(DcMotorEx.class,"shooterRight");
         shooterRight = hardwareMap.get(DcMotorEx.class,"shooterLeft");
         hoodServo = hardwareMap.get(Servo.class,"hoodServo");
-        turretServo1 = hardwareMap.get(Servo.class, "turretServoleft");
-        turretServo2 = hardwareMap.get(Servo.class,"turretServoright");
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         //Change direction for both if the flywheel is spinning the wrong way
@@ -112,26 +112,7 @@ public class FlyWheelSubsystem extends SubsystemBase {
         return Constants.servoPositionToHoodAngle(hoodServo.getPosition());
     }
 
-    public void setTurretAngleRad(double turretAngleRad) {
-        double turretAngleDeg = Math.toDegrees(turretAngleRad) + Constants.turretAngleOffsetDeg;
-        double servoDelta = turretAngleDeg / Constants.turretDegreesPerServoPosition;
 
-        double servo1Position = Constants.turretServo1Zero + servoDelta;
-        double servo2Position = Constants.turretServo2Reversed
-                ? Constants.turretServo2Zero - servoDelta
-                : Constants.turretServo2Zero + servoDelta;
-
-        turretServo1.setPosition(Constants.clip(
-                servo1Position,
-                Constants.turretMinServoPosition,
-                Constants.turretMaxServoPosition
-        ));
-        turretServo2.setPosition(Constants.clip(
-                servo2Position,
-                Constants.turretMinServoPosition,
-                Constants.turretMaxServoPosition
-        ));
-    }
 
     public double ticksToRPM(double ticks){
 

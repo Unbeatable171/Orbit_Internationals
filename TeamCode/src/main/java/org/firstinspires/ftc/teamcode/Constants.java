@@ -5,9 +5,9 @@ import com.acmerobotics.dashboard.config.Config;//import com.acmerobotics.dashbo
 @Config
 public class Constants {
 
-    public static volatile double hoodAngle = 65;
+    public static volatile double hoodAngle = 50;
     public static volatile double turretAngleRad = 0.0;
-    public static volatile double hoodMinServoPosition = 0.22;
+    public static volatile double hoodMinServoPosition = 0.2;
     public static volatile double hoodMaxServoPosition = 1.0;
     public static volatile double hoodAngleSlope = 37.0974358974359;
     public static volatile double hoodAngleIntercept = 36.6365641025641;
@@ -23,7 +23,7 @@ public class Constants {
     public static volatile double kP = 0.001;
     public static volatile double kI = 0.0;
     public static volatile double kD = 0;
-    public static volatile double targetRPM = 900;
+    public static volatile double targetRPM = 2500;
     public static volatile double blueGoalYInches = 142;
     public static volatile double redGoalXInches = 142;
     public static volatile double redGoalYInches = 142;

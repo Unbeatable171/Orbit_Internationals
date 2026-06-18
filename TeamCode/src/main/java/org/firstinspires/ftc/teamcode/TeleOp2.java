@@ -109,7 +109,6 @@ public class TeleOp2 extends CommandOpMode {
                         flyWheelSubsystem.stop();
                     }
                     flyWheelSubsystem.setHoodAngle(Constants.hoodAngle);
-                    flyWheelSubsystem.setTurretAngleRad(Constants.turretAngleRad);
                 }, flyWheelSubsystem)
         );
 
