@@ -37,7 +37,7 @@ public class TeleOp1 extends CommandOpMode {
     private IntakeSubsystem intakeSubsystem;
     private FlyWheelSubsystem flyWheelSubsystem;
     private TransferSubsystem transferSubsystem;
-    private Turrettt turrettt;
+//    private Turrettt turrettt;
 
 
     private GamepadEx gamepad1Ex;
@@ -59,7 +59,7 @@ public class TeleOp1 extends CommandOpMode {
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
         transferSubsystem = new TransferSubsystem(hardwareMap);
         flyWheelSubsystem = new FlyWheelSubsystem(hardwareMap);
-        turrettt = new Turrettt(hardwareMap);
+//        turrettt = new Turrettt(hardwareMap);
 
         gamepad1Ex = new GamepadEx(gamepad1);
         gamepad2Ex = new GamepadEx(gamepad2);
@@ -151,7 +151,7 @@ public class TeleOp1 extends CommandOpMode {
     public void run() {
         Localization.update();
         super.run();
-        turrettt.periodic();
+//        turrettt.periodic();
 
 
         Pose   robotPose = follower.getPose();

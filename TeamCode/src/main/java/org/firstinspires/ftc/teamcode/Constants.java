@@ -19,8 +19,8 @@ public class Constants {
     // Goal Poses
     public static volatile double blueGoalXInches = 0;
 
-    public static volatile double kF = 1.4;
-    public static volatile double kP = 0.001;
+    public static volatile double kF = 1.3;
+    public static volatile double kP = 0.0015;
     public static volatile double kI = 0.0;
     public static volatile double kD = 0;
     public static volatile double targetRPM = 2500;
