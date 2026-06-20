@@ -9,7 +9,7 @@ public class RobotConstants {
 
     public static Pose blueGoalPose =
             new Pose(
-                    2,
+                    3,
                     144,
                     Math.toRadians(90)
             );

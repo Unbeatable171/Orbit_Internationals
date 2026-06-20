@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.DriveSubsystem;
@@ -20,7 +21,7 @@ import org.firstinspires.ftc.teamcode.SUBSYSTEMS.Turrettt;
 import org.firstinspires.ftc.teamcode.ShooterCalculator;
 import org.firstinspires.ftc.teamcode.globals.Localization;
 
-@TeleOp(name = "TeleOp1")
+@TeleOp(name = "TeleOp11    ")
 public class TeleOp1 extends CommandOpMode {
 
     private static final double rpm1 = 2300;
@@ -30,6 +31,10 @@ public class TeleOp1 extends CommandOpMode {
     private static final double rpm3 = 3200.0;
     private static final double hood3 = 0.205;
 
+    private static final double HOOD_INCREMENT = 0.02;
+    private static final double HOOD_MIN       = 0.56;
+    private static final double HOOD_MAX       = 1.0;
+
     private Follower follower;
     private ShooterCalculator shooterCalc;
 
@@ -37,29 +42,33 @@ public class TeleOp1 extends CommandOpMode {
     private IntakeSubsystem intakeSubsystem;
     private FlyWheelSubsystem flyWheelSubsystem;
     private TransferSubsystem transferSubsystem;
-//    private Turrettt turrettt;
+    private Turrettt turrettt;
 
+    private Servo hoodServo;
 
     private GamepadEx gamepad1Ex;
     private GamepadEx gamepad2Ex;
 
-    private boolean transferOpen = false;
+    private boolean transferOpen    = false;
     private boolean flywheelEnabled = true;
+
+    private double manualHoodServoPosition = hood2;
 
     @Override
     public void initialize() {
 
         follower = Pedropathing.Constants.createFollower(hardwareMap);
-//        follower.setStartingPose(new Pose(33.700164744645804, 136.82372322899505, Math.toRadians(90)));
         follower.setStartingPose(new Pose(72, 72, Math.toRadians(90)));
         Localization.init(follower);
         shooterCalc = new ShooterCalculator();
 
-        driveSubsystem = new DriveSubsystem(hardwareMap);
-        intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        driveSubsystem    = new DriveSubsystem(hardwareMap);
+        intakeSubsystem   = new IntakeSubsystem(hardwareMap);
         transferSubsystem = new TransferSubsystem(hardwareMap);
         flyWheelSubsystem = new FlyWheelSubsystem(hardwareMap);
-//        turrettt = new Turrettt(hardwareMap);
+        turrettt          = new Turrettt(hardwareMap);
+
+        hoodServo = hardwareMap.get(Servo.class, "hoodServo");
 
         gamepad1Ex = new GamepadEx(gamepad1);
         gamepad2Ex = new GamepadEx(gamepad2);
@@ -92,7 +101,6 @@ public class TeleOp1 extends CommandOpMode {
                 }, intakeSubsystem)
         );
 
-
         flyWheelSubsystem.setDefaultCommand(
                 new RunCommand(() -> {
                     if (flywheelEnabled) {
@@ -103,6 +111,8 @@ public class TeleOp1 extends CommandOpMode {
                     flyWheelSubsystem.setHoodAngle(Constants.hoodAngle);
                 }, flyWheelSubsystem)
         );
+
+        // ── Preset buttons ────────────────────────────────────────────────────
 
         new GamepadButton(gamepad1Ex, GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new InstantCommand(() -> {
@@ -125,67 +135,89 @@ public class TeleOp1 extends CommandOpMode {
         new GamepadButton(gamepad1Ex, GamepadKeys.Button.B)
                 .whenPressed(new InstantCommand(() -> {
                     flywheelEnabled = false;
-                    transferOpen = false;
+                    transferOpen    = false;
                     transferSubsystem.Closed();
                 }));
-
 
         new GamepadButton(gamepad1Ex, GamepadKeys.Button.A)
                 .whenPressed(new InstantCommand(() -> {
                     flywheelEnabled = true;
-                    transferOpen = true;
+                    transferOpen    = true;
                     transferSubsystem.Open();
                 }))
                 .whenReleased(new InstantCommand(() -> {
                     transferOpen = false;
                     transferSubsystem.Closed();
                 }));
+
+        // ── Hood manual adjustment (DPAD UP = increase, DPAD DOWN = decrease) ─
+
+        new GamepadButton(gamepad1Ex, GamepadKeys.Button.DPAD_UP)
+                .whenPressed(new InstantCommand(() -> {
+                    manualHoodServoPosition = Math.min(manualHoodServoPosition + HOOD_INCREMENT, HOOD_MAX);
+                    hoodServo.setPosition(manualHoodServoPosition);
+                    Constants.hoodAngle = Constants.servoPositionToHoodAngle(manualHoodServoPosition);
+                }));
+
+        new GamepadButton(gamepad1Ex, GamepadKeys.Button.DPAD_DOWN)
+                .whenPressed(new InstantCommand(() -> {
+                    manualHoodServoPosition = Math.max(manualHoodServoPosition - HOOD_INCREMENT, HOOD_MIN);
+                    hoodServo.setPosition(manualHoodServoPosition);
+                    Constants.hoodAngle = Constants.servoPositionToHoodAngle(manualHoodServoPosition);
+                }));
     }
 
     private void setPreset(double rpm, double hoodPosition) {
-        Constants.targetRPM = rpm;
-        Constants.hoodAngle = Constants.servoPositionToHoodAngle(hoodPosition);
+        Constants.targetRPM     = rpm;
+        Constants.hoodAngle     = Constants.servoPositionToHoodAngle(hoodPosition);
+        manualHoodServoPosition = hoodPosition;
+        hoodServo.setPosition(hoodPosition);
     }
 
     @Override
     public void run() {
         Localization.update();
         super.run();
-//        turrettt.periodic();
-
+        turrettt.periodic();
 
         Pose   robotPose = follower.getPose();
         double rx = robotPose.getX();
         double ry = robotPose.getY();
         double rh = robotPose.getHeading();
 
-        double distanceToGoal = shooterCalc.distanceToGoalInches(rx,ry,rh);
+        double distanceToGoal = shooterCalc.distanceToGoalInches(rx, ry, rh);
 
+        double currentRpmLeft      = flyWheelSubsystem.getCurrentRPMLeft();
+        double currentRpmRight     = flyWheelSubsystem.getCurrentRPMRight();
+        double currentHoodAngle    = flyWheelSubsystem.getHoodAngle();
+        double currentHoodServoPos = hoodServo.getPosition();
 
+        telemetry.addData("X (in)",           rx);
+        telemetry.addData("Y (in)",           ry);
+        telemetry.addData("Heading (deg)",    Math.toDegrees(rh));
+        telemetry.addData("Distance to Goal", distanceToGoal);
 
-
-
-        double currentRpmLeft = flyWheelSubsystem.getCurrentRPMLeft();
-        double currentRpmRight = flyWheelSubsystem.getCurrentRPMRight();
-        double currentHoodAngle = flyWheelSubsystem.getHoodAngle();
-
-        telemetry.addData("X (in)",         rx);
-        telemetry.addData("Y (in)",         ry);
-        telemetry.addData("Heading (deg)",  Math.toDegrees(rh));
-        telemetry.addData("Distance to Goal ",distanceToGoal);
-
-        telemetry.addData("Target RPM", Constants.targetRPM);
         telemetry.addLine("----------------------------");
-        telemetry.addData("Left Rpm",currentRpmLeft);
-        telemetry.addData("RPM Error", Constants.targetRPM - currentRpmLeft);
+        telemetry.addData("Target RPM",       Constants.targetRPM);
+
         telemetry.addLine("----------------------------");
-        telemetry.addData("Right Rpm", currentRpmRight);
-        telemetry.addData("RPM Error", Constants.targetRPM - currentRpmRight);
+        telemetry.addData("Left RPM",         currentRpmLeft);
+        telemetry.addData("Left RPM Error",   Constants.targetRPM - currentRpmLeft);
+
         telemetry.addLine("----------------------------");
-        telemetry.addData("Hood Angle", currentHoodAngle);
+        telemetry.addData("Right RPM",        currentRpmRight);
+        telemetry.addData("Right RPM Error",  Constants.targetRPM - currentRpmRight);
+
+        telemetry.addLine("----------------------------");
+        telemetry.addData("Hood Angle (deg)",         currentHoodAngle);
+        telemetry.addData("Hood Target Angle (deg)",  Constants.hoodAngle);
+        telemetry.addData("Hood Angle Error (deg)",   Constants.hoodAngle - currentHoodAngle);
+
+        telemetry.addLine("----------------------------");
+        telemetry.addData("Hood Servo Position",        currentHoodServoPos);
+        telemetry.addData("Hood Servo Target Position", manualHoodServoPosition);
+        telemetry.addData("Hood Servo Error",           manualHoodServoPosition - currentHoodServoPos);
 
         telemetry.update();
     }
-
-
 }

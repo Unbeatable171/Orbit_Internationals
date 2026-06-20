@@ -25,15 +25,15 @@ public class Turrettt extends SubsystemBase {
     public static double minimumValueRad = -Math.PI;
     public static double maximumValueRad = Math.PI;
 
-    public static double minPosServos = 0.1625;
-    public static double maxPosServos = 0.845;
+    public static double minPosServos = 0.155;
+    public static double maxPosServos = 0.855;
 
-    public static double maxStepPerLoop = 0.025;
+    public static double maxStepPerLoop = 0.03;
 
-    public static double wrapLow = 0.1925;
-    public static double wrapHigh = 0.815;
+    public static double wrapLow = 0.165;
+    public static double wrapHigh = 0.835;
 
-    public static double safeMiddle = 0.5;
+    public static double safeMiddle = 0.335   ;
 
     public static double turretMountOffset = 0.0;
 
@@ -210,7 +210,7 @@ public class Turrettt extends SubsystemBase {
 
 
         double dynamicStep = Math.min(
-                Math.abs(error) * 0.4,
+                Math.abs(error) * 0.3,
                 maxStep
         );
 
