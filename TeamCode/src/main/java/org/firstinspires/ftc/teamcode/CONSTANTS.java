@@ -24,14 +24,14 @@ public class CONSTANTS {
     public static volatile double kI = 0.0;
     public static volatile double kD = 0;
     public static volatile double targetRPM = 2000;
-    public static volatile double blueGoalYInches = 142;
+    public static volatile double blueGoalYInches = 116;
     public static volatile double redGoalXInches = 142;
     public static volatile double redGoalYInches = 142;
 
     // Vertical difference between goal center and ball release point in meters.
     public static volatile double goalHeightInches = 27;
     public static volatile double gravityInches = 386.09;
-    public static volatile double scoreAngle = -45;
+    public static volatile double scoreAngle = -35;
     public static volatile double passThroughRadius = 5;
 
     // Hood angles are physical launch angles in degrees, not servo positions.

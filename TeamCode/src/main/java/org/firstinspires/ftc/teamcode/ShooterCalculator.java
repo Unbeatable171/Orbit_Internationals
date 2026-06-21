@@ -105,7 +105,7 @@ public class ShooterCalculator {
     public double rpmCalculator(double velocityInchesPerSec) {
         double rpm = CONSTANTS.rpmA * velocityInchesPerSec * velocityInchesPerSec
                 + CONSTANTS.rpmB * velocityInchesPerSec
-                + CONSTANTS.rpmC;
+                + CONSTANTS.rpmC - 250;
 
             return clamp(rpm, CONSTANTS.minRpm, CONSTANTS.maxRpm);
     }

@@ -111,7 +111,7 @@ public class TeleOp1 extends CommandOpMode {
                     } else {
                         flyWheelSubsystem.stop();
                     }
-                    flyWheelSubsystem.setHoodAngle(shotSolution.rpm);
+                    flyWheelSubsystem.setHoodAngle(shotSolution.hoodAngleDeg);
                 }, flyWheelSubsystem)
         );
 
