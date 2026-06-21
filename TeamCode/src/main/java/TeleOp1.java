@@ -188,6 +188,17 @@ public class TeleOp1 extends CommandOpMode {
         double ry = robotPose.getY();
         double rh = robotPose.getHeading();
 
+
+        double vx = 0, vy = 0;
+        try {
+            vx = follower.getVelocity().getXComponent();
+            vy = follower.getVelocity().getYComponent();
+        } catch (Exception ignored) {}
+
+        // --- Recompute shot solution every loop ---
+        shotSolution = shooterCalc.calculateShotSolution(rx, ry, rh, vx, vy);
+
+
         double distanceToGoal = shooterCalc.distanceToGoalInches(rx, ry, rh);
 
         double currentRpmLeft      = flyWheelSubsystem.getCurrentRPMLeft();
