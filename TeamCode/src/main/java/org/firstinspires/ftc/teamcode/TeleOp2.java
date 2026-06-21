@@ -8,21 +8,19 @@ import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.FlyWheelSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.Command.DriveCommand;
-import org.firstinspires.ftc.teamcode.ServoPositionFinderAryan;
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
-@TeleOp(name = "TeleOp2")
+@Disabled
 public class TeleOp2 extends CommandOpMode {
 
     private static final double rpm1 = 2300;
@@ -104,11 +102,11 @@ public class TeleOp2 extends CommandOpMode {
         flyWheelSubsystem.setDefaultCommand(
                 new RunCommand(() -> {
                     if (flywheelEnabled) {
-                        flyWheelSubsystem.spinUp(Constants.targetRPM);
+                        flyWheelSubsystem.spinUp(CONSTANTS.targetRPM);
                     } else {
                         flyWheelSubsystem.stop();
                     }
-                    flyWheelSubsystem.setHoodAngle(Constants.hoodAngle);
+                    flyWheelSubsystem.setHoodAngle(CONSTANTS.hoodAngle);
                 }, flyWheelSubsystem)
         );
 
@@ -162,19 +160,19 @@ public class TeleOp2 extends CommandOpMode {
         new GamepadButton(gamepad1Ex, GamepadKeys.Button.DPAD_UP)
                 .whenPressed(new InstantCommand(() -> {
                     manualHoodPosition += 0.02;
-                    setPreset(Constants.targetRPM, manualHoodPosition);
+                    setPreset(CONSTANTS.targetRPM, manualHoodPosition);
                 }));
 
         new GamepadButton(gamepad1Ex, GamepadKeys.Button.DPAD_DOWN)
                 .whenPressed(new InstantCommand(() -> {
                     manualHoodPosition -= 0.02;
-                    setPreset(Constants.targetRPM, manualHoodPosition);
+                    setPreset(CONSTANTS.targetRPM, manualHoodPosition);
                 }));
     }
 
     private void setPreset(double rpm, double hoodPosition) {
-        Constants.targetRPM = rpm;
-        Constants.hoodAngle = Constants.servoPositionToHoodAngle(hoodPosition);
+        CONSTANTS.targetRPM = rpm;
+        CONSTANTS.hoodAngle = CONSTANTS.servoPositionToHoodAngle(hoodPosition);
     }
 
     private double getDistanceToGoal() {
@@ -201,13 +199,13 @@ public class TeleOp2 extends CommandOpMode {
         double currentRpmRight = flyWheelSubsystem.getCurrentRPMRight();
         double currentHoodAngle = flyWheelSubsystem.getHoodAngle();
 
-        telemetry.addData("Target RPM", Constants.targetRPM);
+        telemetry.addData("Target RPM", CONSTANTS.targetRPM);
         telemetry.addLine("----------------------------");
         telemetry.addData("Left Rpm", currentRpmLeft);
-        telemetry.addData("RPM Error", Constants.targetRPM - currentRpmLeft);
+        telemetry.addData("RPM Error", CONSTANTS.targetRPM - currentRpmLeft);
         telemetry.addLine("----------------------------");
         telemetry.addData("Right Rpm", currentRpmRight);
-        telemetry.addData("RPM Error", Constants.targetRPM - currentRpmRight);
+        telemetry.addData("RPM Error", CONSTANTS.targetRPM - currentRpmRight);
         telemetry.addLine("----------------------------");
         telemetry.addData("Hood Angle", currentHoodAngle);
         telemetry.addData("Hood Servo Position", manualHoodPosition);

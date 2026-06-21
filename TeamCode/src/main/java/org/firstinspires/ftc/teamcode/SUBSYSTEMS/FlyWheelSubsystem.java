@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.SUBSYSTEMS;
 
-import androidx.xr.runtime.math.Pose;
-
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.CONSTANTS;
 
 public class FlyWheelSubsystem extends SubsystemBase {
 
@@ -31,8 +29,8 @@ public class FlyWheelSubsystem extends SubsystemBase {
 
     public FlyWheelSubsystem(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
-        shooterLeft = hardwareMap.get(DcMotorEx.class,"shooterRight");
-        shooterRight = hardwareMap.get(DcMotorEx.class,"shooterLeft");
+        shooterLeft = hardwareMap.get(DcMotorEx.class,"shooterLeft");
+        shooterRight = hardwareMap.get(DcMotorEx.class,"shooterRight");
         hoodServo = hardwareMap.get(Servo.class,"hoodServo");
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
@@ -64,11 +62,11 @@ public class FlyWheelSubsystem extends SubsystemBase {
             double actualRight = shooterRight.getVelocity();
 
             //Update PID values every tick
-            pidTop.setPID(Constants.kP, Constants.kI, Constants.kD);
-            pidBottom.setPID(Constants.kP, Constants.kI, Constants.kD);
+            pidTop.setPID(CONSTANTS.kP, CONSTANTS.kI, CONSTANTS.kD);
+            pidBottom.setPID(CONSTANTS.kP, CONSTANTS.kI, CONSTANTS.kD);
 
             //FeedForward
-            double ff = Constants.kF * (targetVelocity / maxTicks_per_rev);
+            double ff = CONSTANTS.kF * (targetVelocity / maxTicks_per_rev);
             // FlyWheelConstants.kS + FlyWheelConstants.kV * (targetVelocity / maxTicks_per_rev);
 
             //Voltage Compensation
@@ -102,16 +100,16 @@ public class FlyWheelSubsystem extends SubsystemBase {
     }
 
     public void setHoodAngle(double degrees){
-        double position = Constants.hoodAngleToServoPosition(degrees);
+        double position = CONSTANTS.hoodAngleToServoPosition(degrees);
         position = Math.max(
-                Constants.hoodMinServoPosition,
-                Math.min(Constants.hoodMaxServoPosition, position)
+                CONSTANTS.hoodMinServoPosition,
+                Math.min(CONSTANTS.hoodMaxServoPosition, position)
         );
         hoodServo.setPosition(position);
     }
 
     public double getHoodAngle() {
-        return Constants.servoPositionToHoodAngle(hoodServo.getPosition());
+        return CONSTANTS.servoPositionToHoodAngle(hoodServo.getPosition());
     }
 
 

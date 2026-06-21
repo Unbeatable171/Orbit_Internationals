@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.config.Config;//import com.acmerobotics.dashboard.config.Config;
 
 @Config
-public class Constants {
+public class CONSTANTS {
 
     public static volatile double hoodAngle = 50;
     public static volatile double turretAngleRad = 0.0;
@@ -19,11 +19,11 @@ public class Constants {
     // Goal Poses
     public static volatile double blueGoalXInches = 0;
 
-    public static volatile double kF = 1.3;
-    public static volatile double kP = 0.0015;
+    public static volatile double kF = 1.37;
+    public static volatile double kP = 0.004;
     public static volatile double kI = 0.0;
     public static volatile double kD = 0;
-    public static volatile double targetRPM = 2500;
+    public static volatile double targetRPM = 2000;
     public static volatile double blueGoalYInches = 142;
     public static volatile double redGoalXInches = 142;
     public static volatile double redGoalYInches = 142;
@@ -42,9 +42,9 @@ public class Constants {
     //TODO Retune rpm vs velocity regression, with constant hood angle
 
     // Exit velocity -> RPM regression coefficients.
-    public static volatile double rpmA = 0;
-    public static volatile double rpmB = 0 ;
-    public static volatile double rpmC = 0;
+    public static volatile double rpmA = 0.0369772;
+    public static volatile double rpmB = -2.58908 ;
+    public static volatile double rpmC = 1701.90631;
     public static volatile double rpmD = 0;
     public static volatile double rpmE = 0;
 

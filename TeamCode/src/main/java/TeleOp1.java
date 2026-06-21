@@ -11,7 +11,7 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.CONSTANTS;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.FlyWheelSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.IntakeSubsystem;
@@ -21,27 +21,30 @@ import org.firstinspires.ftc.teamcode.SUBSYSTEMS.Turrettt;
 import org.firstinspires.ftc.teamcode.ShooterCalculator;
 import org.firstinspires.ftc.teamcode.globals.Localization;
 
-@TeleOp(name = "TeleOp11    ")
+@TeleOp(name = "TeleOp11 orbittt  ")
 public class TeleOp1 extends CommandOpMode {
 
-    private static final double rpm1 = 2300;
-    private static final double hood1 = 0.5375;
-    private static final double rpm2 = 2400.0;
-    private static final double hood2 = 0.51;
-    private static final double rpm3 = 3200.0;
-    private static final double hood3 = 0.205;
+    private static final double rpm1 = 2500;
+    private static final double hood1 = CONSTANTS.hoodAngleToServoPosition(50);
+    private static final double rpm2 = 2700;
+    private static final double hood2 = CONSTANTS.hoodAngleToServoPosition(55);
+    private static final double rpm3 = 3300;
+    private static final double hood3 = CONSTANTS.hoodAngleToServoPosition(55);
 
     private static final double HOOD_INCREMENT = 0.02;
     private static final double HOOD_MIN       = 0.56;
     private static final double HOOD_MAX       = 1.0;
 
     private Follower follower;
-    private ShooterCalculator shooterCalc;
+
+    private ShooterCalculator shooterCalc = new ShooterCalculator();
+    private ShooterCalculator.ShotSolution shotSolution = null;
 
     private DriveSubsystem driveSubsystem;
     private IntakeSubsystem intakeSubsystem;
     private FlyWheelSubsystem flyWheelSubsystem;
     private TransferSubsystem transferSubsystem;
+    private CONSTANTS constants;
     private Turrettt turrettt;
 
     private Servo hoodServo;
@@ -104,11 +107,11 @@ public class TeleOp1 extends CommandOpMode {
         flyWheelSubsystem.setDefaultCommand(
                 new RunCommand(() -> {
                     if (flywheelEnabled) {
-                        flyWheelSubsystem.spinUp(Constants.targetRPM);
+                        flyWheelSubsystem.spinUp(shotSolution.rpm);
                     } else {
                         flyWheelSubsystem.stop();
                     }
-                    flyWheelSubsystem.setHoodAngle(Constants.hoodAngle);
+                    flyWheelSubsystem.setHoodAngle(shotSolution.rpm);
                 }, flyWheelSubsystem)
         );
 
@@ -156,20 +159,20 @@ public class TeleOp1 extends CommandOpMode {
                 .whenPressed(new InstantCommand(() -> {
                     manualHoodServoPosition = Math.min(manualHoodServoPosition + HOOD_INCREMENT, HOOD_MAX);
                     hoodServo.setPosition(manualHoodServoPosition);
-                    Constants.hoodAngle = Constants.servoPositionToHoodAngle(manualHoodServoPosition);
+                    CONSTANTS.hoodAngle = CONSTANTS.servoPositionToHoodAngle(manualHoodServoPosition);
                 }));
 
         new GamepadButton(gamepad1Ex, GamepadKeys.Button.DPAD_DOWN)
                 .whenPressed(new InstantCommand(() -> {
                     manualHoodServoPosition = Math.max(manualHoodServoPosition - HOOD_INCREMENT, HOOD_MIN);
                     hoodServo.setPosition(manualHoodServoPosition);
-                    Constants.hoodAngle = Constants.servoPositionToHoodAngle(manualHoodServoPosition);
+                    CONSTANTS.hoodAngle = CONSTANTS.servoPositionToHoodAngle(manualHoodServoPosition);
                 }));
     }
 
     private void setPreset(double rpm, double hoodPosition) {
-        Constants.targetRPM     = rpm;
-        Constants.hoodAngle     = Constants.servoPositionToHoodAngle(hoodPosition);
+        CONSTANTS.targetRPM     = rpm;
+        CONSTANTS.hoodAngle     = CONSTANTS.servoPositionToHoodAngle(hoodPosition);
         manualHoodServoPosition = hoodPosition;
         hoodServo.setPosition(hoodPosition);
     }
@@ -198,20 +201,24 @@ public class TeleOp1 extends CommandOpMode {
         telemetry.addData("Distance to Goal", distanceToGoal);
 
         telemetry.addLine("----------------------------");
-        telemetry.addData("Target RPM",       Constants.targetRPM);
+        telemetry.addData("Target RPM",       CONSTANTS.targetRPM);
 
         telemetry.addLine("----------------------------");
         telemetry.addData("Left RPM",         currentRpmLeft);
-        telemetry.addData("Left RPM Error",   Constants.targetRPM - currentRpmLeft);
+        telemetry.addData("Left RPM Error",   CONSTANTS.targetRPM - currentRpmLeft);
 
         telemetry.addLine("----------------------------");
         telemetry.addData("Right RPM",        currentRpmRight);
-        telemetry.addData("Right RPM Error",  Constants.targetRPM - currentRpmRight);
+        telemetry.addData("Right RPM Error",  CONSTANTS.targetRPM - currentRpmRight);
+
+        telemetry.addLine("----------------------------");
+        telemetry.addData("Current Turret Servo Position",turrettt.getServoPosition());
+        telemetry.addData("Turret Angle ",turrettt.getCurrentTargetHeadingDegrees());
 
         telemetry.addLine("----------------------------");
         telemetry.addData("Hood Angle (deg)",         currentHoodAngle);
-        telemetry.addData("Hood Target Angle (deg)",  Constants.hoodAngle);
-        telemetry.addData("Hood Angle Error (deg)",   Constants.hoodAngle - currentHoodAngle);
+        telemetry.addData("Hood Target Angle (deg)",  CONSTANTS.hoodAngle);
+        telemetry.addData("Hood Angle Error (deg)",   CONSTANTS.hoodAngle - currentHoodAngle);
 
         telemetry.addLine("----------------------------");
         telemetry.addData("Hood Servo Position",        currentHoodServoPos);

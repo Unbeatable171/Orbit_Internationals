@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Hood Servo Control", group = "TeleOp")
+//@TeleOp(name = "Hood Servo Control", group = "TeleOp")
 public class ServoPositionFinderAryan extends OpMode {
 
     // Hardware

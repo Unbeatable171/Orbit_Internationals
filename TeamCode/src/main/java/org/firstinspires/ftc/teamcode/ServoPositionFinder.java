@@ -36,8 +36,8 @@ public class ServoPositionFinder extends OpMode {
 
         hoodposition = Range.clip(
                 hoodposition,
-                Constants.hoodMinServoPosition,
-                Constants.hoodMaxServoPosition
+                CONSTANTS.hoodMinServoPosition,
+                CONSTANTS.hoodMaxServoPosition
         );
         hoodServo.setPosition(hoodposition);
 
@@ -52,7 +52,7 @@ public class ServoPositionFinder extends OpMode {
         gateServo.setPosition(gateposition);
 
         telemetry.addData("Hood position is",hoodposition);
-        telemetry.addData("Hood angle is", Constants.servoPositionToHoodAngle(hoodposition));
+        telemetry.addData("Hood angle is", CONSTANTS.servoPositionToHoodAngle(hoodposition));
         telemetry.addData("Increment is",increment);
         telemetry.addData("Gate position is", gateposition);
         telemetry.addData("Gate angle is", gateposition*270);

@@ -49,8 +49,8 @@ public class ShooterCalculator {
         double sin = Math.sin(robotHeadingRad);
 
         return robotX
-                + Constants.releaseOffsetXInches * cos
-                - Constants.releaseOffsetYInches * sin;
+                + CONSTANTS.releaseOffsetXInches * cos
+                - CONSTANTS.releaseOffsetYInches * sin;
     }
 
     public double releaseYInches(double robotX, double robotY, double robotHeadingRad) {
@@ -58,35 +58,35 @@ public class ShooterCalculator {
         double sin = Math.sin(robotHeadingRad);
 
         return robotY
-                + Constants.releaseOffsetXInches * sin
-                + Constants.releaseOffsetYInches * cos;
+                + CONSTANTS.releaseOffsetXInches * sin
+                + CONSTANTS.releaseOffsetYInches * cos;
     }
 
     public double distanceToGoalInches(double robotX, double robotY, double robotHeadingRad) {
         double releaseX = releaseXInches(robotX, robotY, robotHeadingRad);
         double releaseY = releaseYInches(robotX, robotY, robotHeadingRad);
 
-        double distanceX = Constants.blueGoalXInches - releaseX;
-        double distanceY = Constants.blueGoalYInches - releaseY;
+        double distanceX = CONSTANTS.blueGoalXInches - releaseX;
+        double distanceY = CONSTANTS.blueGoalYInches - releaseY;
 
         return Math.sqrt(distanceX * distanceX + distanceY * distanceY);
     }
 
     public double hoodAngleCalculator(double distanceInches) {
         double hoodAngleDeg = Math.toDegrees(
-                Math.atan((2 * Constants.goalHeightInches / distanceInches)
-                        - Math.tan(Math.toRadians(Constants.scoreAngle)))
+                Math.atan((2 * CONSTANTS.goalHeightInches / distanceInches)
+                        - Math.tan(Math.toRadians(CONSTANTS.scoreAngle)))
         );
         return clamp(
                 hoodAngleDeg,
-                Constants.minHoodAngleDeg,
-                Constants.maxHoodAngleDeg
+                CONSTANTS.minHoodAngleDeg,
+                CONSTANTS.maxHoodAngleDeg
         );
     }
 
     public double velocityCalculator(double distanceInches, double hoodAngleDeg) {
         double x = distanceInches;
-        double y = Constants.goalHeightInches;
+        double y = CONSTANTS.goalHeightInches;
         double angleRad = Math.toRadians(hoodAngleDeg);
 
         double cos = Math.cos(angleRad);
@@ -98,16 +98,16 @@ public class ShooterCalculator {
         }
 
         return Math.sqrt(
-                (Constants.gravityInches * x * x) / denominator
+                (CONSTANTS.gravityInches * x * x) / denominator
         );
     }
 
     public double rpmCalculator(double velocityInchesPerSec) {
-        double rpm = Constants.rpmA * velocityInchesPerSec * velocityInchesPerSec
-                + Constants.rpmB * velocityInchesPerSec
-                + Constants.rpmC;
+        double rpm = CONSTANTS.rpmA * velocityInchesPerSec * velocityInchesPerSec
+                + CONSTANTS.rpmB * velocityInchesPerSec
+                + CONSTANTS.rpmC;
 
-            return clamp(rpm, Constants.minRpm, Constants.maxRpm);
+            return clamp(rpm, CONSTANTS.minRpm, CONSTANTS.maxRpm);
     }
 
     public ShooterCalculator.ShotSolution calculateShotSolution(double robotX, double robotY, double robotHeadingRad) {
@@ -132,8 +132,8 @@ public class ShooterCalculator {
         // --- Step B1: decompose robot velocity into radial and tangential ---
         double releaseX = releaseXInches(robotX, robotY, robotHeadingRad);
         double releaseY = releaseYInches(robotX, robotY, robotHeadingRad);
-        double dx = Constants.blueGoalXInches - releaseX;
-        double dy = Constants.blueGoalYInches - releaseY;
+        double dx = CONSTANTS.blueGoalXInches - releaseX;
+        double dy = CONSTANTS.blueGoalYInches - releaseY;
         double unitX = dx / distanceInches;
         double unitY = dy / distanceInches;
 
@@ -162,8 +162,8 @@ public class ShooterCalculator {
         // --- Step B5: new hood angle ---
         double newHoodAngleDeg = clamp(
                 Math.toDegrees(Math.atan2(Vy, Vx_new)),
-                Constants.minHoodAngleDeg,
-                Constants.maxHoodAngleDeg
+                CONSTANTS.minHoodAngleDeg,
+                CONSTANTS.maxHoodAngleDeg
         );
 
         // --- Step B6: new launch speed using effective horizontal distance ---
@@ -177,7 +177,7 @@ public class ShooterCalculator {
         }
 
         // --- Step B7: turret heading offset ---
-        double headingLeadRad = Constants.turretLeadScale * Math.atan2(Vrt, Vx_compensated);
+        double headingLeadRad = CONSTANTS.turretLeadScale * Math.atan2(Vrt, Vx_compensated);
         double targetHeadingRad = Math.atan2(dy, dx);
         double compensatedTargetHeadingRad = normalizeAngle(targetHeadingRad - headingLeadRad);
         double compensatedHeadingErrorRad = normalizeAngle(

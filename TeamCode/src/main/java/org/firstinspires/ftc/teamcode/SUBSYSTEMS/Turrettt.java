@@ -24,14 +24,14 @@ public class Turrettt extends SubsystemBase {
      * 0 radians  = 0 degrees
      * 2π radians = 360 degrees
      */
-    public static double minimumValueRad = -Math.PI;
-    public static double maximumValueRad = Math.PI;
+    public static double minimumValueRad = 0;
+    public static double maximumValueRad = 2*Math.PI;
 
     /*
      * Logical ServoEx range for one full turret rotation.
      */
-    public static double minPosServos = 0.125;
-    public static double maxPosServos = 0.815;
+    public static double minPosServos = 0.1375;
+    public static double maxPosServos = 0.82;
 
     /*
      * Maximum logical servo-position change per periodic loop.
@@ -55,7 +55,7 @@ public class Turrettt extends SubsystemBase {
      * The turret is mounted opposite Pedro Pathing's
      * robot-forward direction.
      */
-    public static double turretMountOffset = 0;
+    public static double turretMountOffset = Math.PI;
 
     private double currentServoPosition = safeMiddle;
 

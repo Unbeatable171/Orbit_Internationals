@@ -100,7 +100,7 @@ public class TurretDebug extends LinearOpMode {
             }
 
             if (gamepad1.x) {
-                servoPos -= 0.005;
+                servoPos -= 0.0025;
                 sleep(40);
             }
 

@@ -10,20 +10,17 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.FlyWheelSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.TurretSubsystemAaravDewan;
 import org.firstinspires.ftc.teamcode.Command.DriveCommand;
-import org.firstinspires.ftc.teamcode.SUBSYSTEMS.TurretSubsystemAaravDewan;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.Turrettt;
 import org.firstinspires.ftc.teamcode.globals.Localization;
 
-@TeleOp(name = "TTT")
+//@TeleOp(name = "TTT")
 public class TTT extends CommandOpMode {
 
     private static final double rpm1 = 2300;
@@ -96,11 +93,11 @@ public class TTT extends CommandOpMode {
         flyWheelSubsystem.setDefaultCommand(
                 new RunCommand(() -> {
                     if (flywheelEnabled) {
-                        flyWheelSubsystem.spinUp(Constants.targetRPM);
+                        flyWheelSubsystem.spinUp(CONSTANTS.targetRPM);
                     } else {
                         flyWheelSubsystem.stop();
                     }
-                    flyWheelSubsystem.setHoodAngle(Constants.hoodAngle);
+                    flyWheelSubsystem.setHoodAngle(CONSTANTS.hoodAngle);
                 }, flyWheelSubsystem)
         );
 
@@ -159,8 +156,8 @@ public class TTT extends CommandOpMode {
     }
 
     private void setPreset(double rpm, double hoodPosition) {
-        Constants.targetRPM = rpm;
-        Constants.hoodAngle = Constants.servoPositionToHoodAngle(hoodPosition);
+        CONSTANTS.targetRPM = rpm;
+        CONSTANTS.hoodAngle = CONSTANTS.servoPositionToHoodAngle(hoodPosition);
     }
 
     @Override
@@ -178,13 +175,13 @@ public class TTT extends CommandOpMode {
         double currentHoodAngle = flyWheelSubsystem.getHoodAngle();
         Pose pose = follower.getPose();
 
-        telemetry.addData("Target RPM", Constants.targetRPM);
+        telemetry.addData("Target RPM", CONSTANTS.targetRPM);
         telemetry.addLine("----------------------------");
         telemetry.addData("Left Rpm", currentRpmLeft);
-        telemetry.addData("RPM Error", Constants.targetRPM - currentRpmLeft);
+        telemetry.addData("RPM Error", CONSTANTS.targetRPM - currentRpmLeft);
         telemetry.addLine("----------------------------");
         telemetry.addData("Right Rpm", currentRpmRight);
-        telemetry.addData("RPM Error", Constants.targetRPM - currentRpmRight);
+        telemetry.addData("RPM Error", CONSTANTS.targetRPM - currentRpmRight);
         telemetry.addLine("----------------------------");
         telemetry.addData("Hood Angle", currentHoodAngle);
         telemetry.addLine("----------------------------");
