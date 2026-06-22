@@ -31,7 +31,7 @@ public class CONSTANTS {
     // Vertical difference between goal center and ball release point in meters.
     public static volatile double goalHeightInches = 27;
     public static volatile double gravityInches = 386.09;
-    public static volatile double scoreAngle = -35;
+    public static volatile double scoreAngle = -32;
     public static volatile double passThroughRadius = 5;
 
     // Hood angles are physical launch angles in degrees, not servo positions.

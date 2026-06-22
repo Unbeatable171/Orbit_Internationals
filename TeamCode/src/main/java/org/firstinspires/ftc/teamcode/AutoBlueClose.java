@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.SUBSYSTEMS.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.Turrettt;
 
 @Config
-@Autonomous(name = "Auto Blue Close")
+@Autonomous(name = "Auto Blue Closeeee")
 public class AutoBlueClose extends OpMode {
 
     public enum SequenceState {
@@ -40,8 +40,8 @@ public class AutoBlueClose extends OpMode {
     // Tunable parameters (tweakable via FTC Dashboard)
     // -------------------------------------------------------------------------
     public static double fireDurationSeconds   = 0.9;
-    public static double maxWaitForShotSeconds = 2.5;
-    public static double gateWaitSeconds       = 1.2;
+    public static double maxWaitForShotSeconds = 2;
+    public static double gateWaitSeconds       = 1;
     public static double rpmTolerance          = 125.0;
 
     // Preset 1 — preload shot from shootPose
@@ -67,14 +67,15 @@ public class AutoBlueClose extends OpMode {
     // Poses
     // -------------------------------------------------------------------------
     private final Pose startPose                = new Pose(37.34831836370614, 136.13465551339004, Math.toRadians(90));
-    private final Pose shootPose                = new Pose(58.6, 83.85628742514972, Math.toRadians(130));
+    private final Pose shootPose                = new Pose(52., 87, Math.toRadians(130));
     private final Pose shootPose2               = new Pose(59.5, 80, Math.toRadians(170));
-    private final Pose spike1Pose               = new Pose(28, 86.39819893649711, Math.toRadians(180));
+    private final Pose shootpose3               = new Pose (52,87,Math.toRadians(180));
+    private final Pose spike1Pose               = new Pose(32, 87, Math.toRadians(180));
     private final Pose spike1ControlPose        = new Pose(48, 74.2);
     private final Pose spike2Pose               = new Pose(22.5, 62, Math.toRadians(180));
     private final Pose spike2Control1Pose       = new Pose(70, 50);
     private final Pose spike2ReturnControl1Pose = new Pose(85, 83);
-    private final Pose gatePose                 = new Pose(8.2, 61, Math.toRadians(145));
+    private final Pose gatePose                 = new Pose(8.2, 58.5, Math.toRadians(145));
     private final Pose gatemiddlePose           = new Pose(13.2,67, Math.toRadians(180));
     private final Pose gateControlPose          = new Pose(41.428710947133744, 64.18349791356334);
     private final Pose gateReturnControlPose    = new Pose(8, 50.65863141524106);
