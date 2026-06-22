@@ -58,7 +58,7 @@ public class AutoBlueClose extends OpMode {
     // -------------------------------------------------------------------------
     private Pose getBlueGoalPose() {
         return new Pose(
-                CONSTANTS.blueGoalXInches + 2,
+                CONSTANTS.blueGoalXInches - 8,
                 CONSTANTS.blueGoalYInches
         );
     }
@@ -68,15 +68,16 @@ public class AutoBlueClose extends OpMode {
     // -------------------------------------------------------------------------
     private final Pose startPose                = new Pose(37.34831836370614, 136.13465551339004, Math.toRadians(90));
     private final Pose shootPose                = new Pose(58.6, 83.85628742514972, Math.toRadians(130));
-    private final Pose shootPose2               = new Pose(59.5, 80, Math.toRadians(180));
-    private final Pose spike1Pose               = new Pose(36, 86.39819893649711, Math.toRadians(180));
+    private final Pose shootPose2               = new Pose(59.5, 80, Math.toRadians(170));
+    private final Pose spike1Pose               = new Pose(28, 86.39819893649711, Math.toRadians(180));
     private final Pose spike1ControlPose        = new Pose(48, 74.2);
-    private final Pose spike2Pose               = new Pose(28.5, 62, Math.toRadians(180));
+    private final Pose spike2Pose               = new Pose(22.5, 62, Math.toRadians(180));
     private final Pose spike2Control1Pose       = new Pose(70, 50);
     private final Pose spike2ReturnControl1Pose = new Pose(85, 83);
     private final Pose gatePose                 = new Pose(8.2, 61, Math.toRadians(145));
+    private final Pose gatemiddlePose           = new Pose(13.2,67, Math.toRadians(180));
     private final Pose gateControlPose          = new Pose(41.428710947133744, 64.18349791356334);
-    private final Pose gateReturnControlPose    = new Pose(9, 50.65863141524106);
+    private final Pose gateReturnControlPose    = new Pose(8, 50.65863141524106);
     private final Pose leavePose                = new Pose(40, 56.7, Math.toRadians(145));
 
     // -------------------------------------------------------------------------
@@ -521,17 +522,17 @@ public class AutoBlueClose extends OpMode {
                 .build();
 
         driveShootToGate1 = follower.pathBuilder()
-                .addPath(new BezierCurve(shootPose2, gateControlPose, gatePose))
+                .addPath(new BezierCurve(shootPose2, gatemiddlePose, gatePose))
                 .setLinearHeadingInterpolation(shootPose2.getHeading(), gatePose.getHeading())
                 .build();
 
         driveGate1ToShoot = follower.pathBuilder()
-                .addPath(new BezierCurve(gatePose, gateReturnControlPose, shootPose2))
+                .addPath(new BezierCurve(gatePose, gateControlPose, shootPose2))
                 .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose2.getHeading())
                 .build();
 
         driveShootToGate2 = follower.pathBuilder()
-                .addPath(new BezierCurve(shootPose2, gateControlPose, gatePose))
+                .addPath(new BezierCurve(shootPose2, gatemiddlePose, gatePose))
                 .setLinearHeadingInterpolation(shootPose2.getHeading(), gatePose.getHeading())
                 .build();
 
@@ -541,7 +542,7 @@ public class AutoBlueClose extends OpMode {
                 .build();
 
         driveShootToGate3 = follower.pathBuilder()
-                .addPath(new BezierCurve(shootPose2, gateControlPose, gatePose))
+                .addPath(new BezierCurve(shootPose2, gatemiddlePose, gatePose))
                 .setLinearHeadingInterpolation(shootPose2.getHeading(), gatePose.getHeading())
                 .build();
 
