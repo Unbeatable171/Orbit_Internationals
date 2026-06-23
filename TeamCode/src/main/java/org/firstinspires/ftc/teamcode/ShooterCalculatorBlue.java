@@ -1,7 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
-public class ShooterCalculator {
+import com.acmerobotics.dashboard.config.Config;
 
+import org.firstinspires.ftc.teamcode.globals.RobotConstants;
+
+@Config
+public class ShooterCalculatorBlue {
+
+    public static volatile double releaseOffsetXInches = 0.0;
+    public static volatile double releaseOffsetYInches = -1.5;
+    public static volatile double rpmD = 175.0;
+    public static volatile double rpmE = 120;
 
     public static class ShotSolution {
         public final double distanceInches;
@@ -34,6 +43,7 @@ public class ShooterCalculator {
             this.turretAngleRad = turretAngleRad;
         }
     }
+
     public double clamp(double value, double minValue, double maxValue) {
         return Math.max(minValue, Math.min(value, maxValue));
     }
@@ -49,8 +59,8 @@ public class ShooterCalculator {
         double sin = Math.sin(robotHeadingRad);
 
         return robotX
-                + getReleaseOffsetXInches() * cos
-                - getReleaseOffsetYInches() * sin;
+                + releaseOffsetXInches * cos
+                - releaseOffsetYInches * sin;
     }
 
     public double releaseYInches(double robotX, double robotY, double robotHeadingRad) {
@@ -58,15 +68,16 @@ public class ShooterCalculator {
         double sin = Math.sin(robotHeadingRad);
 
         return robotY
-                + getReleaseOffsetXInches() * sin
-                + getReleaseOffsetYInches() * cos;
+                + releaseOffsetXInches * sin
+                + releaseOffsetYInches * cos;
     }
 
     public double distanceToGoalInches(double robotX, double robotY, double robotHeadingRad) {
         double releaseX = releaseXInches(robotX, robotY, robotHeadingRad);
         double releaseY = releaseYInches(robotX, robotY, robotHeadingRad);
-        double distanceX = getGoalXInches() - releaseX;
-        double distanceY = getGoalYInches() - releaseY;
+
+        double distanceX = RobotConstants.blueGoalPose.getX() - releaseX;
+        double distanceY = RobotConstants.blueGoalPose.getY() - releaseY;
 
         return Math.sqrt(distanceX * distanceX + distanceY * distanceY);
     }
@@ -76,11 +87,11 @@ public class ShooterCalculator {
                 Math.atan((2 * CONSTANTS.goalHeightInches / distanceInches)
                         - Math.tan(Math.toRadians(CONSTANTS.scoreAngle)))
         );
-        return applyHoodOffset(clamp(
+        return clamp(
                 hoodAngleDeg,
                 CONSTANTS.minHoodAngleDeg,
                 CONSTANTS.maxHoodAngleDeg
-        ));
+        );
     }
 
     public double velocityCalculator(double distanceInches, double hoodAngleDeg) {
@@ -91,8 +102,8 @@ public class ShooterCalculator {
         double cos = Math.cos(angleRad);
         double tan = Math.tan(angleRad);
         double denominator = 2 * cos * cos * (x * tan - y);
-//mmm
-        if(denominator <= 0){
+
+        if (denominator <= 0) {
             return Double.NaN;
         }
 
@@ -106,96 +117,73 @@ public class ShooterCalculator {
                 + CONSTANTS.rpmB * velocityInchesPerSec
                 + CONSTANTS.rpmC;
 
-        if(rpm <=2900){
-            double closerpm =rpm -CONSTANTS.rpmD;
-            return applyRpmOffset(clamp(closerpm, CONSTANTS.minRpm, CONSTANTS.maxRpm));
-        }
-        else{
-            double rpmFar = rpm - CONSTANTS.rpmE;
-            return applyRpmOffset(clamp(rpmFar, CONSTANTS.minRpm, CONSTANTS.maxRpm));
+        if (rpm <= 2900) {
+            double closerpm = rpm - rpmD;
+            return clamp(closerpm, CONSTANTS.minRpm, CONSTANTS.maxRpm);
+        } else {
+            double rpmFar = rpm - rpmE;
+            return clamp(rpmFar, CONSTANTS.minRpm, CONSTANTS.maxRpm);
         }
     }
 
-    public ShooterCalculator.ShotSolution calculateShotSolution(double robotX, double robotY, double robotHeadingRad) {
+    public ShooterCalculatorBlue.ShotSolution calculateShotSolution(double robotX, double robotY, double robotHeadingRad) {
         return calculateShotSolution(robotX, robotY, robotHeadingRad, 0.0, 0.0);
     }
 
-    public ShooterCalculator.ShotSolution calculateShotSolution(double robotX, double robotY,
-                                                              double robotHeadingRad,
-                                                              double robotVelocityXInchesPerSec,
-                                                              double robotVelocityYInchesPerSec) {
-
+    public ShooterCalculatorBlue.ShotSolution calculateShotSolution(double robotX, double robotY,
+                                                                    double robotHeadingRad,
+                                                                    double robotVelocityXInchesPerSec,
+                                                                    double robotVelocityYInchesPerSec) {
         double distanceInches = distanceToGoalInches(robotX, robotY, robotHeadingRad);
 
-
-        // --- Step A: stationary ballistic solution ---
         double hoodAngleDeg = hoodAngleCalculator(distanceInches);
         double v0 = velocityCalculator(distanceInches, hoodAngleDeg);
 
-
         double hoodAngleRad = Math.toRadians(hoodAngleDeg);
 
-        // --- Step B1: decompose robot velocity into radial and tangential ---
         double releaseX = releaseXInches(robotX, robotY, robotHeadingRad);
         double releaseY = releaseYInches(robotX, robotY, robotHeadingRad);
-        double dx = getGoalXInches() - releaseX;
-        double dy = getGoalYInches() - releaseY;
+        double dx = RobotConstants.blueGoalPose.getX() - releaseX;
+        double dy = RobotConstants.blueGoalPose.getY() - releaseY;
         double unitX = dx / distanceInches;
         double unitY = dy / distanceInches;
 
-        // Radial: positive = robot moving toward goal
         double Vrr = robotVelocityXInchesPerSec * unitX + robotVelocityYInchesPerSec * unitY;
-        // Tangential: positive = robot moving left of goal line
         double Vrt = robotVelocityXInchesPerSec * (-unitY) + robotVelocityYInchesPerSec * unitX;
 
-        // --- Step B2: flight time from stationary solution ---
         double Vx0 = v0 * Math.cos(hoodAngleRad);
         double flightTime = distanceInches / Vx0;
-
-        // --- Step B3: new horizontal ball speed ---
-        // Ball must still cross distanceInches in flightTime,
-        // but the robot is already contributing Vrr radially
-        double Vx_compensated = (distanceInches / flightTime) - Vrr; // = Vx0 - Vrr
-
-
-
-        // Add tangential demand as perpendicular horizontal component
-        double Vx_new = Math.sqrt(Vx_compensated * Vx_compensated + Vrt * Vrt);
-
-        // --- Step B4: vertical component unchanged ---
+        double VxCompensated = (distanceInches / flightTime) - Vrr;
+        double VxNew = Math.sqrt(VxCompensated * VxCompensated + Vrt * Vrt);
         double Vy = v0 * Math.sin(hoodAngleRad);
 
-        // --- Step B5: new hood angle ---
         double newHoodAngleDeg = clamp(
-                Math.toDegrees(Math.atan2(Vy, Vx_new)),
+                Math.toDegrees(Math.atan2(Vy, VxNew)),
                 CONSTANTS.minHoodAngleDeg,
                 CONSTANTS.maxHoodAngleDeg
         );
 
-        // --- Step B6: new launch speed using effective horizontal distance ---
-        double x_new = Vx_new * flightTime;
-        double v0_new = velocityCalculator(x_new, newHoodAngleDeg);
-//mmm
+        double xNew = VxNew * flightTime;
+        double v0New = velocityCalculator(xNew, newHoodAngleDeg);
 
-        if(Double.isNaN((v0_new))||v0_new <=0){
-            v0_new = v0;
+        if (Double.isNaN(v0New) || v0New <= 0) {
+            v0New = v0;
             newHoodAngleDeg = hoodAngleDeg;
         }
 
-        // --- Step B7: turret heading offset ---
-        double headingLeadRad = CONSTANTS.turretLeadScale * Math.atan2(Vrt, Vx_compensated);
+        double headingLeadRad = CONSTANTS.turretLeadScale * Math.atan2(Vrt, VxCompensated);
         double targetHeadingRad = Math.atan2(dy, dx);
         double compensatedTargetHeadingRad = normalizeAngle(targetHeadingRad - headingLeadRad);
-        double compensatedHeadingErrorRad = applyTurretOffset(normalizeAngle(
+        double compensatedHeadingErrorRad = normalizeAngle(
                 compensatedTargetHeadingRad - robotHeadingRad
-        ));
+        );
 
-        double rpm = rpmCalculator(v0_new);
+        double rpm = rpmCalculator(v0New);
 
-        return new ShooterCalculator.ShotSolution(
+        return new ShooterCalculatorBlue.ShotSolution(
                 distanceInches,
                 newHoodAngleDeg,
-                v0_new,
+                v0New,
                 rpm,
                 Vrr,
                 Vrt,
@@ -203,33 +191,5 @@ public class ShooterCalculator {
                 compensatedHeadingErrorRad,
                 compensatedHeadingErrorRad
         );
-    }
-
-    protected double getGoalXInches() {
-        return CONSTANTS.blueGoalXInches;
-    }
-
-    protected double getGoalYInches() {
-        return CONSTANTS.blueGoalYInches;
-    }
-
-    protected double getReleaseOffsetXInches() {
-        return CONSTANTS.releaseOffsetXInches;
-    }
-
-    protected double getReleaseOffsetYInches() {
-        return CONSTANTS.releaseOffsetYInches;
-    }
-
-    protected double applyHoodOffset(double hoodAngleDeg) {
-        return hoodAngleDeg;
-    }
-
-    protected double applyRpmOffset(double rpm) {
-        return rpm;
-    }
-
-    protected double applyTurretOffset(double turretAngleRad) {
-        return turretAngleRad;
     }
 }

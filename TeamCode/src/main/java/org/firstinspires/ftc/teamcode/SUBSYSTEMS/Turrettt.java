@@ -30,13 +30,13 @@ public class Turrettt extends SubsystemBase {
     /*
      * Logical ServoEx range for one full turret rotation.
      */
-    public static double minPosServos = 0.1375;
-    public static double maxPosServos = 0.82;
+    public static double minPosServos = 0.13;
+    public static double maxPosServos = 0.83;
 
     /*
      * Maximum logical servo-position change per periodic loop.
      */
-    public static double maxStepPerLoop = 0.04                                                                                                                                                                                                                                                                                                          ;
+    public static double maxStepPerLoop = 0.035;                                                                                                                                                                                                                                                                                                          ;
 
     /*
      * Wrap detection regions.

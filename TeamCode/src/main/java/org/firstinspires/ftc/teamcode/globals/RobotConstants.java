@@ -1,23 +1,24 @@
 package org.firstinspires.ftc.teamcode.globals;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 
-@Configurable
+@Config
 public class RobotConstants {
 
 
     public static Pose blueGoalPose =
             new Pose(
-                    -4,
-                    138,
+                    1.1399688958009242,//0.9844479004665576,
+                    134.49766718506996,//131.72706065318818,
                     Math.toRadians(90)
             );
 
     public static Pose redGoalPose =
             new Pose(
-                    141,
-                    141,
+                    135,
+                    138,
                     Math.toRadians(90)
             );
 
@@ -28,7 +29,7 @@ public class RobotConstants {
                     Math.toRadians(90)
             );
 
-    public static String chosenAlliance = "BLUE";
+    public static String chosenAlliance = "RED";
 
     public static Pose savedPose = null;
 

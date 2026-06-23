@@ -18,11 +18,12 @@ import org.firstinspires.ftc.teamcode.SUBSYSTEMS.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.Command.DriveCommand;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.Turrettt;
-import org.firstinspires.ftc.teamcode.ShooterCalculator;
+import org.firstinspires.ftc.teamcode.ShooterCalculatorRed;
 import org.firstinspires.ftc.teamcode.globals.Localization;
+import org.firstinspires.ftc.teamcode.globals.RobotConstants;
 
-@TeleOp(name = "TeleOp11 orbittt  ")
-public class TeleOp1 extends CommandOpMode {
+@TeleOp(name = "TeleOp Red")
+public class TeleOpRed extends CommandOpMode {
 
     private static final double rpm1 = 2500;
     private static final double hood1 = CONSTANTS.hoodAngleToServoPosition(50);
@@ -37,8 +38,8 @@ public class TeleOp1 extends CommandOpMode {
 
     private Follower follower;
 
-    private ShooterCalculator shooterCalc = new ShooterCalculator();
-    private ShooterCalculator.ShotSolution shotSolution = null;
+    private ShooterCalculatorRed shooterCalc = new ShooterCalculatorRed();
+    private ShooterCalculatorRed.ShotSolution shotSolution = null;
 
     private DriveSubsystem driveSubsystem;
     private IntakeSubsystem intakeSubsystem;
@@ -59,11 +60,12 @@ public class TeleOp1 extends CommandOpMode {
 
     @Override
     public void initialize() {
+        RobotConstants.chosenAlliance = getAlliance();
 
         follower = Pedropathing.Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(72, 72, Math.toRadians(90)));
         Localization.init(follower);
-        shooterCalc = new ShooterCalculator();
+        shooterCalc = new ShooterCalculatorRed();
 
         driveSubsystem    = new DriveSubsystem(hardwareMap);
         intakeSubsystem   = new IntakeSubsystem(hardwareMap);
@@ -77,6 +79,11 @@ public class TeleOp1 extends CommandOpMode {
         gamepad2Ex = new GamepadEx(gamepad2);
 
         transferSubsystem.Closed();
+        shotSolution = shooterCalc.calculateShotSolution(
+                follower.getPose().getX(),
+                follower.getPose().getY(),
+                follower.getPose().getHeading()
+        );
 
         telemetry = new MultipleTelemetry(
                 telemetry,
@@ -112,6 +119,9 @@ public class TeleOp1 extends CommandOpMode {
                         flyWheelSubsystem.stop();
                     }
                     flyWheelSubsystem.setHoodAngle(shotSolution.hoodAngleDeg);
+
+
+
                 }, flyWheelSubsystem)
         );
 
@@ -177,6 +187,10 @@ public class TeleOp1 extends CommandOpMode {
         hoodServo.setPosition(hoodPosition);
     }
 
+    protected String getAlliance() {
+        return "RED";
+    }
+
     @Override
     public void run() {
         Localization.update();
@@ -209,6 +223,7 @@ public class TeleOp1 extends CommandOpMode {
         telemetry.addData("X (in)",           rx);
         telemetry.addData("Y (in)",           ry);
         telemetry.addData("Heading (deg)",    Math.toDegrees(rh));
+        telemetry.addData("Alliance",         RobotConstants.chosenAlliance);
         telemetry.addData("Distance to Goal", distanceToGoal);
 
         telemetry.addLine("----------------------------");

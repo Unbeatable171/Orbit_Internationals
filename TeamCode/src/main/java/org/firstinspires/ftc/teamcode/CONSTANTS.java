@@ -23,21 +23,27 @@ public class CONSTANTS {
 
 
     // Goal Poses
-    public static volatile double blueGoalXInches = 0;
+    public static volatile double blueGoalXInches = 1.5800933125971774;
 
     public static volatile double kF = 1.37;
     public static volatile double kP = 0.006;
     public static volatile double kI = 0.0;
     public static volatile double kD = 0;
+
+    public static volatile double kFHigh = 1.27;
+    public static volatile double kPHigh = 0.015;
+    public static volatile double kIHigh = 0;
+    public static volatile double kDHigh = 0;
+
     public static volatile double targetRPM = 0;
-    public static volatile double blueGoalYInches = 116;
-    public static volatile double redGoalXInches = 142;
-    public static volatile double redGoalYInches = 142;
+    public static volatile double blueGoalYInches = 131.8569206842924;
+    public static volatile double redGoalXInches = 137.13841368584758;
+    public static volatile double redGoalYInches = 132.5171073094868;
 
     // Vertical difference between goal center and ball release point in meters.
-    public static volatile double goalHeightInches = 22;
+    public static volatile double goalHeightInches = 14;// 31.5 ;//14;
     public static volatile double gravityInches = 386.09;
-    public static volatile double scoreAngle = -32;
+    public static volatile double scoreAngle = -20;
     public static volatile double passThroughRadius = 5;
 
     // Hood angles are physical launch angles in degrees, not servo positions.
@@ -48,11 +54,11 @@ public class CONSTANTS {
     //TODO Retune rpm vs velocity regression, with constant hood angle
 
     // Exit velocity -> RPM regression coefficients.
-    public static volatile double rpmA = 0.0369772;
-    public static volatile double rpmB = -2.58908 ;
-    public static volatile double rpmC = 1701.90631;
-    public static volatile double rpmD = 0;
-    public static volatile double rpmE = 0;
+    public static volatile double rpmA = 0.0259002; //0.0369772;
+    public static volatile double rpmB = 2.28115;//-2.58908 ;
+    public static volatile double rpmC = 1200.1111;//1701.90631;
+    public static volatile double rpmD = 175 ;
+    public static volatile double rpmE = 150;
 
 
     // Valid shooting limits.

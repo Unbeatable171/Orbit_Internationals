@@ -55,11 +55,10 @@ public class FlyWheelSubsystem extends SubsystemBase {
     public void spinUp (double rpm) {
         //mmm
         //if(Double.isNaN(rpm) || rpm < 0) return;
-
-
+        if ( rpm < 3000) {
             double targetVelocity = rpmtoticks(rpm);
-            double actualLeft = shooterLeft.getVelocity();
-            double actualRight = shooterRight.getVelocity();
+            double actualTop = shooterLeft.getVelocity();
+            double actualBottom = shooterRight.getVelocity();
 
             //Update PID values every tick
             pidTop.setPID(CONSTANTS.kP, CONSTANTS.kI, CONSTANTS.kD);
@@ -73,8 +72,37 @@ public class FlyWheelSubsystem extends SubsystemBase {
             double voltageScale = 12.0 / voltageSensor.getVoltage();
 
             //Clamp
-            double powerTop = ff + pidTop.calculate(actualLeft, targetVelocity);
-            double powerBottom = ff + pidBottom.calculate(actualRight, targetVelocity);
+            double powerTop = ff + pidTop.calculate(actualTop, targetVelocity);
+            double powerBottom = ff + pidBottom.calculate(actualBottom, targetVelocity);
+
+            powerTop *= voltageScale;
+            powerBottom *= voltageScale;
+
+            powerTop = Math.max(-1, Math.min(1, powerTop));
+            powerBottom = Math.max(-1, Math.min(1, powerBottom));
+
+            shooterLeft.setPower(powerTop);
+            shooterRight .setPower(powerBottom);
+        }
+        else {
+            double targetVelocity = rpmtoticks(rpm);
+            double actualTop = shooterLeft.getVelocity();
+            double actualBottom = shooterRight.getVelocity();
+
+            //Update PID values every tick
+            pidTop.setPID(CONSTANTS.kPHigh, CONSTANTS.kIHigh, CONSTANTS.kDHigh);
+            pidBottom.setPID(CONSTANTS.kPHigh, CONSTANTS.kIHigh, CONSTANTS.kDHigh);
+
+            //FeedForward
+            double ff = CONSTANTS.kFHigh * (targetVelocity / maxTicks_per_rev);
+            // FlyWheelConstants.kS + FlyWheelConstants.kV * (targetVelocity / maxTicks_per_rev);
+
+            //Voltage Compensation
+            double voltageScale = 12.0 / voltageSensor.getVoltage();
+
+            //Clamp
+            double powerTop = ff + pidTop.calculate(actualTop, targetVelocity);
+            double powerBottom = ff + pidBottom.calculate(actualBottom, targetVelocity);
 
             powerTop *= voltageScale;
             powerBottom *= voltageScale;
@@ -84,6 +112,7 @@ public class FlyWheelSubsystem extends SubsystemBase {
 
             shooterLeft.setPower(powerTop);
             shooterRight.setPower(powerBottom);
+        }
 
     }
 
