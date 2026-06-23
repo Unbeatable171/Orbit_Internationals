@@ -76,7 +76,7 @@ public class AutoBlueClose extends OpMode {
     private final Pose spike2Control1Pose       = new Pose(70, 50);
     private final Pose spike2ReturnControl1Pose = new Pose(85, 83);
     private final Pose gatePose                 = new Pose(8.2, 58.5, Math.toRadians(145));
-    private final Pose gatemiddlePose           = new Pose(13.2,67, Math.toRadians(180));
+    private final Pose gatemiddlePose           = new Pose(10.2,63, Math.toRadians(180));
     private final Pose gateControlPose          = new Pose(41.428710947133744, 64.18349791356334);
     private final Pose gateReturnControlPose    = new Pose(8, 50.65863141524106);
     private final Pose leavePose                = new Pose(40, 56.7, Math.toRadians(145));
