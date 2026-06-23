@@ -222,9 +222,9 @@ public class TeleOp1 extends CommandOpMode {
         telemetry.addData("Right RPM",        currentRpmRight);
         telemetry.addData("Right RPM Error",  CONSTANTS.targetRPM - currentRpmRight);
 
-        telemetry.addLine("----------------------------");
-        telemetry.addData("Current Turret Servo Position",turrettt.getServoPosition());
-        telemetry.addData("Turret Angle ",turrettt.getCurrentTargetHeadingDegrees());
+//        telemetry.addLine("----------------------------");
+//        telemetry.addData("Current Turret Servo Position",turrettt.getServoPosition());
+//        telemetry.addData("Turret Angle ",turrettt.getCurrentTargetHeadingDegrees());
 
         telemetry.addLine("----------------------------");
         telemetry.addData("Hood Angle (deg)",         currentHoodAngle);

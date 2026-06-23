@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;//import com.acmerobotics.dashboard.config.Config;
-
+import com.bylazar.configurables.annotations.Configurable;
 @Config
 public class CONSTANTS {
 
@@ -12,6 +12,12 @@ public class CONSTANTS {
     public static volatile double hoodAngleSlope = 37.0974358974359;
     public static volatile double hoodAngleIntercept = 36.6365641025641;
 
+
+    // ── Bang-Bang tuning ──────────────────────────────────────────
+    private static final double THRESHOLD_RPM  = 100.0; // deadband ± RPM
+
+    // ─────────────────────────────────────────────────────────────
+
     public static volatile double idleRpm = 2200;
 
 
@@ -20,16 +26,16 @@ public class CONSTANTS {
     public static volatile double blueGoalXInches = 0;
 
     public static volatile double kF = 1.37;
-    public static volatile double kP = 0.004;
+    public static volatile double kP = 0.006;
     public static volatile double kI = 0.0;
     public static volatile double kD = 0;
-    public static volatile double targetRPM = 2000;
+    public static volatile double targetRPM = 0;
     public static volatile double blueGoalYInches = 116;
     public static volatile double redGoalXInches = 142;
     public static volatile double redGoalYInches = 142;
 
     // Vertical difference between goal center and ball release point in meters.
-    public static volatile double goalHeightInches = 27;
+    public static volatile double goalHeightInches = 22;
     public static volatile double gravityInches = 386.09;
     public static volatile double scoreAngle = -32;
     public static volatile double passThroughRadius = 5;
@@ -56,8 +62,8 @@ public class CONSTANTS {
     public static volatile double maxRpm = 6000.0;
 
 
-    public static volatile double releaseOffsetXInches = -3.14961;
-    public static volatile double releaseOffsetYInches = 0.0;
+    public static volatile double releaseOffsetXInches = 0;
+    public static volatile double releaseOffsetYInches = -1.5;
 
     // Turret calibration.
     public static volatile double turretServo1Zero = 0.5;
