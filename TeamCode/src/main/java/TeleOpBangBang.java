@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.CONSTANTS;
 import org.firstinspires.ftc.teamcode.Command.DriveCommand;
+import org.firstinspires.ftc.teamcode.PoseMemory;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.BangBangFlyWheelSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.IntakeSubsystem;
@@ -36,6 +37,7 @@ public class TeleOpBangBang extends CommandOpMode {
     private static final double HOOD_MAX = 1.0;
 
     private Follower follower;
+    private Pose startPose = new Pose(72, 72, Math.toRadians(90));
 
     private ShooterCalculator shooterCalc = new ShooterCalculator();
     private ShooterCalculator.ShotSolution shotSolution = null;
@@ -60,7 +62,10 @@ public class TeleOpBangBang extends CommandOpMode {
     public void initialize() {
 
         follower = Pedropathing.Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(72, 72, Math.toRadians(90)));
+        if (PoseMemory.lastPose != null) {
+            startPose = PoseMemory.lastPose;
+        }
+        follower.setStartingPose(startPose);
         Localization.init(follower);
         shooterCalc = new ShooterCalculator();
 

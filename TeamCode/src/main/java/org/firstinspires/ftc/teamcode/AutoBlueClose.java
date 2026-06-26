@@ -46,14 +46,14 @@ public class AutoBlueClose extends OpMode {
     public static double rpmTolerance          = 125.0;
 
     // Preset 1 — preload shot from shootPose
-    public static int    targetRPM1    = 2425;
+    public static int    targetRPM1    = 2400;
     public static double hoodAngle1Deg = 45;
-    public static double turretShot1Pos = 0.4;
+    public static double turretShot1Pos = 0.45;
 
     // Preset 2 — all subsequent shots from shootPose2
     public static int    targetRPM2    = 2500;
     public static double hoodAngle2Deg = 45;
-    public static double turretShot2Pos = 0.395;
+    public static double turretShot2Pos = 0.45;
 
     // -------------------------------------------------------------------------
     // Goal pose — pulled from CONSTANTS so it stays in sync with the rest of
@@ -69,7 +69,7 @@ public class AutoBlueClose extends OpMode {
     // -------------------------------------------------------------------------
     // Poses
     // -------------------------------------------------------------------------
-    private final Pose startPose                = new Pose(33.773716951788494, 132.33514774494557, Math.toRadians(90));
+    private final Pose startPose                = new Pose(32.58491446345256, 131.97542768273718, Math.toRadians(90));
     private final Pose shootPose                = new Pose(58.37513525672598, 74.8975044891659, Math.toRadians(180));
     private final Pose shootPose2               = new Pose(58, 71.4614917168706, Math.toRadians(180));
     private final Pose shootpose3               = new Pose (52,87,Math.toRadians(180));
@@ -78,7 +78,7 @@ public class AutoBlueClose extends OpMode {
     private final Pose spike2Pose               = new Pose(16, 58, Math.toRadians(180));
     private final Pose spike2Control1Pose       = new Pose(45.570833296554895, 56.62517311955695);
    // private final Pose spike2ReturnControl1Pose = new Pose(85, 83);
-    private final Pose gatePose                 = new Pose(7, 57, Math.toRadians(145));
+    private final Pose gatePose                 = new Pose(7.5, 58.5, Math.toRadians(153));
     private final Pose gatemiddlePose           = new Pose(13.2,67, Math.toRadians(180));
     private final Pose gateControlPose          = new Pose(30.257809572826158, 53.62392808341559);
     private final Pose gateReturnControlPose    = new Pose(8, 50.65863141524106);
@@ -171,6 +171,8 @@ public class AutoBlueClose extends OpMode {
 
         // 2. Turret update — uses follower.getPose() directly, no Localization dependency
         updateTurret();
+
+        PoseMemory.lastPose = follower.getPose();
 
         // 3. Sequence logic
         configureSequenceIfNeeded();
@@ -584,5 +586,10 @@ public class AutoBlueClose extends OpMode {
                 .addPath(new BezierLine(shootPose2,leavePose))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
+    }
+
+    @Override
+    public void stop() {
+        PoseMemory.lastPose = follower.getPose();
     }
 }

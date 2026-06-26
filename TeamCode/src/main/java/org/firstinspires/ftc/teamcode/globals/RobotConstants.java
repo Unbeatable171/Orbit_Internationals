@@ -10,14 +10,14 @@ public class RobotConstants {
 
     public static Pose blueGoalPose =
             new Pose(
-                    1.1399688958009242,//0.9844479004665576,
-                    134.49766718506996,//131.72706065318818,
+                    3,//0.9844479004665576,
+                    139,//131.72706065318818,
                     Math.toRadians(90)
             );
 
     public static Pose redGoalPose =
             new Pose(
-                    135,
+                    136,
                     138,
                     Math.toRadians(90)
             );

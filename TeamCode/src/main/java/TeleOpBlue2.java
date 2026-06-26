@@ -23,8 +23,8 @@ import org.firstinspires.ftc.teamcode.SUBSYSTEMS.Turrettt;
 import org.firstinspires.ftc.teamcode.globals.Localization;
 import org.firstinspires.ftc.teamcode.globals.RobotConstants;
 
-@TeleOp(name = "TeleOp Blue")
-public class TeleOpBlue extends CommandOpMode {
+@TeleOp(name = "TeleOp Blue 2")
+public class TeleOpBlue2 extends CommandOpMode {
 
     private static final double rpm1 = 2500;
     private static final double hood1 = CONSTANTS.hoodAngleToServoPosition(50);
@@ -38,11 +38,13 @@ public class TeleOpBlue extends CommandOpMode {
     private static final double HOOD_MAX = 1.0;
 
     private static boolean prevRightBumper = false;
+    private static boolean prevDpadLeft2   = false;
+    private static boolean prevDpadRight2  = false;
 
     private Pose relocalizePose = new Pose(15.2, 77.4, Math.toRadians(180));
 
     private Follower follower;
-    private Pose startPose = new Pose(0,0,0);//(32.58491446345256, 131.97542768273718, Math.toRadians(90));
+    private Pose startPose = new Pose(32.58491446345256, 131.97542768273718, Math.toRadians(90));
 
     private ShooterCalculatorBlue shooterCalc = new ShooterCalculatorBlue();
     private ShooterCalculatorBlue.ShotSolution shotSolution = null;
@@ -197,11 +199,15 @@ public class TeleOpBlue extends CommandOpMode {
     public void run() {
         Localization.update();
         super.run();
-        turrettt.periodic();
+//        turrettt.periodic();
 
         if (gamepad1.dpad_left && !prevRightBumper) relocalizePedro();
-
         prevRightBumper = gamepad1.dpad_left;
+
+        if (gamepad2.dpad_right && !prevDpadRight2) turrettt.commandPosition(turrettt.getServoPosition() - 0.025);
+        if (gamepad2.dpad_left  && !prevDpadLeft2)  turrettt.commandPosition(turrettt.getServoPosition() + 0.05);
+        prevDpadRight2 = gamepad2.dpad_right;
+        prevDpadLeft2  = gamepad2.dpad_left;
 
         Pose robotPose = follower.getPose();
         double rx = robotPose.getX();

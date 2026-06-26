@@ -24,13 +24,13 @@ public class Turrettt extends SubsystemBase {
      * 0 radians  = 0 degrees
      * 2π radians = 360 degrees
      */
-    public static double minimumValueRad = 0;
-    public static double maximumValueRad = 2*Math.PI;
+    public static double minimumValueRad = Math.toRadians(88.4);;
+    public static double maximumValueRad =Math.toRadians(360);
 
     /*
      * Logical ServoEx range for one full turret rotation.
      */
-    public static double minPosServos = 0.13;
+    public static double minPosServos = 0.3025;
     public static double maxPosServos = 0.83;
 
     /*
@@ -41,21 +41,21 @@ public class Turrettt extends SubsystemBase {
     /*
      * Wrap detection regions.
      */
-    public static double wrapLow = minPosServos + 0.02;
-    public static double wrapHigh = maxPosServos - 0.07;
+    public static double wrapLow = 0.32;// minPosServos + 0.02;
+    public static double wrapHigh = 0.81;//maxPosServos - 0.07;
 
     /*
      * This is a physically safe unwind location.
      *
      * It is not the mathematical midpoint of 0.08–0.895.
      */
-    public static double safeMiddle = 0.40;
+    public static double safeMiddle = 0.5275;
 
     /*
      * The turret is mounted opposite Pedro Pathing's
      * robot-forward direction.
      */
-    public static double turretMountOffset = Math.PI;
+    public static double turretMountOffset = Math.toRadians(180);
 
     private double currentServoPosition = safeMiddle;
 

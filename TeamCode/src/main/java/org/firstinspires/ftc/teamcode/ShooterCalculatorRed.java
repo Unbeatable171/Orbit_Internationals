@@ -9,7 +9,7 @@ public class ShooterCalculatorRed {
 
     public static volatile double releaseOffsetXInches = 0.0;
     public static volatile double releaseOffsetYInches = -1.5;
-    public static volatile double rpmD = 200;
+    public static volatile double rpmD = 140;
     public static volatile double rpmE = 120;
 
     public static class ShotSolution {

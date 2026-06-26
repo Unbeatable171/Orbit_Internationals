@@ -14,17 +14,17 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.CONSTANTS;
 import org.firstinspires.ftc.teamcode.Command.DriveCommand;
 import org.firstinspires.ftc.teamcode.PoseMemory;
-import org.firstinspires.ftc.teamcode.ShooterCalculatorBlue;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.FlyWheelSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.SUBSYSTEMS.Turrettt;
+import org.firstinspires.ftc.teamcode.ShooterCalculatorBlue;
 import org.firstinspires.ftc.teamcode.globals.Localization;
 import org.firstinspires.ftc.teamcode.globals.RobotConstants;
 
-@TeleOp(name = "TeleOp Blue")
-public class TeleOpBlue extends CommandOpMode {
+@TeleOp(name = "TeleOp Blue Backup")
+public class TeleOpBlueBackup extends CommandOpMode {
 
     private static final double rpm1 = 2500;
     private static final double hood1 = CONSTANTS.hoodAngleToServoPosition(50);
@@ -37,12 +37,8 @@ public class TeleOpBlue extends CommandOpMode {
     private static final double HOOD_MIN = 0.56;
     private static final double HOOD_MAX = 1.0;
 
-    private static boolean prevRightBumper = false;
-
-    private Pose relocalizePose = new Pose(15.2, 77.4, Math.toRadians(180));
-
     private Follower follower;
-    private Pose startPose = new Pose(0,0,0);//(32.58491446345256, 131.97542768273718, Math.toRadians(90));
+    private Pose startPose = new Pose(72, 72, Math.toRadians(90));
 
     private ShooterCalculatorBlue shooterCalc = new ShooterCalculatorBlue();
     private ShooterCalculatorBlue.ShotSolution shotSolution = null;
@@ -130,23 +126,23 @@ public class TeleOpBlue extends CommandOpMode {
                 }, flyWheelSubsystem)
         );
 
-//        new GamepadButton(gamepad1Ex, GamepadKeys.Button.LEFT_BUMPER)
-//                .whenPressed(new InstantCommand(() -> {
-//                    setPreset(rpm1, hood1);
-//                    flywheelEnabled = true;
-//                }));
-//
-//        new GamepadButton(gamepad1Ex, GamepadKeys.Button.RIGHT_BUMPER)
-//                .whenPressed(new InstantCommand(() -> {
-//                    setPreset(rpm2, hood2);
-//                    flywheelEnabled = true;
-//                }));
-//
-//        new GamepadButton(gamepad1Ex, GamepadKeys.Button.Y)
-//                .whenPressed(new InstantCommand(() -> {
-//                    setPreset(rpm3, hood3);
-//                    flywheelEnabled = true;
-//                }));
+        new GamepadButton(gamepad2Ex, GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(() -> {
+                    setPreset(rpm1, hood1);
+                    flywheelEnabled = true;
+                }));
+
+        new GamepadButton(gamepad2Ex, GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(new InstantCommand(() -> {
+                    setPreset(rpm2, hood2);
+                    flywheelEnabled = true;
+                }));
+
+        new GamepadButton(gamepad2Ex, GamepadKeys.Button.Y)
+                .whenPressed(new InstantCommand(() -> {
+                    setPreset(rpm3, hood3);
+                    flywheelEnabled = true;
+                }));
 
         new GamepadButton(gamepad2Ex, GamepadKeys.Button.B)
                 .whenPressed(new InstantCommand(() -> {
@@ -166,24 +162,19 @@ public class TeleOpBlue extends CommandOpMode {
                     transferSubsystem.Closed();
                 }));
 
-//        new GamepadButton(gamepad1Ex, GamepadKeys.Button.DPAD_UP)
-//                .whenPressed(new InstantCommand(() -> {
-//                    manualHoodServoPosition = Math.min(manualHoodServoPosition + HOOD_INCREMENT, HOOD_MAX);
-//                    hoodServo.setPosition(manualHoodServoPosition);
-//                    CONSTANTS.hoodAngle = CONSTANTS.servoPositionToHoodAngle(manualHoodServoPosition);
-//                }));
-//
-//        new GamepadButton(gamepad1Ex, GamepadKeys.Button.DPAD_DOWN)
-//                .whenPressed(new InstantCommand(() -> {
-//                    manualHoodServoPosition = Math.max(manualHoodServoPosition - HOOD_INCREMENT, HOOD_MIN);
-//                    hoodServo.setPosition(manualHoodServoPosition);
-//                    CONSTANTS.hoodAngle = CONSTANTS.servoPositionToHoodAngle(manualHoodServoPosition);
-//                }));
-    }
+        new GamepadButton(gamepad2Ex, GamepadKeys.Button.DPAD_UP)
+                .whenPressed(new InstantCommand(() -> {
+                    manualHoodServoPosition = Math.min(manualHoodServoPosition + HOOD_INCREMENT, HOOD_MAX);
+                    hoodServo.setPosition(manualHoodServoPosition);
+                    CONSTANTS.hoodAngle = CONSTANTS.servoPositionToHoodAngle(manualHoodServoPosition);
+                }));
 
-    private void relocalizePedro() {
-        follower.setPose(relocalizePose);
-        follower.startTeleopDrive(true);
+        new GamepadButton(gamepad2Ex, GamepadKeys.Button.DPAD_DOWN)
+                .whenPressed(new InstantCommand(() -> {
+                    manualHoodServoPosition = Math.max(manualHoodServoPosition - HOOD_INCREMENT, HOOD_MIN);
+                    hoodServo.setPosition(manualHoodServoPosition);
+                    CONSTANTS.hoodAngle = CONSTANTS.servoPositionToHoodAngle(manualHoodServoPosition);
+                }));
     }
 
     private void setPreset(double rpm, double hoodPosition) {
@@ -198,10 +189,6 @@ public class TeleOpBlue extends CommandOpMode {
         Localization.update();
         super.run();
         turrettt.periodic();
-
-        if (gamepad1.dpad_left && !prevRightBumper) relocalizePedro();
-
-        prevRightBumper = gamepad1.dpad_left;
 
         Pose robotPose = follower.getPose();
         double rx = robotPose.getX();

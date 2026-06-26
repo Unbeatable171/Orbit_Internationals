@@ -57,7 +57,7 @@ public class AutoBlueFar extends OpMode {
     public static int targetRPM2 = 2450;
     public static double hoodAngle2Deg = 60;
     public static double turretShot1Pos = 0.49;
-    public static double turretShot2Pos = 0.49;
+    public static double turretShot2Pos = 0.4725;
 
     private final Pose startPose = new Pose(56, 8.9, Math.toRadians(90));
     private final Pose shootPose = new Pose(56.11586314152411, 13.20373250388803, Math.toRadians(114.5));
@@ -495,5 +495,10 @@ public class AutoBlueFar extends OpMode {
     private boolean isTurretOnTarget() {
         return !turret.isRoutingThroughMiddle()
                 && Math.abs(turret.getServoPosition() - turret.getFinalTargetPosition()) < 0.01;
+    }
+
+    @Override
+    public void stop() {
+        PoseMemory.lastPose = follower.getPose();
     }
 }

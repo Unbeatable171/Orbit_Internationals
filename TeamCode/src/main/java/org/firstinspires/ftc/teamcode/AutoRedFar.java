@@ -52,7 +52,7 @@ public class AutoRedFar extends OpMode {
     public static double redGoalXInches = 126.5;
     public static double redGoalYInches = 136;
 
-    public static int targetRPM1 = 2900;
+    public static int targetRPM1 = 3000;
     public static double hoodAngle1Deg = 45;
 
     public static int targetRPM2 = 2450;
@@ -498,5 +498,10 @@ public class AutoRedFar extends OpMode {
     private boolean isTurretOnTarget() {
         return !turret.isRoutingThroughMiddle()
                 && Math.abs(turret.getServoPosition() - turret.getFinalTargetPosition()) < 0.01;
+    }
+
+    @Override
+    public void stop() {
+        PoseMemory.lastPose = follower.getPose();
     }
 }
