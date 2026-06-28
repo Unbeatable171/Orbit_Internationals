@@ -25,7 +25,7 @@ public class FlyWheelSubsystem extends SubsystemBase {
     private static final double Ticks_Per_Rev = 28; // this in
     private static final double maxRPM = 6000;
     private static final double maxTicks_per_rev = maxRPM * Ticks_Per_Rev/60;
-    private static final double idleRPM = 2000;
+    private static final double idleRPM = 2500;
 
     public FlyWheelSubsystem(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
@@ -139,6 +139,18 @@ public class FlyWheelSubsystem extends SubsystemBase {
 
     public double getHoodAngle() {
         return CONSTANTS.servoPositionToHoodAngle(hoodServo.getPosition());
+    }
+
+//    public boolean isAtSpeed(double rpm){
+//        double targetVelocity = rpmtoticks(rpm);
+//        double errorTop = Math.abs(targetVelocity - shooterRight.getVelocity());
+//        double errorBottom = Math.abs(targetVelocity - shooterLeft.getVelocity());
+//        return errorTop < CONSTANTS.velocityTolerance && errorBottom < FlyWheelConstants.velocityTolerance;
+//    }
+
+    public void idlefar(){
+
+        spinUp(2800);
     }
 
 

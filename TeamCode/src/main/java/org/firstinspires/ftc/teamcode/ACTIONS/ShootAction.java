@@ -27,9 +27,9 @@ public class ShootAction {
         flyWheelSubsystem.idle();
     }
 
-//    public void idlefar() {
-//        flyWheelSubsystem.idlefar();
-//    }
+    public void idlefar() {
+        flyWheelSubsystem.idlefar();
+    }
 
     public void stop() {
         flyWheelSubsystem.stop();

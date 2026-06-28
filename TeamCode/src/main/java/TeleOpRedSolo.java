@@ -37,18 +37,31 @@ public class TeleOpRedSolo extends CommandOpMode {
     private static final double HOOD_MIN       = 0.56;
     private static final double HOOD_MAX       = 1.0;
 
+    // ── Added from TeleOpRed ──────────────────────────────────────────────────
+    private static boolean prevdpadleft = false;
+    private static boolean prevdpadup   = false;
+    // ─────────────────────────────────────────────────────────────────────────
+
     private Follower follower;
-    private Pose startPose = new Pose(72, 72, Math.toRadians(90));
+
+    // ── Updated start pose from TeleOpRed ────────────────────────────────────
+    private Pose startPose = new Pose(109.25505443234837, 131.45489891135304, Math.toRadians(90));
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // ── Added from TeleOpRed ──────────────────────────────────────────────────
+    private Pose relocalizePose1 = new Pose(126.63996889580092, 77.09953343701397, Math.toRadians(0));
+    private Pose relocalizePose2 = new Pose(9.6, 7.9, Math.toRadians(180));
+    // ─────────────────────────────────────────────────────────────────────────
 
     private ShooterCalculatorRed shooterCalc = new ShooterCalculatorRed();
     private ShooterCalculatorRed.ShotSolution shotSolution = null;
 
-    private DriveSubsystem driveSubsystem;
-    private IntakeSubsystem intakeSubsystem;
+    private DriveSubsystem    driveSubsystem;
+    private IntakeSubsystem   intakeSubsystem;
     private FlyWheelSubsystem flyWheelSubsystem;
     private TransferSubsystem transferSubsystem;
-    private CONSTANTS constants;
-    private Turrettt turrettt;
+    private CONSTANTS         constants;
+    private Turrettt          turrettt;
 
     private Servo hoodServo;
 
@@ -124,14 +137,10 @@ public class TeleOpRedSolo extends CommandOpMode {
                         flyWheelSubsystem.stop();
                     }
                     flyWheelSubsystem.setHoodAngle(shotSolution.hoodAngleDeg);
-
-
-
                 }, flyWheelSubsystem)
         );
 
-        // ── Preset buttons ────────────────────────────────────────────────────
-
+        // ── Preset buttons (Solo-specific) ────────────────────────────────────
         new GamepadButton(gamepad1Ex, GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new InstantCommand(() -> {
                     setPreset(rpm1, hood1);
@@ -168,8 +177,7 @@ public class TeleOpRedSolo extends CommandOpMode {
                     transferSubsystem.Closed();
                 }));
 
-        // ── Hood manual adjustment (DPAD UP = increase, DPAD DOWN = decrease) ─
-
+        // ── Hood manual adjustment (Solo-specific) ────────────────────────────
         new GamepadButton(gamepad1Ex, GamepadKeys.Button.DPAD_UP)
                 .whenPressed(new InstantCommand(() -> {
                     manualHoodServoPosition = Math.min(manualHoodServoPosition + HOOD_INCREMENT, HOOD_MAX);
@@ -196,27 +204,45 @@ public class TeleOpRedSolo extends CommandOpMode {
         return "RED";
     }
 
+    // ── Added from TeleOpRed ──────────────────────────────────────────────────
+    private void relocalizePedro1() {
+        follower.setPose(relocalizePose1);
+        follower.startTeleopDrive(true);
+    }
+
+    private void relocalizePedro2() {
+        follower.setPose(relocalizePose2);
+        follower.startTeleopDrive(true);
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     @Override
     public void run() {
         Localization.update();
         super.run();
         turrettt.periodic();
 
+        // ── Added from TeleOpRed ──────────────────────────────────────────────
+        if (gamepad1.dpad_left && !prevdpadleft) relocalizePedro1();
+        if (gamepad1.dpad_up   && !prevdpadup)   relocalizePedro2();
+        // ─────────────────────────────────────────────────────────────────────
+
         Pose   robotPose = follower.getPose();
         double rx = robotPose.getX();
         double ry = robotPose.getY();
         double rh = robotPose.getHeading();
 
-
+        // ── Added from TeleOpRed ──────────────────────────────────────────────
         double vx = 0, vy = 0;
         try {
             vx = follower.getVelocity().getXComponent();
             vy = follower.getVelocity().getYComponent();
         } catch (Exception ignored) {}
+        // ─────────────────────────────────────────────────────────────────────
 
-        // --- Recompute shot solution every loop ---
+        // ── Updated to pass velocity from TeleOpRed ───────────────────────────
         shotSolution = shooterCalc.calculateShotSolution(rx, ry, rh, vx, vy);
-
+        // ─────────────────────────────────────────────────────────────────────
 
         double distanceToGoal = shooterCalc.distanceToGoalInches(rx, ry, rh);
 
@@ -224,6 +250,11 @@ public class TeleOpRedSolo extends CommandOpMode {
         double currentRpmRight     = flyWheelSubsystem.getCurrentRPMRight();
         double currentHoodAngle    = flyWheelSubsystem.getHoodAngle();
         double currentHoodServoPos = hoodServo.getPosition();
+
+        // ── Added from TeleOpRed ──────────────────────────────────────────────
+        prevdpadleft = gamepad1.dpad_left;
+        prevdpadup   = gamepad1.dpad_up;
+        // ─────────────────────────────────────────────────────────────────────
 
         telemetry.addData("X (in)",           rx);
         telemetry.addData("Y (in)",           ry);
@@ -241,10 +272,6 @@ public class TeleOpRedSolo extends CommandOpMode {
         telemetry.addLine("----------------------------");
         telemetry.addData("Right RPM",        currentRpmRight);
         telemetry.addData("Right RPM Error",  CONSTANTS.targetRPM - currentRpmRight);
-
-//        telemetry.addLine("----------------------------");
-//        telemetry.addData("Current Turret Servo Position",turrettt.getServoPosition());
-//        telemetry.addData("Turret Angle ",turrettt.getCurrentTargetHeadingDegrees());
 
         telemetry.addLine("----------------------------");
         telemetry.addData("Hood Angle (deg)",         currentHoodAngle);

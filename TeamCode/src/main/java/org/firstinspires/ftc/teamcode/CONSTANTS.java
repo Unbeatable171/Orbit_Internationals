@@ -30,8 +30,8 @@ public class CONSTANTS {
     public static volatile double kI = 0.0;
     public static volatile double kD = 0;
 
-    public static volatile double kFHigh = 1.27;
-    public static volatile double kPHigh = 0.015;
+    public static volatile double kFHigh = 1.305;//1.27;
+    public static volatile double kPHigh = 0.025;//0.015;
     public static volatile double kIHigh = 0;
     public static volatile double kDHigh = 0;
 

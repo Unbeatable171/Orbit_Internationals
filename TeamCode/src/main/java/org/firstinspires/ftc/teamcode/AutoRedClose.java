@@ -41,20 +41,20 @@ public class AutoRedClose extends OpMode {
     // -------------------------------------------------------------------------
     // Tunable parameters (tweakable via FTC Dashboard)
     // -------------------------------------------------------------------------
-    public static double fireDurationSeconds   = 0.5;
-    public static double maxWaitForShotSeconds = 1.5;
-    public static double gateWaitSeconds       = 0.5;
+    public static double fireDurationSeconds   = 0.6;
+    public static double maxWaitForShotSeconds = 0.05;
+    public static double gateWaitSeconds       = 0.8;
     public static double rpmTolerance          = 125.0;
 
     // Preset 1 — preload shot from shootPose
-    public static int    targetRPM1    = 2425;
+    public static int    targetRPM1    = 2400;
     public static double hoodAngle1Deg = 45;
-    public static double turretShot1Pos = 0.585;
+//    public static double turretShot1Pos = 0.585;
 
     // Preset 2 — all subsequent shots from shootPose2
-    public static int    targetRPM2    = 2500;
+    public static int    targetRPM2    = 2450;
     public static double hoodAngle2Deg = 45;
-    public static double turretShot2Pos = 0.555;
+//    public static double turretShot2Pos = 0.555;
 
     // -------------------------------------------------------------------------
     // Goal pose — pulled from CONSTANTS so it stays in sync with the rest of
@@ -71,19 +71,19 @@ public class AutoRedClose extends OpMode {
     // Poses
     // -------------------------------------------------------------------------
     private  Pose startPose = new Pose(109.25505443234837, 131.45489891135304,Math.toRadians(90));//(107.726, 132.335, Math.toRadians(90));
-    private final Pose shootPose                = new Pose(83.125, 74.898, Math.toRadians(0));
-    private final Pose shootPose2               = new Pose(81.5, 71.461, Math.toRadians(0));
+    private final Pose shootPose                = new Pose(84, 83, Math.toRadians(57.5));
+    private final Pose shootPose2               = new Pose(84, 83, Math.toRadians(44.5));
     private final Pose shootpose3               = new Pose(89.5, 87, Math.toRadians(0));
-    private final Pose spike1Pose               = new Pose(121.5, 85, Math.toRadians(0));
-    private final Pose spike1ControlPose        = new Pose(93.5, 74.2);
-    private final Pose spike2Pose               = new Pose(125.5, 58, Math.toRadians(0));
-    private final Pose spike2Control1Pose       = new Pose(95.929, 56.625);
+    private final Pose spike1Pose               = new Pose(121.5, 84.5, Math.toRadians(0));
+    private final Pose spike1ControlPose        = new Pose(80, 65);
+    private final Pose spike2Pose               = new Pose(129.5, 58, Math.toRadians(0));
+    private final Pose spike2Control1Pose       = new Pose(95.929, 48);
    // private final Pose spike2ReturnControl1Pose = new Pose(85, 83);
-    private final Pose gatePose                 = new Pose(134, 57.5, Math.toRadians(35));
+    private final Pose gatePose                 = new Pose(132.2, 57.5, Math.toRadians(25));
     private final Pose gatemiddlePose           = new Pose(128.3, 67, Math.toRadians(0));
-    private final Pose gateControlPose          = new Pose(111.242, 53.624);
+    private final Pose gateControlPose          = new Pose(95, 42);
     private final Pose gateReturnControlPose    = new Pose(133.5, 50.659);
-    private final Pose leavePose                = new Pose(101.5, 56.7, Math.toRadians(35));
+    private final Pose leavePose                = new Pose(123, 80, Math.toRadians(0));//(101.5, 56.7, Math.toRadians(35));
 
     // -------------------------------------------------------------------------
     // Subsystems
@@ -92,7 +92,7 @@ public class AutoRedClose extends OpMode {
     private FlyWheelSubsystem flyWheelSubsystem;
     private IntakeSubsystem   intakeSubsystem;
     private TransferSubsystem transferSubsystem;
-    private Turrettt          turret;
+//    private Turrettt          turret;
 
     // -------------------------------------------------------------------------
     // Timers
@@ -146,7 +146,7 @@ public class AutoRedClose extends OpMode {
         flyWheelSubsystem = new FlyWheelSubsystem(hardwareMap);
         intakeSubsystem   = new IntakeSubsystem(hardwareMap);
         transferSubsystem = new TransferSubsystem(hardwareMap);
-        turret            = new Turrettt(hardwareMap);
+//        turret            = new Turrettt(hardwareMap);
 
         follower = Pedropathing.Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
@@ -157,7 +157,7 @@ public class AutoRedClose extends OpMode {
         stopIntake();
 
         // Park turret at safe centre while waiting for start
-        turret.commandPosition(Turrettt.safeMiddle);
+//        turret.commandPosition(Turrettt.safeMiddle);
     }
 
     @Override
@@ -173,7 +173,7 @@ public class AutoRedClose extends OpMode {
         follower.update();
 
         // 2. Turret update — uses follower.getPose() directly, no Localization dependency
-        updateTurret();
+//        updateTurret();
 
 
         PoseMemory.lastPose = follower.getPose();
@@ -194,10 +194,10 @@ public class AutoRedClose extends OpMode {
         telemetry.addData("Shot Time",       shotTimer.seconds());
         telemetry.addData("Left RPM",        flyWheelSubsystem.getCurrentRPMLeft());
         telemetry.addData("Right RPM",       flyWheelSubsystem.getCurrentRPMRight());
-        telemetry.addData("Turret Pos",      turret.getServoPosition());
-        telemetry.addData("Turret Target°",  turret.getCurrentTargetHeadingDegrees());
-        telemetry.addData("Turret Routing",  turret.isRoutingThroughMiddle());
-        telemetry.addData("Turret OnTarget", isTurretOnTarget());
+//        telemetry.addData("Turret Pos",      turret.getServoPosition());
+//        telemetry.addData("Turret Target°",  turret.getCurrentTargetHeadingDegrees());
+//        telemetry.addData("Turret Routing",  turret.isRoutingThroughMiddle());
+//        telemetry.addData("Turret OnTarget", isTurretOnTarget());
         telemetry.update();
     }
 
@@ -213,17 +213,17 @@ public class AutoRedClose extends OpMode {
      *
      * During travel/intake states: park at safeMiddle to stay out of the way.
      */
-    private void updateTurret() {
-        if (isTurretActiveState()) {
-            double targetServoPos = useShot2Preset()
-                    ? turretShot2Pos
-                    : turretShot1Pos;
-
-            turret.setPosition(targetServoPos);
-        } else {
-            turret.commandPosition(turretShot2Pos);
-        }
-    }
+//    private void updateTurret() {
+//        if (isTurretActiveState()) {
+//            double targetServoPos = useShot2Preset()
+//                    ? turretShot2Pos
+//                    : turretShot1Pos;
+//
+//            turret.setPosition(targetServoPos);
+//        } else {
+//            turret.commandPosition(turretShot2Pos);
+//        }
+//    }
 
     /**
      * Returns true for every state where the turret should actively track the
@@ -332,19 +332,19 @@ public class AutoRedClose extends OpMode {
                 currentPath       = driveGate3ToShoot;
                 shootDuringPath   = true;
                 intakeDuringPath  = true;
-                nextSequenceState = SequenceState.TO_GATE_4;
+                nextSequenceState = SequenceState.EXIT;
                 break;
             case TO_GATE_4:
                 currentPath       = driveShootToGate4;
                 intakeDuringPath  = true;
                 waitAtEndOfPath   = true;
-                nextSequenceState = SequenceState.RETURN_SHOT_6;
+                nextSequenceState = SequenceState.FINISHED;
                 break;
             case RETURN_SHOT_6:
                 currentPath       = driveGate4ToShoot;
                 shootDuringPath   = true;
                 intakeDuringPath  = true;
-                nextSequenceState = SequenceState.EXIT;
+                nextSequenceState = SequenceState.FINISHED;
                 break;
             case EXIT:
                 currentPath = exitPath;
@@ -354,7 +354,7 @@ public class AutoRedClose extends OpMode {
                 stopTransfer();
                 flyWheelSubsystem.stop();
                 stopIntake();
-                turret.commandPosition(Turrettt.safeMiddle);
+//                turret.commandPosition(Turrettt.safeMiddle);
                 shotFinished   = true;
                 segmentStarted = true;
                 return;
@@ -402,7 +402,7 @@ public class AutoRedClose extends OpMode {
                     pathEndTimer.reset();
                 }
 
-                if (flywheelReady && isTurretOnTarget()) {
+                if (flywheelReady) {
                     // Both flywheel and turret ready — fire
                     startTransfer();
                     shotTriggered = true;
@@ -478,10 +478,10 @@ public class AutoRedClose extends OpMode {
      * and is not mid-wrap-routing. Loosen the threshold to 0.02–0.03 if you
      * find the turret never fully settles before the timeout.
      */
-    private boolean isTurretOnTarget() {
-        return !turret.isRoutingThroughMiddle()
-                && Math.abs(turret.getServoPosition() - turret.getFinalTargetPosition()) < 0.01;
-    }
+//    private boolean isTurretOnTarget() {
+//        return !turret.isRoutingThroughMiddle()
+//                && Math.abs(turret.getServoPosition() - turret.getFinalTargetPosition()) < 0.01;
+//    }
 
     // =========================================================================
     // Intake / transfer helpers
@@ -515,8 +515,8 @@ public class AutoRedClose extends OpMode {
                 .build();
 
         driveShootToSpike1 = follower.pathBuilder()
-//                .addPath(new BezierCurve(shootPose2, spike1ControlPose, spike1Pose))
-                .addPath(new BezierLine(shootPose2, spike1Pose))
+                .addPath(new BezierCurve(shootPose2, spike1ControlPose, spike1Pose))
+//                .addPath(new BezierLine(shootPose2, spike1Pose))
                 .setLinearHeadingInterpolation(shootPose2.getHeading(), spike1Pose.getHeading())
                 .build();
 
@@ -533,8 +533,8 @@ public class AutoRedClose extends OpMode {
 
         driveSpike2ToShoot = follower.pathBuilder()
                 .addPath(new BezierLine(spike2Pose, shootPose2))
-//                .setLinearHeadingInterpolation(spike2Pose.getHeading(), shootPose2.getHeading())
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setLinearHeadingInterpolation(spike2Pose.getHeading(), shootPose2.getHeading())
+//                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         driveShootToGate1 = follower.pathBuilder()
@@ -544,11 +544,11 @@ public class AutoRedClose extends OpMode {
                 .build();
 
         driveGate1ToShoot = follower.pathBuilder()
-//                .addPath(new BezierCurve(gatePose, gateControlPose, shootPose2))
-                .addPath(new BezierLine(gatePose, shootPose2))
-//                .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose2.getHeading())
+                .addPath(new BezierCurve(gatePose, gateControlPose, shootPose2))
+//                .addPath(new BezierLine(gatePose, shootPose2))
+                .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose2.getHeading())
 //                .setTangentHeadingInterpolation()
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+//                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         driveShootToGate2 = follower.pathBuilder()
@@ -559,8 +559,8 @@ public class AutoRedClose extends OpMode {
 
         driveGate2ToShoot = follower.pathBuilder()
                 .addPath(new BezierLine(gatePose, shootPose2))
-//                .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose2.getHeading())
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose2.getHeading())
+//                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         driveShootToGate3 = follower.pathBuilder()
@@ -571,8 +571,8 @@ public class AutoRedClose extends OpMode {
 
         driveGate3ToShoot = follower.pathBuilder()
                 .addPath(new BezierLine(gatePose, shootPose2))
-//                .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose2.getHeading())
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose2.getHeading())
+//                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         driveShootToGate4 = follower.pathBuilder()
@@ -582,8 +582,8 @@ public class AutoRedClose extends OpMode {
 
         driveGate4ToShoot = follower.pathBuilder()
                 .addPath(new BezierLine(gatePose, shootPose2))
-//                .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose2.getHeading())
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setLinearHeadingInterpolation(gatePose.getHeading(), shootPose2.getHeading())
+//                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         exitPath = follower.pathBuilder()

@@ -16,6 +16,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private static final double intakeTransferSpeed = 1;
     private static final double reverseSpeed = -0.8;
     private static final double transferSpeed = 1.0;
+    private static final double transferSpeedFar = 0.5;
 
 
     public IntakeSubsystem(HardwareMap hardwareMap) {
@@ -49,5 +50,10 @@ public class IntakeSubsystem extends SubsystemBase {
     public void transfer() {
         intake.setPower(transferSpeed);
         transfer.setPower(transferSpeed);
+    }
+
+    public void transferFar (){
+        intake.setPower(transferSpeedFar);
+        transfer.setPower(transferSpeedFar);
     }
 }
