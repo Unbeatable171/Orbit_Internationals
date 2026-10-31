@@ -1661,8 +1661,8 @@ public class AutoRedFar extends OpMode {
     public static double rpmTolerance          = 125.0;
 
     // ── Pulse-based shot parameters ───────────────────────────────────────────
-    public static double transferOpenSeconds   = 0.15;
-    public static double transferClosedSeconds = 0.2;
+    public static double transferOpenSeconds   = 0.13;
+    public static double transferClosedSeconds = 0.25;
     public static int    shotPulseCountTarget  = 3;
 
     // ── Shooter presets ───────────────────────────────────────────────────────
@@ -1677,9 +1677,9 @@ public class AutoRedFar extends OpMode {
 
     // ── Poses ─────────────────────────────────────────────────────────────────
     private final Pose startPose           = new Pose(85.5, 8.9, Math.toRadians(0));
-    private final Pose shootPose           = new Pose(85.38413685847589, 13.20373250388803, Math.toRadians(60));
+    private final Pose shootPose           = new Pose(85.38413685847589, 13.20373250388803, Math.toRadians(64));
     private final Pose humanZone           = new Pose(136.5, 8, Math.toRadians(0));
-    private final Pose backPose            = new Pose(110, 8, Math.toRadians(0));
+    private final Pose backPose            = new Pose(110, 9, Math.toRadians(0));
     private final Pose spike3pose          = new Pose(116.5, 32, Math.toRadians(0));
     private final Pose controlSpike3       = new Pose(95.91642498392333, 35);
     private final Pose overflowPick        = new Pose(128.61, 38.12498924965115, Math.toRadians(60));
@@ -1940,27 +1940,40 @@ public class AutoRedFar extends OpMode {
             flyWheelSubsystem.spinUp(activeRPM);
             flyWheelSubsystem.setHoodAngle(activeHoodDeg);
 
-            boolean flywheelReady = isAtSpeed(activeRPM);
-            boolean pathDone      = !follower.isBusy();
+//            boolean flywheelReady = isAtSpeed(activeRPM);
+//            boolean pathDone      = !follower.isBusy();
+//
+//            if (pathDone && !shotTriggered && !shotFinished) {
+//                if (!pathEndWaitStarted) {
+//                    pathEndWaitStarted = true;
+//                    pathEndTimer.reset();
+//                }
+//
+//                if (flywheelReady) {
+//                    // ── Open transfer and begin pulse sequence ─────────────────
+//                    transferSubsystem.Open();
+//                    transferAction.start();
+//                    shotTriggered         = true;
+//                    transferCurrentlyOpen = true;
+//                    shotPulseCount        = 1;
+//                    shotTimer.reset();
+//                } else if (pathEndTimer.seconds() >= maxWaitForShotSeconds) {
+//                    stopTransferAction.run();
+//                    shotFinished = true;
+//                }
+//            }
+            boolean pathDone = !follower.isBusy();
 
             if (pathDone && !shotTriggered && !shotFinished) {
-                if (!pathEndWaitStarted) {
-                    pathEndWaitStarted = true;
-                    pathEndTimer.reset();
-                }
 
-                if (flywheelReady) {
-                    // ── Open transfer and begin pulse sequence ─────────────────
-                    transferSubsystem.Open();
-                    transferAction.start();
-                    shotTriggered         = true;
-                    transferCurrentlyOpen = true;
-                    shotPulseCount        = 1;
-                    shotTimer.reset();
-                } else if (pathEndTimer.seconds() >= maxWaitForShotSeconds) {
-                    stopTransferAction.run();
-                    shotFinished = true;
-                }
+                // Fire immediately when the robot reaches the end of the path.
+                transferSubsystem.Open();
+                transferAction.start();
+
+                shotTriggered = true;
+                transferCurrentlyOpen = true;
+                shotPulseCount = 1;
+                shotTimer.reset();
             }
 
             // ── Pulse-shot state machine ───────────────────────────────────────

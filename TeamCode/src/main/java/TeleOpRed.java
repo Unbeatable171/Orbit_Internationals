@@ -315,6 +315,8 @@ import org.firstinspires.ftc.teamcode.ShooterCalculatorRed;
 import org.firstinspires.ftc.teamcode.globals.Localization;
 import org.firstinspires.ftc.teamcode.globals.RobotConstants;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 @TeleOp(name = "TeleOp Red")
 public class TeleOpRed extends CommandOpMode {
 
@@ -328,6 +330,18 @@ public class TeleOpRed extends CommandOpMode {
     private static final double HOOD_INCREMENT = 0.02;
     private static final double HOOD_MIN       = 0.56;
     private static final double HOOD_MAX       = 1.0;
+
+    private final ElapsedTime transferDelayTimer = new ElapsedTime();
+
+    private boolean waitingForTransfer = false;
+
+    private static final double TRANSFER_DELAY = 0.1;
+
+    private static final double HEADING_TOLERANCE_RAD = Math.toRadians(4);
+
+    private static final double HEADING_KP = 0.8;
+
+    private boolean headingLockEnabled = false;
 
     // ── Added from TeleOpRed ──────────────────────────────────────────────────
     private static boolean prevdpadleft = false;
@@ -458,13 +472,31 @@ public class TeleOpRed extends CommandOpMode {
                     transferSubsystem.Closed();
                 }));
 
+//        new GamepadButton(gamepad2Ex, GamepadKeys.Button.A)
+//                .whenPressed(new InstantCommand(() -> {
+//                    flywheelEnabled = true;
+//                    transferOpen    = true;
+//                    transferSubsystem.Open();
+//                }))
+//                .whenReleased(new InstantCommand(() -> {
+//                    transferOpen = false;
+//                    transferSubsystem.Closed();
+//                }));
+
         new GamepadButton(gamepad2Ex, GamepadKeys.Button.A)
                 .whenPressed(new InstantCommand(() -> {
                     flywheelEnabled = true;
-                    transferOpen    = true;
+
+                    // Open the transfer servo immediately
                     transferSubsystem.Open();
+
+                    // Wait before starting transfer motors
+                    transferOpen = false;
+                    waitingForTransfer = true;
+                    transferDelayTimer.reset();
                 }))
                 .whenReleased(new InstantCommand(() -> {
+                    waitingForTransfer = false;
                     transferOpen = false;
                     transferSubsystem.Closed();
                 }));
@@ -483,6 +515,7 @@ public class TeleOpRed extends CommandOpMode {
                     hoodServo.setPosition(manualHoodServoPosition);
                     CONSTANTS.hoodAngle = CONSTANTS.servoPositionToHoodAngle(manualHoodServoPosition);
                 }));
+
     }
 
     private void setPreset(double rpm, double hoodPosition) {
@@ -491,6 +524,39 @@ public class TeleOpRed extends CommandOpMode {
         manualHoodServoPosition = hoodPosition;
         hoodServo.setPosition(hoodPosition);
     }
+
+//    private double computeRotate() {
+//        if (!headingLockEnabled) {
+//            return gamepad1.right_stick_x;
+//        }
+//
+//        Pose pose = follower.getPose();
+//        double targetHeading = goalHeadingRad(pose.getX(), pose.getY());
+//        double error = angleWrap(targetHeading - pose.getHeading());
+//
+//        if (Math.abs(error) < HEADING_TOLERANCE_RAD) return 0.0;
+//
+//        // Clamp to [-1, 1] so it matches the stick range DriveCommand expects
+//        return -Math.max(-1.0, Math.min(1.0, HEADING_KP * error));
+//    }
+//
+//    /**
+//     * Angle (radians) the robot must face to point at the blue goal from (x, y).
+//     */
+//    private double goalHeadingRad(double x, double y) {
+//        double dx = CONSTANTS.redGoalXInches - x;
+//        double dy = CONSTANTS.redGoalYInches - y;
+//        return Math.atan2(dy, dx);
+//    }
+//
+//    /**
+//     * Wraps an angle to [-π, π].
+//     */
+//    private double angleWrap(double angle) {
+//        while (angle >  Math.PI) angle -= 2 * Math.PI;
+//        while (angle < -Math.PI) angle += 2 * Math.PI;
+//        return angle;
+//    }
 
     protected String getAlliance() {
         return "RED";

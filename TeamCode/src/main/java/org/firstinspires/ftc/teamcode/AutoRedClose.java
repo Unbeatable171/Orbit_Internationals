@@ -79,9 +79,9 @@ public class AutoRedClose extends OpMode {
     private final Pose spike2Pose               = new Pose(129.5, 58, Math.toRadians(0));
     private final Pose spike2Control1Pose       = new Pose(95.929, 48);
    // private final Pose spike2ReturnControl1Pose = new Pose(85, 83);
-    private final Pose gatePose                 = new Pose(132.2, 57.5, Math.toRadians(25));
+    private final Pose gatePose                 = new Pose(132.5, 58.5, Math.toRadians(25));
     private final Pose gatemiddlePose           = new Pose(128.3, 67, Math.toRadians(0));
-    private final Pose gateControlPose          = new Pose(95, 42);
+    private final Pose gateControlPose          = new Pose(70, 35);
     private final Pose gateReturnControlPose    = new Pose(133.5, 50.659);
     private final Pose leavePose                = new Pose(123, 80, Math.toRadians(0));//(101.5, 56.7, Math.toRadians(35));
 
@@ -538,8 +538,8 @@ public class AutoRedClose extends OpMode {
                 .build();
 
         driveShootToGate1 = follower.pathBuilder()
-//                .addPath(new BezierCurve(shootPose2, gateControlPose, gatePose))
-                .addPath(new BezierLine(shootPose2, gatePose))
+                .addPath(new BezierCurve(shootPose2, gateControlPose, gatePose))
+//                .addPath(new BezierLine(shootPose2, gatePose))
                 .setLinearHeadingInterpolation(shootPose2.getHeading(), gatePose.getHeading())
                 .build();
 
@@ -552,8 +552,8 @@ public class AutoRedClose extends OpMode {
                 .build();
 
         driveShootToGate2 = follower.pathBuilder()
-//                .addPath(new BezierCurve(shootPose2, gateControlPose, gatePose))
-                .addPath(new BezierLine(shootPose2, gatePose))
+                .addPath(new BezierCurve(shootPose2, gateControlPose, gatePose))
+//                .addPath(new BezierLine(shootPose2, gatePose))
                 .setLinearHeadingInterpolation(shootPose2.getHeading(), gatePose.getHeading())
                 .build();
 

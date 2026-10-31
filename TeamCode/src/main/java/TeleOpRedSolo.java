@@ -61,7 +61,7 @@ public class TeleOpRedSolo extends CommandOpMode {
     private FlyWheelSubsystem flyWheelSubsystem;
     private TransferSubsystem transferSubsystem;
     private CONSTANTS         constants;
-    private Turrettt          turrettt;
+//    private Turrettt          turrettt;
 
     private Servo hoodServo;
 
@@ -89,7 +89,7 @@ public class TeleOpRedSolo extends CommandOpMode {
         intakeSubsystem   = new IntakeSubsystem(hardwareMap);
         transferSubsystem = new TransferSubsystem(hardwareMap);
         flyWheelSubsystem = new FlyWheelSubsystem(hardwareMap);
-        turrettt          = new Turrettt(hardwareMap);
+//        turrettt          = new Turrettt(hardwareMap);
 
         hoodServo = hardwareMap.get(Servo.class, "hoodServo");
 
@@ -220,7 +220,7 @@ public class TeleOpRedSolo extends CommandOpMode {
     public void run() {
         Localization.update();
         super.run();
-        turrettt.periodic();
+//        turrettt.periodic();
 
         // ── Added from TeleOpRed ──────────────────────────────────────────────
         if (gamepad1.dpad_left && !prevdpadleft) relocalizePedro1();

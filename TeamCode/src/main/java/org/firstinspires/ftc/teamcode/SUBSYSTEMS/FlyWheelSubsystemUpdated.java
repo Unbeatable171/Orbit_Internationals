@@ -82,7 +82,7 @@ public class FlyWheelSubsystemUpdated extends SubsystemBase {
             powerBottom = Math.max(-1, Math.min(1, powerBottom));
 
             shooterLeft.setPower(powerTop);
-            shooterRight .setPower(powerBottom);
+            shooterRight .setPower(powerTop);
         }
         else {
             double targetVelocity = rpmtoticks(rpm);
@@ -111,7 +111,7 @@ public class FlyWheelSubsystemUpdated extends SubsystemBase {
             powerBottom = Math.max(-1, Math.min(1, powerBottom));
 
             shooterLeft.setPower(powerTop);
-            shooterRight.setPower(powerBottom);
+            shooterRight.setPower(powerTop);
         }
 
     }

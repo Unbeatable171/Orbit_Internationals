@@ -46,13 +46,13 @@ public class AutoRedFar2 extends OpMode {
     }
 
     // ── Timing ────────────────────────────────────────────────────────────────
-    public static double maxWaitForShotSeconds = 2.5;
+    public static double maxWaitForShotSeconds = 3.5;
     public static double gateWaitSeconds       = 0.8;
     public static double rpmTolerance          = 125.0;
 
     // ── Pulse-based shot parameters ───────────────────────────────────────────
     public static double transferOpenSeconds   = 0.15;
-    public static double transferClosedSeconds = 0.2;
+    public static double transferClosedSeconds = 0.3;
     public static int    shotPulseCountTarget  = 3;
 
     // ── Shooter presets ───────────────────────────────────────────────────────
@@ -355,6 +355,20 @@ public class AutoRedFar2 extends OpMode {
                     shotFinished = true;
                 }
             }
+
+//            boolean pathDone = !follower.isBusy();
+//
+//            if (pathDone && !shotTriggered && !shotFinished) {
+//
+//                // Fire immediately when the robot reaches the end of the path.
+//                transferSubsystem.Open();
+//                transferAction.start();
+//
+//                shotTriggered = true;
+//                transferCurrentlyOpen = true;
+//                shotPulseCount = 1;
+//                shotTimer.reset();
+//            }
 
             // ── Pulse-shot state machine ───────────────────────────────────────
             if (shotTriggered && !shotFinished) {
